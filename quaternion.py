@@ -123,7 +123,7 @@ class quaternion(object):
         M[2,2] = 1.0 - 2.0 * ( x**2 + y**2 )
         return M
 
-    def toEuler(self):
+    def toEuler2(self):
         """ The Euler angles belonging to the quaternion.
         """
         w,x,y,z = self.__q
@@ -149,7 +149,30 @@ class quaternion(object):
 	        attitude = math.asin(2*test/unit);
 	        bank = math.atan2(2*x*w-2*y*z , -sqx + sqy - sqz + sqw)
 
-        return np.array([attitude, heading,  bank]) 
+        return np.array([bank, attitude, heading])
+
+    def toEuler(self):
+        """ The Eulet angles using the rotation matrix
+            result = [heading, attitude, bank]
+            ranges are [-pi, pi], [-pi/2, pi/2] and [-pi, pi]
+        """
+        M = np.zeros((3,3))
+        M = self.toMatrix()
+        x = np.linalg.norm([M[2,2] ,M[2,1]])
+        result = np.array([0, math.atan2(-M[2,0],x), 0])
+        if x > 0.0001:
+            result[0] = math.atan2(M[1,0], M[0,0])
+            result[2] = math.atan2(M[2,1], M[2,2])
+        else:
+            result[0] = 0.00
+            if M[2,0] > 0.00:
+                aux = 1.00
+            else:
+                aux=-1.00
+
+            result[2] = aux * math.atan2(-M[0,1], M[1,1])
+
+        return result
 
     def __add__(self,other):
         return quaternion(self.__q + other.__q)

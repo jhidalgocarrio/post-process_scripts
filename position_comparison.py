@@ -58,20 +58,42 @@ odoOrient = data.QuaternionData()
 odoOrient.readData('/home/jhidalgocarrio/esa-npi/dev/bundles/asguard/logs/20131119-1212/data/odometry_orientation.0.data', cov=True)
 odoOrient.eigenValues()
 
+# State Pose
+statePos = data.ThreeData()
+statePos.readData('/home/jhidalgocarrio/esa-npi/dev/bundles/asguard/logs/20131129-2046/data/state_position.0.data', cov=True)
+statePos.eigenValues()
+stateOrient = data.QuaternionData()
+stateOrient.readData('/home/jhidalgocarrio/esa-npi/dev/bundles/asguard/logs/20131128-1829/data/odometry_orientation.0.data', cov=True)
+stateOrient.eigenValues()
+
+# Delta State Pose
+statedeltaPos = data.ThreeData()
+statedeltaPos.readData('/home/jhidalgocarrio/esa-npi/dev/bundles/asguard/logs/20131129-2102/data/state_odo_delta_position.0.data', cov=True)
+statedeltaPos.eigenValues()
+
+# Delta Accelerometers Pose
+accdeltaPos = data.ThreeData()
+accdeltaPos.readData('/home/jhidalgocarrio/esa-npi/dev/bundles/asguard/logs/20131129-2102/data/state_acc_delta_position.0.data', cov=True)
+accdeltaPos.eigenValues()
+
+#GPS/Vicon reference from Ground Truth
+refPos = data.ThreeData()
+refPos.readData('/home/jhidalgocarrio/esa-npi/dev/bundles/asguard/logs/20131129-1644/data/reference_position.0.data', cov=False)
+refPos.eigenValues()
+refOrient = data.QuaternionData()
+refOrient.readData('/home/jhidalgocarrio/esa-npi/dev/bundles/asguard/logs/20131128-1829/data/reference_orientation.0.data', cov=False)
+refOrient.eigenValues()
+
+#World to navigation
+worldnavOrient = data.QuaternionData()
+worldnavOrient.readData('/home/jhidalgocarrio/esa-npi/dev/bundles/asguard/logs/20131128-1829/data/world_2_nav_orient.0.data', cov=False)
+worldnavOrient.eigenValues()
 
 
-#GPS reference from Ground Truth
-gpsPos = data.ThreeData()
-#gpsPose.readData('/home/jhidalgocarrio/esa-npi/experiments/20131022_motocross_field/20131022-1812/data/gps_position.0.data', cov=False)
-gpsPos.readData('/home/jhidalgocarrio/esa-npi/dev/bundles/asguard/logs/20131123-2115/data/reference_position.0.data', cov=False)
-gpsPos.eigenValues()
-
-#GPS reference from Ground Truth
-gpsdeltaPos = data.ThreeData()
-gpsdeltaPos.readData('/home/jhidalgocarrio/esa-npi/dev/bundles/asguard/logs/20131119-1212/data/reference_delta_position.0.data', cov=False)
-gpsdeltaPos.eigenValues()
-
-
+#GPS delta reference from Ground Truth
+refdeltaPos = data.ThreeData()
+refdeltaPos.readData('/home/jhidalgocarrio/esa-npi/dev/bundles/asguard/logs/20131119-1212/data/reference_delta_position.0.data', cov=False)
+refdeltaPos.eigenValues()
 
 #Loading  the script error_ellipse
 finalpose= frontendbodytest1139.data[len(frontendbodytest1139.t)-1]
@@ -147,8 +169,8 @@ savefig('figures/position_dynamic_vs_no_dynamic_vicon.png')
 
 #Plotting GPS and Odometry values
 plt.figure(1)
-xposition = gpsPos.getAxis(0)
-yposition = gpsPos.getAxis(1)
+xposition = refPos.getAxis(0)
+yposition = refPos.getAxis(1)
 plt.scatter(xposition[0], yposition[0], marker='D', color=[0,0.5,0.5], alpha=0.5, lw=20)
 plt.scatter(xposition[len(xposition)-1], yposition[len(yposition)-1], marker='D', color=[0.5,0,0.5], alpha=0.5, lw=20)
 plt.plot(xposition, yposition, marker='D', label="GPS Ground Truth", color=[0.5,0,0], alpha=0.5, lw=2)
@@ -172,9 +194,9 @@ from mpl_toolkits.mplot3d import Axes3D
 fig = plt.figure()
 ax = fig.gca(projection='3d')
 
-xposition = gpsPos.getAxis(0)
-yposition = gpsPos.getAxis(1)
-zposition = gpsPos.getAxis(2)
+xposition = refPos.getAxis(0)
+yposition = refPos.getAxis(1)
+zposition = refPos.getAxis(2)
 ax.plot(xposition, yposition, zposition, marker='D', label="GPS Ground Truth", color=[0,0,1], lw=2)
 xposition = odoPos.getAxis(0)
 yposition = odoPos.getAxis(1)
@@ -209,5 +231,79 @@ plt.legend(prop={'size':25})
 plt.show(block=False)
 
 
-#Project the trajectory to the X-Y plane
+#Plotting Vicon and Odometry values
+plt.figure(2)
+xposition = refPos.getAxis(0)
+yposition = refPos.getAxis(1)
+plt.scatter(xposition[0], yposition[0], marker='D', color=[0,0.5,0.5], alpha=0.5, lw=20)
+plt.scatter(xposition[len(xposition)-1], yposition[len(yposition)-1], marker='D', color=[0.5,0,0.5], alpha=0.5, lw=20)
+plt.plot(xposition, yposition, marker='D', label="Ground Truth", color=[0.5,0,0], alpha=0.5, lw=2)
+plt.annotate(r'Starting point', xy=(xposition[0], yposition[0]), xycoords='data',
+                                xytext=(+10, +30), textcoords='offset points', fontsize=18,
+                                arrowprops=dict(arrowstyle="->", connectionstyle="arc3,rad=.2"))
+plt.annotate(r'End point', xy=(xposition[len(xposition)-1], yposition[len(yposition)-1]), xycoords='data',
+                                xytext=(-10, -30), textcoords='offset points', fontsize=18,
+                                arrowprops=dict(arrowstyle="->", connectionstyle="arc3,rad=.2"))
+xposition = statePos.getAxis(0)
+yposition = statePos.getAxis(1)
+plt.plot(xposition, yposition, marker='.', label="State Optimize", color=[0,0,1], lw=2)
+plt.ylabel(r'Position [$m$]')
+plt.xlabel(r'Position [$m$]')
+plt.grid(True)
+plt.legend(prop={'size':25})
+plt.show(block=False)
+
+#Plotting state position versus time
+plt.figure(1)
+values = statePos.getAxis(0)
+plt.plot(statePos.t, values,
+        marker='.', label="Motion Model X-axis", color=[0,1,0], lw=2)
+
+
+# Delta pose comparison
+plt.figure(4)
+values = statedeltaPos.getAxis(0)
+plt.plot(statedeltaPos.t, values,
+        marker='.', label="Motion Model X-axis", color=[0,1,0], lw=2)
+plt.plot(statedeltaPos.t, statedeltaPos.getStdMax(0) , color=[0,0,0], linestyle='--', lw=2, label=r'$\pm 1\sigma$ Motion Model uncertainty')
+plt.plot(statedeltaPos.t, statedeltaPos.getStdMin(0) , color=[0,0,0], linestyle='--', lw=2)
+values=accdeltaPos.getAxis(0)
+plt.plot(accdeltaPos.t, values,
+        marker='D', label="Accelerometers X-axis", color=[0,0.5,0.5], alpha=0.5, lw=5)
+plt.plot(accdeltaPos.t, accdeltaPos.getStdMax(0) , color=[0.5,0.5,0.5], linestyle='--', lw=2, label=r'$\pm 1\sigma$ Motion Model uncertainty')
+plt.plot(accdeltaPos.t, accdeltaPos.getStdMin(0) , color=[0.5,0.5,0.5], linestyle='--', lw=2)
+plt.ylabel(r'Delta Position [$m$]')
+plt.xlabel(r'Time [$s$]')
+plt.grid(True)
+plt.legend(prop={'size':25})
+plt.show(block=False)
+
+# Comparison State and Cumsum delta state
+plt.figure(3)
+xposition = statePos.getAxis(0)
+yposition = statePos.getAxis(1)
+plt.scatter(xposition[0], yposition[0], marker='D', color=[0,0.5,0.5], alpha=0.5, lw=20)
+plt.scatter(xposition[len(xposition)-1], yposition[len(yposition)-1], marker='D', color=[0.5,0,0.5], alpha=0.5, lw=20)
+plt.plot(xposition, yposition, marker='D', label="State Optimize", color=[0.5,0,0], alpha=0.5, lw=2)
+
+values = statedeltaPos.getAxis(0)
+xcumpos = xposition[0] + np.cumsum(values)
+values = statedeltaPos.getAxis(1)
+ycumpos = yposition[0] + np.cumsum(values)
+plt.plot(xcumpos, ycumpos, marker='.', label="Cumulative Sum Delta State Optimize", color=[1,0,0], lw=2)
+
+values = accdeltaPos.getAxis(0)
+xcumpos = xposition[0] + np.cumsum(values)
+values = accdeltaPos.getAxis(1)
+ycumpos = yposition[0] + np.cumsum(values)
+#values = [x * 1 * 1 for x in accx ]
+#xcumpos = xposition[0] + np.cumsum(values)
+#values = [y * 1 * 1 for y in accy ]
+#ycumpos = yposition[0] + np.cumsum(values)
+plt.plot(xcumpos, ycumpos, marker='.', label="Cumulative Sum Delta Acceleration", color=[0.2,0,0], lw=2)
+plt.ylabel(r'Position [$m$]')
+plt.xlabel(r'Position [$m$]')
+plt.grid(True)
+plt.legend(prop={'size':25})
+plt.show(block=False)
 

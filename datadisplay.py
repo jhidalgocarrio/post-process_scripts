@@ -252,6 +252,7 @@ class QuaternionData:
 
         return sdmin
 
+    #Euler in [Yaw, Pitch and Roll]
     def getEuler(self, axis):
 	values = []
 	for i in range(0,len(self.data)):

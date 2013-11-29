@@ -888,7 +888,7 @@ t = delta_t * r_[0:len(time)]
 #spamReader = csv.reader(open('/home/jhidalgocarrio/iMoby/experiments/20121109_multitest_spacehall/20121109-0940/data/stim300.acc.0.data', 'rb'), delimiter=' ', quotechar='|')
 spamReader = csv.reader(open('/home/jhidalgocarrio/esa-npi/dev/bundles/asguard/logs/20131115-1548/data/sensor_processing_imu_acc.0.data', 'rb'), delimiter=' ', quotechar='|')
 spamReader = csv.reader(open('/home/jhidalgocarrio/esa-npi/dev/bundles/asguard/logs/20131115-1608/data/sensor_processing_imu_acc.0.data', 'rb'), delimiter=' ', quotechar='|')
-spamReader = csv.reader(open('/home/jhidalgocarrio/esa-npi/dev/bundles/asguard/logs/20131115-1645/data/sensor_processing_imu_acc.0.data', 'rb'), delimiter=' ', quotechar='|')
+spamReader = csv.reader(open('/home/jhidalgocarrio/esa-npi/dev/bundles/asguard/logs/20131129-2156/data/state_optimize_imu_acc.0.data', 'rb'), delimiter=' ', quotechar='|')
 
 time=[]
 accx=[]
@@ -962,10 +962,11 @@ for i in range(0,len(time)):
     stdacczneg.append(numbermean - numberstd)
 
 plt.figure(1)
-plot(t,accx, label="X axis", color='red')
+plot(t,accx, label="X axis", color='green')
 plot(t,meanaccx, label="Mean value", color='black')
 plot(t,stdaccxpos, label="Std (+)", color='grey')
 plot(t,stdaccxneg, label="Std (-)", color='grey')
+plt.grid(True)
 plt.show(block=False)
 
 plt.figure(2)
@@ -973,6 +974,7 @@ plot(t,accy, label="Y axis", color='green')
 plot(t,meanaccy, label="Mean value", color='black')
 plot(t,stdaccypos, label="Std (+)", color='grey')
 plot(t,stdaccyneg, label="Std (-)", color='grey')
+plt.grid(True)
 plt.show(block=False)
 
 plt.figure(3)
@@ -980,6 +982,7 @@ plot(t,accz, label="Z axis", color="blue")
 plot(t,meanaccz, label="Mean value", color="black")
 plot(t,stdacczpos, label="Std (+)", color="grey")
 plot(t,stdacczneg, label="Std (-)", color="grey")
+plt.grid(True)
 plt.show(block=False)
 
 

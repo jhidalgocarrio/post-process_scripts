@@ -264,4 +264,20 @@ plt.legend(prop={'size':25})
 plt.show(block=False)
 savefig('figures/turn_point_z_velocity_plot.png')
 
+#FrontEnd reference from Ground Truth
+stateVelo = data.ThreeData()
+stateVelo.readData('/home/jhidalgocarrio/esa-npi/dev/bundles/asguard/logs/20131129-2102/data/state_velocity.0.data', cov=True)
+stateVelo.eigenValues()
+
+plt.figure(1)
+values = stateVelo.getAxis(0)
+plt.plot(stateVelo.t, values,
+        marker='.', label="Motion Model X-axis", color=[1,0,0], lw=2)
+plt.plot(stateVelo.t, stateVelo.getStdMax(0, 3) , color=[0,0,0], linestyle='--', lw=2, label=r'$\pm 1\sigma$ uncertainty')
+plt.plot(stateVelo.t, stateVelo.getStdMin(0, 3) , color=[0,0,0], linestyle='--', lw=2)
+plt.ylabel(r'Velocity [$m/s$]')
+plt.xlabel(r'Time [$s$]')
+plt.grid(True)
+plt.legend(prop={'size':25})
+plt.show(block=False)
 
