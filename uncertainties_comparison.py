@@ -197,7 +197,7 @@ figure()
 boxplot(values)
 show(block=False)
 
-#Ploting the begining of the velocity
+#Plotting the beginning of the velocity
 plt.figure(1)
 values = frontendbody30.getAxis(0)[0:2000]
 plt.plot(frontendbody30.t[0:2000], values,

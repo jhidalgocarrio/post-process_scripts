@@ -52,11 +52,16 @@ frontendposenodynamic.eigenValues()
 
 # Odometry Pose
 odoPos = data.ThreeData()
-odoPos.readData('/home/jhidalgocarrio/esa-npi/dev/bundles/asguard/logs/20131123-2115/data/odometry_position.0.data', cov=True)
+odoPos.readData('/home/jhidalgocarrio/esa-npi/dev/bundles/asguard/logs/20131207-0210/data/odometry_position.0.data', cov=True)
 odoPos.eigenValues()
 odoOrient = data.QuaternionData()
 odoOrient.readData('/home/jhidalgocarrio/esa-npi/dev/bundles/asguard/logs/20131119-1212/data/odometry_orientation.0.data', cov=True)
 odoOrient.eigenValues()
+
+# Odometry Pose
+skidodoPos = data.ThreeData()
+skidodoPos.readData('/home/jhidalgocarrio/esa-npi/dev/bundles/asguard/logs/20131206-2344/data/skid_odometry_position.0.data', cov=True)
+skidodoPos.eigenValues()
 
 # State Pose
 statePos = data.ThreeData()
@@ -78,7 +83,7 @@ accdeltaPos.eigenValues()
 
 #GPS/Vicon reference from Ground Truth
 refPos = data.ThreeData()
-refPos.readData('/home/jhidalgocarrio/esa-npi/dev/bundles/asguard/logs/20131129-1644/data/reference_position.0.data', cov=False)
+refPos.readData('/home/jhidalgocarrio/esa-npi/dev/bundles/asguard/logs/20131206-2344/data/reference_position.0.data', cov=False)
 refPos.eigenValues()
 refOrient = data.QuaternionData()
 refOrient.readData('/home/jhidalgocarrio/esa-npi/dev/bundles/asguard/logs/20131128-1829/data/reference_orientation.0.data', cov=False)
@@ -94,6 +99,7 @@ worldnavOrient.eigenValues()
 refdeltaPos = data.ThreeData()
 refdeltaPos.readData('/home/jhidalgocarrio/esa-npi/dev/bundles/asguard/logs/20131119-1212/data/reference_delta_position.0.data', cov=False)
 refdeltaPos.eigenValues()
+
 
 #Loading  the script error_ellipse
 finalpose= frontendbodytest1139.data[len(frontendbodytest1139.t)-1]
@@ -180,33 +186,325 @@ plt.annotate(r'Starting point', xy=(xposition[0], yposition[0]), xycoords='data'
 plt.annotate(r'End point', xy=(xposition[len(xposition)-1], yposition[len(yposition)-1]), xycoords='data',
                                 xytext=(-10, -30), textcoords='offset points', fontsize=18,
                                 arrowprops=dict(arrowstyle="->", connectionstyle="arc3,rad=.2"))
-xposition = odoPos.getAxis(0)
-yposition = odoPos.getAxis(1)
-plt.plot(xposition, yposition, marker='.', label="Odometry", color=[0,0,1], lw=2)
+xposition = odoPos2010.getAxis(0)
+yposition = odoPos2010.getAxis(1)
+plt.plot(xposition, yposition, marker='.', label="Asguard Odometry", color=[0,0,1], lw=2)
 plt.ylabel(r'Position [$m$]')
 plt.xlabel(r'Position [$m$]')
 plt.grid(True)
 plt.legend(prop={'size':25})
 plt.show(block=False)
 
-#3D Plotting GPS values
+#Odometry and Skid Odometry values (X-Y Axes)
+matplotlib.rcParams.update({'font.size': 25})
+plt.figure(1)
+xposition = odoPos.getAxis(0)
+yposition = odoPos.getAxis(1)
+plt.plot(xposition, yposition, marker='.', linestyle='--', label="Full Odometry", color=[0,0.5,0], alpha=0.5, lw=5)
+
+plt.scatter(xposition[0], yposition[0], marker='D', color=[0,0.5,0.5], alpha=0.5, lw=20)
+plt.scatter(xposition[0], yposition[0], marker='D', color=[0.5,0,0.5], alpha=0.5, lw=20)
+plt.annotate(r'Start', xy=(xposition[0], yposition[0]), xycoords='data',
+                                xytext=(-20, -30), textcoords='offset points', fontsize=22,
+                                arrowprops=dict(arrowstyle="->", connectionstyle="arc3,rad=.2"))
+plt.annotate(r'End', xy=(xposition[0], yposition[0]), xycoords='data',
+                                xytext=(+20, +30), textcoords='offset points', fontsize=22,
+                                arrowprops=dict(arrowstyle="->", connectionstyle="arc3,rad=.2"))
+
+xposition = odoPosDyn.getAxis(0)
+yposition = odoPosDyn.getAxis(1)
+plt.plot(xposition, yposition, marker='*', linestyle='-.', label="Full Odometry + Suppor Polygon", color=[0.5,0,0], alpha=0.5, lw=5)
+
+xposition = skidodoPos.getAxis(0)
+yposition = skidodoPos.getAxis(1)
+plt.plot(xposition, yposition, marker='.', linestyle='.-', label="Skid Odometry", color=[0,0,1], lw=5)
+plt.xlabel(r' Position in X [$m$]', fontsize=24)
+plt.ylabel(r' Position in Y [$m$]', fontsize=24)
+plt.grid(True)
+plt.legend(prop={'size':25})
+plt.show(block=False)
+savefig('figures/test_track_position_x_y.png')
+
+
+#Odometry and Skid Odometry values (X-Z Axis)
+matplotlib.rcParams.update({'font.size': 25})
+plt.figure(2)
+xposition = odoPos.getAxis(0)
+zposition = odoPos.getAxis(2)
+plt.plot(xposition, zposition, marker='.', linestyle='--', label="Full Odometry", color=[0,0.5,0], alpha=0.5, lw=5)
+
+plt.scatter(xposition[0], yposition[0], marker='D', color=[0,0.5,0.5], alpha=0.5, lw=20)
+plt.scatter(xposition[0], yposition[0], marker='D', color=[0.5,0,0.5], alpha=0.5, lw=20)
+plt.annotate(r'Start', xy=(xposition[0], yposition[0]), xycoords='data',
+                                xytext=(-20, -30), textcoords='offset points', fontsize=22,
+                                arrowprops=dict(arrowstyle="->", connectionstyle="arc3,rad=.2"))
+plt.annotate(r'End', xy=(xposition[0], yposition[0]), xycoords='data',
+                                xytext=(+20, +30), textcoords='offset points', fontsize=22,
+                                arrowprops=dict(arrowstyle="->", connectionstyle="arc3,rad=.2"))
+
+xposition = odoPosDyn.getAxis(0)
+zposition = odoPosDyn.getAxis(2)
+plt.plot(xposition, zposition, marker='*', linestyle='-.', label="Full Odometry + Suppor Polygon", color=[0.5,0,0], alpha=0.5, lw=5)
+
+xposition = skidodoPos.getAxis(0)
+zposition = skidodoPos.getAxis(2)
+plt.plot(xposition, zposition, marker='.', linestyle='.-', label="Skid Odometry", color=[0,0,1], lw=5)
+plt.xlabel(r' Position in X [$m$]', fontsize=24)
+plt.ylabel(r' Position in Z [$m$]', fontsize=24)
+plt.grid(True)
+plt.legend(prop={'size':25})
+plt.show(block=False)
+savefig('figures/test_track_position_x_z.png')
+
+
+
+#3D Plotting Odometry and Skid odometry values
 from mpl_toolkits.mplot3d import Axes3D
 fig = plt.figure()
 ax = fig.gca(projection='3d')
 
-xposition = refPos.getAxis(0)
-yposition = refPos.getAxis(1)
-zposition = refPos.getAxis(2)
-ax.plot(xposition, yposition, zposition, marker='D', label="GPS Ground Truth", color=[0,0,1], lw=2)
-xposition = odoPos.getAxis(0)
-yposition = odoPos.getAxis(1)
-zposition = odoPos.getAxis(2)
-ax.plot(xposition, yposition, zposition, marker='.', label="Odometry", color=[0,0,1], lw=2)
+xposition = odoPosDyn.getAxis(0)
+yposition = odoPosDyn.getAxis(1)
+zposition = odoPosDyn.getAxis(2)
+ax.plot(xposition, yposition, zposition, marker='.', label="Full Odometry + Support Polygon", color=[0.7,0.4,0.0], lw=2)
+
+xposition = skidodoPos.getAxis(0)
+yposition = skidodoPos.getAxis(1)
+zposition = skidodoPos.getAxis(2)
+ax.plot(xposition, yposition, zposition, marker='.', label="Skid Odometry", color=[0,0.0,1], lw=2)
+
+ax.zaxis.set_major_locator(LinearLocator(10))
+ax.zaxis.set_major_formatter(FormatStrFormatter('%.02f'))
 
 ax.grid(True)
 ax.legend(prop={'size':25})
 plt.ylabel(r'Position [$m$]')
 plt.xlabel(r'Position [$s$]')
+ax.set_xlim([-3,60])
+ax.set_ylim([-10,10])
+ax.set_zlim([0,5])
+plt.show(block=False)
+
+
+#Odometry , Skid Odometry and GPS values(X-Y Axis Sand Field)
+matplotlib.rcParams.update({'font.size': 25})
+plt.figure(1)
+rot = quat.quaternion([0.819, -0.014, 0.01001, -0.5735])
+M = rot.toMatrix()
+xposition = []
+yposition = []
+
+for i in range(0,len(refPos.data)):
+    x = refPos.data[i][0]
+    y = refPos.data[i][1]
+    z = refPos.data[i][2]
+    vec = dot(M,[x,y,z])
+    xposition.append(vec[0])
+    yposition.append(vec[1])
+
+plt.plot(xposition, yposition, marker='D', linestyle='--', label="GPS", color=[0.5,0,0], alpha=0.5, lw=2)
+plt.scatter(xposition[0], yposition[0], marker='D', color=[0,0.5,0.5], alpha=0.5, lw=20)
+plt.scatter(xposition[len(xposition)-1], yposition[len(yposition)-1], marker='D', color=[0.5,0,0.5], alpha=0.5, lw=20)
+plt.annotate(r'Start', xy=(xposition[0], yposition[0]), xycoords='data',
+                                xytext=(-10, -30), textcoords='offset points', fontsize=22,
+                                arrowprops=dict(arrowstyle="->", connectionstyle="arc3,rad=.2"))
+plt.annotate(r'End', xy=(xposition[len(xposition)-1], yposition[len(yposition)-1]), xycoords='data',
+                                xytext=(+10, +30), textcoords='offset points', fontsize=22,
+                                arrowprops=dict(arrowstyle="->", connectionstyle="arc3,rad=.2"))
+xposition = odoPos.getAxis(0)
+yposition = odoPos.getAxis(1)
+plt.plot(xposition, yposition, marker='*', linestyle='--', label="Full Odometry", color=[0.3,0.2,0.4], alpha=0.5, lw=2)
+
+xposition = odoPosDyn.getAxis(0)
+yposition = odoPosDyn.getAxis(1)
+plt.plot(xposition, yposition, marker='*', linestyle='-.', label="Full Odometry + Support Polygon", color=[0.0,0.8,0], alpha=0.5, lw=2)
+
+
+xposition = skidodoPos.getAxis(0)
+yposition = skidodoPos.getAxis(1)
+plt.plot(xposition, yposition, marker='.', label="Skid Odometry", color=[0,0.5,1], lw=2)
+plt.xlabel(r'Position in X [$m$]', fontsize=24)
+plt.ylabel(r'Position in Y [$m$]', fontsize=24)
+plt.grid(True)
+plt.legend(prop={'size':25})
+plt.show(block=False)
+savefig('figures/sandfield_position_x_y.png')
+
+
+#Odometry , Skid Odometry and GPS values(X-Z Axis Sand Field)
+matplotlib.rcParams.update({'font.size': 25})
+plt.figure(2)
+rot = quat.quaternion([0.819, -0.014, 0.01001, -0.5735])
+M = rot.toMatrix()
+xposition = []
+zposition = []
+
+for i in range(0,len(refPos.data)):
+    x = refPos.data[i][0]
+    y = refPos.data[i][1]
+    z = refPos.data[i][2]
+    vec = dot(M,[x,y,z])
+    xposition.append(vec[0])
+    zposition.append(vec[2])
+
+plt.plot(xposition, zposition, marker='D', linestyle='--', label="GPS", color=[0.5,0,0], alpha=0.5, lw=2)
+plt.scatter(xposition[0], zposition[0], marker='D', color=[0,0.5,0.5], alpha=0.5, lw=20)
+plt.scatter(xposition[len(xposition)-1], zposition[len(zposition)-1], marker='D', color=[0.5,0,0.5], alpha=0.5, lw=20)
+plt.annotate(r'Start', xy=(xposition[0], zposition[0]), xycoords='data',
+                                xytext=(-70, -30), textcoords='offset points', fontsize=22,
+                                arrowprops=dict(arrowstyle="->", connectionstyle="arc3,rad=.2"))
+plt.annotate(r'End', xy=(xposition[len(xposition)-1], zposition[len(zposition)-1]), xycoords='data',
+                                xytext=(+10, +30), textcoords='offset points', fontsize=22,
+                                arrowprops=dict(arrowstyle="->", connectionstyle="arc3,rad=.2"))
+xposition = odoPos.getAxis(0)
+zposition = odoPos.getAxis(2)
+plt.plot(xposition, zposition, marker='*', linestyle='--', label="Full Odometry", color=[0.3,0.2,0.4], alpha=0.5, lw=2)
+
+xposition = odoPosDyn.getAxis(0)
+zposition = odoPosDyn.getAxis(2)
+plt.plot(xposition, zposition, marker='*', linestyle='-.', label="Full Odometry + Support Polygon", color=[0.0,0.8,0], alpha=0.5, lw=2)
+
+
+xposition = skidodoPos.getAxis(0)
+zposition = skidodoPos.getAxis(2)
+plt.plot(xposition, zposition, marker='.', label="Skid Odometry", color=[0,0.5,1], lw=2)
+plt.xlabel(r'Position in X [$m$]', fontsize=24)
+plt.ylabel(r'Position in Z [$m$]', fontsize=24)
+plt.grid(True)
+plt.legend(prop={'size':25})
+plt.show(block=False)
+savefig('figures/sandfield_position_x_z.png')
+
+
+#Odometry , Skid Odometry and GPS values(X-Y Axis Motocross Field)
+matplotlib.rcParams.update({'font.size': 25})
+plt.figure(1)
+#rot = quat.quaternion([0.898, 0.0, 0.0, 0.4383]) #only heading
+rot = quat.quaternion([0.8984, 0.0038, 0.0078, 0.4383])
+M = rot.toMatrix()
+xposition = []
+yposition = []
+
+for i in range(0,len(refPos.data)):
+    x = refPos.data[i][0]
+    y = refPos.data[i][1]
+    z = refPos.data[i][2]
+    vec = dot(M,[x,y,z])
+    xposition.append(vec[0])
+    yposition.append(vec[1])
+
+plt.plot(xposition, yposition, marker='D', linestyle='--', label="RTK GPS", color=[0.5,0,0], alpha=0.5, lw=2)
+plt.scatter(xposition[0], yposition[0], marker='D', color=[0,0.5,0.5], alpha=0.5, lw=20)
+plt.scatter(xposition[len(xposition)-1], yposition[len(yposition)-1], marker='D', color=[0.5,0,0.5], alpha=0.5, lw=20)
+plt.annotate(r'Start', xy=(xposition[0], yposition[0]), xycoords='data',
+                                xytext=(-10, -30), textcoords='offset points', fontsize=22,
+                                arrowprops=dict(arrowstyle="->", connectionstyle="arc3,rad=.2"))
+plt.annotate(r'End', xy=(xposition[len(xposition)-1], yposition[len(yposition)-1]), xycoords='data',
+                                xytext=(+10, +30), textcoords='offset points', fontsize=22,
+                                arrowprops=dict(arrowstyle="->", connectionstyle="arc3,rad=.2"))
+xposition = odoPos.getAxis(0)
+yposition = odoPos.getAxis(1)
+plt.plot(xposition, yposition, marker='*', linestyle='--', label="Full Odometry", color=[0.3,0.2,0.4], alpha=0.5, lw=2)
+
+xposition = odoPosDyn.getAxis(0)
+yposition = odoPosDyn.getAxis(1)
+plt.plot(xposition, yposition, marker='*', linestyle='-.', label="Full Odometry + Support Polygon", color=[0.0,0.8,0], alpha=0.5, lw=2)
+
+
+xposition = skidodoPos.getAxis(0)
+yposition = skidodoPos.getAxis(1)
+plt.plot(xposition, yposition, marker='.', label="Skid Odometry", color=[0,0.5,1], lw=2)
+plt.xlabel(r'Position in X [$m$]', fontsize=24)
+plt.ylabel(r'Position in Y [$m$]', fontsize=24)
+plt.grid(True)
+plt.legend(loc=4, prop={'size':25})
+plt.show(block=False)
+savefig('figures/motocross_position_x_y.png')
+
+
+#Odometry , Skid Odometry and GPS values(X-Z Axis Motocross Field)
+matplotlib.rcParams.update({'font.size': 25})
+plt.figure(2)
+rot = quat.quaternion([0.8984, 0.0038, 0.0078, 0.4383])
+M = rot.toMatrix()
+xposition = []
+zposition = []
+
+for i in range(0,len(refPos.data)):
+    x = refPos.data[i][0]
+    y = refPos.data[i][1]
+    z = refPos.data[i][2]
+    vec = dot(M,[x,y,z])
+    xposition.append(vec[0])
+    zposition.append(vec[2])
+
+plt.plot(xposition, zposition, marker='D', linestyle='--', label="GPS", color=[0.5,0,0], alpha=0.5, lw=2)
+plt.scatter(xposition[0], zposition[0], marker='D', color=[0,0.5,0.5], alpha=0.5, lw=20)
+plt.scatter(xposition[len(xposition)-1], zposition[len(zposition)-1], marker='D', color=[0.5,0,0.5], alpha=0.5, lw=20)
+plt.annotate(r'Start', xy=(xposition[0], zposition[0]), xycoords='data',
+                                xytext=(-70, -30), textcoords='offset points', fontsize=22,
+                                arrowprops=dict(arrowstyle="->", connectionstyle="arc3,rad=.2"))
+plt.annotate(r'End', xy=(xposition[len(xposition)-1], zposition[len(zposition)-1]), xycoords='data',
+                                xytext=(+10, +30), textcoords='offset points', fontsize=22,
+                                arrowprops=dict(arrowstyle="->", connectionstyle="arc3,rad=.2"))
+xposition = odoPos.getAxis(0)
+zposition = odoPos.getAxis(2)
+plt.plot(xposition, zposition, marker='*', linestyle='--', label="Full Odometry", color=[0.3,0.2,0.4], alpha=0.5, lw=2)
+
+xposition = odoPosDyn.getAxis(0)
+zposition = odoPosDyn.getAxis(2)
+plt.plot(xposition, zposition, marker='*', linestyle='-.', label="Full Odometry + Support Polygon", color=[0.0,0.8,0], alpha=0.5, lw=2)
+
+
+xposition = skidodoPos.getAxis(0)
+zposition = skidodoPos.getAxis(2)
+plt.plot(xposition, zposition, marker='.', label="Skid Odometry", color=[0,0.5,1], lw=2)
+plt.xlabel(r'Position in X [$m$]', fontsize=24)
+plt.ylabel(r'Position in Z [$m$]', fontsize=24)
+plt.grid(True)
+plt.legend(prop={'size':25})
+plt.show(block=False)
+savefig('figures/motocross_position_x_z.png')
+
+#3D Plotting GPS values
+from mpl_toolkits.mplot3d import Axes3D
+fig = plt.figure()
+ax = fig.gca(projection='3d')
+
+rot = quat.quaternion([0.898794046299167, 0.00, 0.00, 0.4383711467890774])
+M = rot.toMatrix()
+xposition = []
+yposition = []
+zposition = []
+
+for i in range(0,len(refPos.data)):
+    x = refPos.data[i][0]
+    y = refPos.data[i][1]
+    z = refPos.data[i][2]
+    vec = dot(M,[x,y,z])
+    xposition.append(vec[0])
+    yposition.append(vec[1])
+    zposition.append(vec[2])
+
+ax.plot(xposition, yposition, zposition, marker='D', label="GPS Ground Truth", color=[0.5,0,0], alpha=0.5, lw=2)
+
+xposition = odoPos.getAxis(0)
+yposition = odoPos.getAxis(1)
+zposition = odoPos.getAxis(2)
+ax.plot(xposition, yposition, zposition, marker='.', label="Odometry", color=[0,0.4,1], lw=2)
+
+xposition = skidodoPos.getAxis(0)
+yposition = skidodoPos.getAxis(1)
+zposition = skidodoPos.getAxis(2)
+ax.plot(xposition, yposition, zposition, marker='.', label="Skid Odometry", color=[0,0.5,1], lw=2)
+
+ax.grid(True)
+ax.legend(prop={'size':25})
+plt.ylabel(r'Position [$m$]')
+plt.xlabel(r'Position [$s$]')
+ax.set_xlim([0,100])
+ax.set_ylim([0,100])
+ax.set_zlim([0,10])
 plt.show(block=False)
 
 #Plotting Orientation values

@@ -1336,10 +1336,31 @@ plt.show()
 
 (1.22412 - 1.21951+ 1.19344- 1.16889+ 1.14282 - 1.1106+ 1.07839)/(6*0.01)
 
+#Delta_t of sysmon (passive joint)
+spamReader = csv.reader(open('/home/jhidalgocarrio/esa-npi/experiments/20131125-1505_asguard_sandfield/delta_t_sysmon.0.data', 'rb'), delimiter=' ', quotechar='|')
 
+time=[]
 
+for row in spamReader:
+    #print row
+    time.append(float(row[0])/1000000)
+    
+    
+delta = []
+for i in range(0,len(time)-1):
+    #print time[i]
+    t = float(time[i+1]) - float(time[i])
+    delta.append(t)
+    
+delta_t = mean(delta)    
+sample_rate = 1/delta_t
+t = delta_t * r_[0:len(time)]
 
-
+plt.figure(1)
+plt.plot(delta, color=[1,0,0])
+plt.grid(True)
+plt.legend(prop={'size':20})
+plt.show(block=False)
 
 
 

@@ -173,7 +173,7 @@ deltapose_t = mean(deltapose)
 sample_ratepose = 1/deltapose_t
 tpose = deltapose_t * r_[0:len(timepose)]
 
-#Only to copy when it is w/o whell weighting
+#Only to copy when it is w/o wheel weighting
 posposex_wo = posposex
 posposey_wo = posposey
 
