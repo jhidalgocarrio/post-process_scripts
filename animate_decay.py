@@ -32,6 +32,5 @@ def run(data):
 
     return line,
 
-ani = animation.FuncAnimation(fig, run, data_gen, blit=True, interval=10,
-    repeat=False)
+ani = animation.FuncAnimation(fig, run, data_gen, blit=True, interval=10, repeat=False)
 plt.show()

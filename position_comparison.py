@@ -52,7 +52,7 @@ frontendposenodynamic.eigenValues()
 
 # Odometry Pose
 odoPos = data.ThreeData()
-odoPos.readData('/home/jhidalgocarrio/esa-npi/dev/bundles/asguard/logs/20131207-0210/data/odometry_position.0.data', cov=True)
+odoPos.readData('/home/jhidalgocarrio/esa-npi/dev/bundles/asguard/logs/20131209-2022/data/odometry_position.0.data', cov=True)
 odoPos.eigenValues()
 odoOrient = data.QuaternionData()
 odoOrient.readData('/home/jhidalgocarrio/esa-npi/dev/bundles/asguard/logs/20131119-1212/data/odometry_orientation.0.data', cov=True)
@@ -60,7 +60,7 @@ odoOrient.eigenValues()
 
 # Odometry Pose
 skidodoPos = data.ThreeData()
-skidodoPos.readData('/home/jhidalgocarrio/esa-npi/dev/bundles/asguard/logs/20131206-2344/data/skid_odometry_position.0.data', cov=True)
+skidodoPos.readData('/home/jhidalgocarrio/esa-npi/dev/bundles/asguard/logs/20131209-1818/data/skid_odometry_position.0.data', cov=True)
 skidodoPos.eigenValues()
 
 # State Pose
@@ -200,7 +200,7 @@ matplotlib.rcParams.update({'font.size': 25})
 plt.figure(1)
 xposition = odoPos.getAxis(0)
 yposition = odoPos.getAxis(1)
-plt.plot(xposition, yposition, marker='.', linestyle='--', label="Full Odometry", color=[0,0.5,0], alpha=0.5, lw=5)
+plt.plot(xposition, yposition, marker='*', linestyle='--', label="Full Odometry", color=[0.3,0.2,0.4], alpha=0.5, lw=2)
 
 plt.scatter(xposition[0], yposition[0], marker='D', color=[0,0.5,0.5], alpha=0.5, lw=20)
 plt.scatter(xposition[0], yposition[0], marker='D', color=[0.5,0,0.5], alpha=0.5, lw=20)
@@ -213,11 +213,11 @@ plt.annotate(r'End', xy=(xposition[0], yposition[0]), xycoords='data',
 
 xposition = odoPosDyn.getAxis(0)
 yposition = odoPosDyn.getAxis(1)
-plt.plot(xposition, yposition, marker='*', linestyle='-.', label="Full Odometry + Suppor Polygon", color=[0.5,0,0], alpha=0.5, lw=5)
+plt.plot(xposition, yposition, marker='*', linestyle='-.', label="Full Odometry + Support Polygon", color=[0.0,0.8,0], alpha=0.5, lw=2)
 
 xposition = skidodoPos.getAxis(0)
 yposition = skidodoPos.getAxis(1)
-plt.plot(xposition, yposition, marker='.', linestyle='.-', label="Skid Odometry", color=[0,0,1], lw=5)
+plt.plot(xposition, yposition, marker='.', linestyle='.-', label="Skid Odometry", color=[0,0.5,1], lw=2)
 plt.xlabel(r' Position in X [$m$]', fontsize=24)
 plt.ylabel(r' Position in Y [$m$]', fontsize=24)
 plt.grid(True)
@@ -231,7 +231,7 @@ matplotlib.rcParams.update({'font.size': 25})
 plt.figure(2)
 xposition = odoPos.getAxis(0)
 zposition = odoPos.getAxis(2)
-plt.plot(xposition, zposition, marker='.', linestyle='--', label="Full Odometry", color=[0,0.5,0], alpha=0.5, lw=5)
+plt.plot(xposition, zposition, marker='*', linestyle='--', label="Full Odometry", color=[0.3,0.2,0.4], alpha=0.5, lw=2)
 
 plt.scatter(xposition[0], yposition[0], marker='D', color=[0,0.5,0.5], alpha=0.5, lw=20)
 plt.scatter(xposition[0], yposition[0], marker='D', color=[0.5,0,0.5], alpha=0.5, lw=20)
@@ -244,11 +244,11 @@ plt.annotate(r'End', xy=(xposition[0], yposition[0]), xycoords='data',
 
 xposition = odoPosDyn.getAxis(0)
 zposition = odoPosDyn.getAxis(2)
-plt.plot(xposition, zposition, marker='*', linestyle='-.', label="Full Odometry + Suppor Polygon", color=[0.5,0,0], alpha=0.5, lw=5)
+plt.plot(xposition, zposition, marker='*', linestyle='-.', label="Full Odometry + Support Polygon", color=[0.0,0.8,0], alpha=0.5, lw=2)
 
 xposition = skidodoPos.getAxis(0)
 zposition = skidodoPos.getAxis(2)
-plt.plot(xposition, zposition, marker='.', linestyle='.-', label="Skid Odometry", color=[0,0,1], lw=5)
+plt.plot(xposition, zposition, marker='.', linestyle='.-', label="Skid Odometry", color=[0,0.5,1], lw=2)
 plt.xlabel(r' Position in X [$m$]', fontsize=24)
 plt.ylabel(r' Position in Z [$m$]', fontsize=24)
 plt.grid(True)
@@ -604,4 +604,51 @@ plt.xlabel(r'Position [$m$]')
 plt.grid(True)
 plt.legend(prop={'size':25})
 plt.show(block=False)
+
+
+# Full Odometry values with inclinometers in attitude correction(X-Y Axes)
+matplotlib.rcParams.update({'font.size': 25})
+plt.figure(1)
+
+xposition = odoPosDynInc.getAxis(0)
+yposition = odoPosDynInc.getAxis(1)
+plt.plot(xposition, yposition, marker='.', linestyle='.-', label="Full Odometry + Support Polygon + Inc", color=[0.5,0,1], lw=2)
+plt.scatter(xposition[0], yposition[0], marker='D', color=[0,0.5,0.5], alpha=0.5, lw=20)
+plt.scatter(xposition[0], yposition[0], marker='D', color=[0.5,0,0.5], alpha=0.5, lw=20)
+plt.annotate(r'Start', xy=(xposition[0], yposition[0]), xycoords='data',
+                                xytext=(-20, -30), textcoords='offset points', fontsize=22,
+                                arrowprops=dict(arrowstyle="->", connectionstyle="arc3,rad=.2"))
+plt.annotate(r'End', xy=(xposition[0], yposition[0]), xycoords='data',
+                                xytext=(+20, +30), textcoords='offset points', fontsize=22,
+                                arrowprops=dict(arrowstyle="->", connectionstyle="arc3,rad=.2"))
+
+
+xposition = odoPosDyn.getAxis(0)
+yposition = odoPosDyn.getAxis(1)
+plt.plot(xposition, yposition, marker='*', linestyle='-.', label="Full Odometry + Support Polygon", color=[0.0,0.8,0], alpha=0.5, lw=2)
+plt.xlabel(r' Position in X [$m$]', fontsize=24)
+plt.ylabel(r' Position in Y [$m$]', fontsize=24)
+plt.grid(True)
+plt.legend(prop={'size':25})
+plt.show(block=False)
+savefig('figures/test_track_position_with_inc_x_y.png')
+
+
+# Full Odometry values with inclinometers in attitude correction(X-Z Axes)
+matplotlib.rcParams.update({'font.size': 25})
+plt.figure(2)
+
+xposition = odoPosDynInc.getAxis(0)
+zposition = odoPosDynInc.getAxis(2)
+plt.plot(xposition, zposition, marker='.', linestyle='.-', label="Skid Odometry + Support Polygon + Inc", color=[0.5,0,1], lw=2)
+
+xposition = odoPosDyn.getAxis(0)
+zposition = odoPosDyn.getAxis(2)
+plt.plot(xposition, zposition, marker='*', linestyle='-.', label="Full Odometry + Support Polygon", color=[0.0,0.8,0], alpha=0.5, lw=2)
+plt.xlabel(r' Position in X [$m$]', fontsize=24)
+plt.ylabel(r' Position in Z [$m$]', fontsize=24)
+plt.grid(True)
+plt.legend(prop={'size':25})
+plt.show(block=False)
+savefig('figures/test_track_position_with_inc_x_z.png')
 
