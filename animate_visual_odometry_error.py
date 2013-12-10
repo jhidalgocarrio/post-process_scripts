@@ -3,6 +3,14 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 import random
 from matplotlib.patches import Ellipse
+import pointcloud_display as point
+import datadisplay as data
+
+
+vodoFeatures = point.PointCloud()
+vodoFeatures.readData('/home/jhidalgocarrio/esa-npi/dev/bundles/asguard/logs/20131210-1926/data/pointcloud_position.0.data',
+                      '/home/jhidalgocarrio/esa-npi/dev/bundles/asguard/logs/20131210-1926/data/pointcloud_cov.0.data', cov=True)
+vodoFeatures.eigenValues()
 
 fig = plt.figure(figsize=(8,6), dpi=150)
 ax = fig.add_subplot(111)
@@ -16,6 +24,11 @@ ax.grid()
 xdata, ydata = [], []
 
 line, = plt.plot([], [], linestyle='none', marker='o', color='r')
+
+def init():
+    """initialize animation"""
+    line.set_data([], [])
+    return line,
 
 def data_gen():
     i = 0
@@ -32,7 +45,7 @@ def run(data):
     nstd=1
     xdata.append(x0)
     ydata.append(y0)
-    line.set_data(xdata, ydata)
+    line.set_data(x0, y0)
 
     def eigsorted(cov):
         vals, vecs = np.linalg.eigh(cov)
@@ -44,11 +57,17 @@ def run(data):
 
     # Width and height are "full" widths, not radius
     width, height = 2 * nstd * np.sqrt(vals)
-    ellip = Ellipse([x0,y0], width, height, theta, alpha=0.5, color='green')
-    artirst = ax.add_artist(ellip)
 
-    return line,artist,
+    return line,
 
-ani = animation.FuncAnimation(fig, run, data_gen, blit=True, interval=0.5, repeat=False)
+# choose the interval based on dt and the time to animate one step
+from time import time
+t0 = time()
+t1 = time()
+dt = 1./1 # 30 fps
+interval = 1000 * dt - (t1 - t0)
+
+ani = animation.FuncAnimation(fig, run, data_gen, blit=True, interval=interval,
+        init_func=init, repeat=False)
 plt.show()
 
