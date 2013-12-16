@@ -568,7 +568,7 @@ odomediane.append(np.median(np.absolute(odopos[2][0:datasize[2]] - refpos[2][0:d
 # Test Track Data #
 # ############### #
 odoPosDyn = data.ThreeData()
-odoPosDyn.readData('/home/jhidalgocarrio/esa-npi/dev/bundles/asguard/logs/20131206-2159/data/odometry_position.0.data', cov=True)
+odoPosDyn.readData('../post-process_data/20130415_motion_model_test_track/20131206-2159/data/odometry_position.0.data', cov=True)
 odoPosDyn.eigenValues()
 ododynpos=[]
 ododynpos.append(np.array(odoPosDyn.getAxis(0)))
@@ -576,7 +576,7 @@ ododynpos.append(np.array(odoPosDyn.getAxis(1)))
 ododynpos.append(np.array(odoPosDyn.getAxis(2)))
 
 skidodoPos = data.ThreeData()
-skidodoPos.readData('/home/jhidalgocarrio/esa-npi/dev/bundles/asguard/logs/20131206-2159/data/skid_odometry_position.0.data', cov=True)
+skidodoPos.readData('../post-process_data/20130415_motion_model_test_track/20131206-2159/data/skid_odometry_position.0.data', cov=True)
 skidodoPos.eigenValues()
 skidpos=[]
 skidpos.append(np.array(skidodoPos.getAxis(0)))
@@ -584,7 +584,7 @@ skidpos.append(np.array(skidodoPos.getAxis(1)))
 skidpos.append(np.array(skidodoPos.getAxis(2)))
 
 odoPos = data.ThreeData()
-odoPos.readData('/home/jhidalgocarrio/esa-npi/dev/bundles/asguard/logs/20131206-2243/data/odometry_position.0.data', cov=True)
+odoPos.readData('../post-process_data/20130415_motion_model_test_track/20131206-2243/data/odometry_position.0.data', cov=True)
 odoPos.eigenValues()
 odopos=[]
 odopos.append(np.array(odoPos.getAxis(0)))
@@ -603,7 +603,7 @@ plt.show(block=False)
 
 plot(ododynpos[0], ododynpos[2], color='blue')
 plot(skidpos[0], skidpos[2], color='red')
-plot(refpos[0], refpos[2], color='black')
+plot(odopos[0], odopos[2], color='black')
 plt.xlabel(r'Position in X [$m$]', fontsize=24)
 plt.ylabel(r'Position in Z [$m$]', fontsize=24)
 plt.grid(True)
@@ -628,4 +628,72 @@ odofinale = []
 odofinale.append(np.absolute(odopos[0][len(odopos[0])-1] - odopos[0][0]))
 odofinale.append(np.absolute(odopos[1][len(odopos[1])-1] - odopos[1][0]))
 odofinale.append(np.absolute(odopos[2][len(odopos[2])-1] - odopos[2][0]))
+
+# ############### #
+# Sand Field Data #
+# ############### #
+deltarefPos = data.ThreeData()
+#deltarefPos.readData('../post-process_data/20131125-1505_asguard_sandfield/20131206-2344/data/reference_delta_position.0.data', cov=False)
+deltarefPos.readData('../post-process_data/20131125-1505_asguard_sandfield/20131206-2344/data/odometry_delta_position.0.data', cov=False)
+deltarefPos.eigenValues()
+rot = quat.quaternion([0.819, -0.014, 0.01001, -0.5735]) #Align reference trajectory
+M = rot.toMatrix()
+xrefpos = []
+yrefpos = []
+zrefpos = []
+for i in range(0,len(deltarefPos.data)):
+    x = deltarefPos.data[i][0]
+    y = deltarefPos.data[i][1]
+    z = deltarefPos.data[i][2]
+    vec = dot(M,[x,y,z])
+    xrefpos.append(vec[0])
+    yrefpos.append(vec[1])
+    zrefpos.append(vec[2])
+
+deltarefpos=[]
+deltarefpos.append(np.array(xrefpos))
+deltarefpos.append(np.array(yrefpos))
+deltarefpos.append(np.array(zrefpos))
+
+distance = np.cumsum(deltarefpos[0])
+distance[len(distance)-1]
+distance = np.cumsum(deltarefPos.getAxis(0))
+
+# #################### #
+# Motocross Field Data #
+# #################### #
+deltarefPos = data.ThreeData()
+#deltarefPos.readData('../post-process_data/20131022_motocross_field/20131022-1812/20131207-1929/data/reference_delta_position.0.data', cov=False)
+deltarefPos.readData('../post-process_data/20131022_motocross_field/20131022-1812/20131207-1929/data/odometry_delta_position.0.data', cov=False)
+deltarefPos.eigenValues()
+rot = quat.quaternion([0.8987, 0.0, 0.0, 0.4383])#Align reference trajectory
+M = rot.toMatrix()
+xrefpos = []
+yrefpos = []
+zrefpos = []
+for i in range(0,len(deltarefPos.data)):
+    x = refPos.data[i][0]
+    y = refPos.data[i][1]
+    z = refPos.data[i][2]
+    vec = dot(M,[x,y,z])
+    xrefpos.append(vec[0])
+    yrefpos.append(vec[1])
+    zrefpos.append(vec[2])
+
+deltarefpos=[]
+deltarefpos.append(np.array(xrefpos))
+deltarefpos.append(np.array(yrefpos))
+deltarefpos.append(np.array(zrefpos))
+
+distance = np.cumsum(deltarefpos[0])
+
+# ############### #
+# Test Track Data #
+# ############### #
+deltaodoPosDyn = data.ThreeData()
+deltaodoPosDyn.readData('../post-process_data/20130415_motion_model_test_track/20131206-2159/data/odometry_delta_position.0.data', cov=True)
+deltaodoPosDyn.eigenValues()
+
+distance = np.cumsum(deltaodoPosDyn.getAxis(0))
+
 

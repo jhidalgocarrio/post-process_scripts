@@ -217,7 +217,7 @@ plt.plot(xposition, yposition, marker='*', linestyle='-.', label="Full Odometry 
 
 xposition = skidodoPos.getAxis(0)
 yposition = skidodoPos.getAxis(1)
-plt.plot(xposition, yposition, marker='.', linestyle='.-', label="Skid Odometry", color=[0,0.5,1], lw=2)
+plt.plot(xposition, yposition, marker='.', linestyle='.-', label="Conventional Odometry", color=[0,0.5,1], lw=2)
 plt.xlabel(r' Position in X [$m$]', fontsize=24)
 plt.ylabel(r' Position in Y [$m$]', fontsize=24)
 plt.grid(True)
@@ -248,7 +248,7 @@ plt.plot(xposition, zposition, marker='*', linestyle='-.', label="Full Odometry 
 
 xposition = skidodoPos.getAxis(0)
 zposition = skidodoPos.getAxis(2)
-plt.plot(xposition, zposition, marker='.', linestyle='.-', label="Skid Odometry", color=[0,0.5,1], lw=2)
+plt.plot(xposition, zposition, marker='.', linestyle='.-', label="Conventional Odometry", color=[0,0.5,1], lw=2)
 plt.xlabel(r' Position in X [$m$]', fontsize=24)
 plt.ylabel(r' Position in Z [$m$]', fontsize=24)
 plt.grid(True)
@@ -271,7 +271,7 @@ ax.plot(xposition, yposition, zposition, marker='.', label="Full Odometry + Supp
 xposition = skidodoPos.getAxis(0)
 yposition = skidodoPos.getAxis(1)
 zposition = skidodoPos.getAxis(2)
-ax.plot(xposition, yposition, zposition, marker='.', label="Skid Odometry", color=[0,0.0,1], lw=2)
+ax.plot(xposition, yposition, zposition, marker='.', label="Conventional Odometry", color=[0,0.0,1], lw=2)
 
 ax.zaxis.set_major_locator(LinearLocator(10))
 ax.zaxis.set_major_formatter(FormatStrFormatter('%.02f'))
@@ -322,7 +322,7 @@ plt.plot(xposition, yposition, marker='*', linestyle='-.', label="Full Odometry 
 
 xposition = skidodoPos.getAxis(0)
 yposition = skidodoPos.getAxis(1)
-plt.plot(xposition, yposition, marker='.', label="Skid Odometry", color=[0,0.5,1], lw=2)
+plt.plot(xposition, yposition, marker='.', label="Conventional Odometry", color=[0,0.5,1], lw=2)
 plt.xlabel(r'Position in X [$m$]', fontsize=24)
 plt.ylabel(r'Position in Y [$m$]', fontsize=24)
 plt.grid(True)
@@ -367,7 +367,7 @@ plt.plot(xposition, zposition, marker='*', linestyle='-.', label="Full Odometry 
 
 xposition = skidodoPos.getAxis(0)
 zposition = skidodoPos.getAxis(2)
-plt.plot(xposition, zposition, marker='.', label="Skid Odometry", color=[0,0.5,1], lw=2)
+plt.plot(xposition, zposition, marker='.', label="Conventional Odometry", color=[0,0.5,1], lw=2)
 plt.xlabel(r'Position in X [$m$]', fontsize=24)
 plt.ylabel(r'Position in Z [$m$]', fontsize=24)
 plt.grid(True)
@@ -413,7 +413,7 @@ plt.plot(xposition, yposition, marker='*', linestyle='-.', label="Full Odometry 
 
 xposition = skidodoPos.getAxis(0)
 yposition = skidodoPos.getAxis(1)
-plt.plot(xposition, yposition, marker='.', label="Skid Odometry", color=[0,0.5,1], lw=2)
+plt.plot(xposition, yposition, marker='.', label="Conventional Odometry", color=[0,0.5,1], lw=2)
 plt.xlabel(r'Position in X [$m$]', fontsize=24)
 plt.ylabel(r'Position in Y [$m$]', fontsize=24)
 plt.grid(True)
@@ -458,7 +458,7 @@ plt.plot(xposition, zposition, marker='*', linestyle='-.', label="Full Odometry 
 
 xposition = skidodoPos.getAxis(0)
 zposition = skidodoPos.getAxis(2)
-plt.plot(xposition, zposition, marker='.', label="Skid Odometry", color=[0,0.5,1], lw=2)
+plt.plot(xposition, zposition, marker='.', label="Conventional Odometry", color=[0,0.5,1], lw=2)
 plt.xlabel(r'Position in X [$m$]', fontsize=24)
 plt.ylabel(r'Position in Z [$m$]', fontsize=24)
 plt.grid(True)
@@ -640,7 +640,7 @@ plt.figure(2)
 
 xposition = odoPosDynInc.getAxis(0)
 zposition = odoPosDynInc.getAxis(2)
-plt.plot(xposition, zposition, marker='.', linestyle='.-', label="Skid Odometry + Support Polygon + Inc", color=[0.5,0,1], lw=2)
+plt.plot(xposition, zposition, marker='.', linestyle='.-', label="Conventional Odometry + Support Polygon + Inc", color=[0.5,0,1], lw=2)
 
 xposition = odoPosDyn.getAxis(0)
 zposition = odoPosDyn.getAxis(2)

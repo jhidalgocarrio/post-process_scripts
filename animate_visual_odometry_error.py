@@ -2,9 +2,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 import random
-from matplotlib.patches import Ellipse
+from matplotlib import patches
 import pointcloud_display as point
 import datadisplay as data
+import error_ellipse as ellip
 
 
 vodoFeatures = point.PointCloud()
@@ -12,40 +13,19 @@ vodoFeatures.readData('/home/jhidalgocarrio/esa-npi/dev/bundles/asguard/logs/201
                       '/home/jhidalgocarrio/esa-npi/dev/bundles/asguard/logs/20131210-1926/data/pointcloud_cov.0.data', cov=True)
 vodoFeatures.eigenValues()
 
-fig = plt.figure(figsize=(8,6), dpi=150)
+fig = plt.figure(1)#figsize=(8,6), dpi=300)
 ax = fig.add_subplot(111)
-ax.spines['right'].set_color('none')
-ax.spines['top'].set_color('none')
-ax.xaxis.set_ticks_position('bottom')
-ax.spines['bottom'].set_position(('data',0))
-ax.yaxis.set_ticks_position('left')
-ax.spines['left'].set_position(('data',0))
-ax.grid()
-xdata, ydata = [], []
+ax.set_xlim(-0.6, 0.5)
+ax.set_ylim(0.0, 2.0)
+ax.grid(True)
+#xdata, ydata = [], []
 
-line, = plt.plot([], [], linestyle='none', marker='o', color='r')
-
-def init():
-    """initialize animation"""
-    line.set_data([], [])
-    return line,
-
-def data_gen():
-    i = 0
-    while i< 100:
-        x0 = random.random()
-        y0 = random.random()
-        i = i + 1
-        cov=np.array([[0.02, 0.01],
-                [0.01, 0.02]])
-        yield x0, y0, cov
-
-def run(data):
-    x0,y0,cov = data
-    nstd=1
-    xdata.append(x0)
-    ydata.append(y0)
-    line.set_data(x0, y0)
+for i in range (2):
+    x = vodoFeatures.data[i][0]
+    z = vodoFeatures.data[i][2]
+    pos = np.array([x,z])
+    cov = np.array([[vodoFeatures.cov[i][0][0], vodoFeatures.cov[i][0][2]],
+                    [vodoFeatures.cov[i][2][0], vodoFeatures.cov[i][2][2]]])
 
     def eigsorted(cov):
         vals, vecs = np.linalg.eigh(cov)
@@ -53,21 +33,55 @@ def run(data):
         return vals[order], vecs[:,order]
 
     vals, vecs = eigsorted(cov)
-    theta = np.degrees(np.arctan2(*vecs[:,0][::-1]))
+    theta = np.degrees(np.arctan2(*vecs[:,0][::-1]))+30
+    nstd=15
 
     # Width and height are "full" widths, not radius
     width, height = 2 * nstd * np.sqrt(vals)
+    ellip = patches.Ellipse(xy=pos, width=width, height=height, angle=theta, alpha=0.5, color='green')
 
-    return line,
+    plt.plot(x,z, linestyle='none', marker='o', color='red')
+    ax.add_artist(ellip)
+    #plt.draw()
+    #plt.savefig('movie/visual_odometry_uncertainty_'+str(i)+'.png')
 
-# choose the interval based on dt and the time to animate one step
-from time import time
-t0 = time()
-t1 = time()
-dt = 1./1 # 30 fps
-interval = 1000 * dt - (t1 - t0)
 
-ani = animation.FuncAnimation(fig, run, data_gen, blit=True, interval=interval,
-        init_func=init, repeat=False)
-plt.show()
+plt.show(block=False)
+
+# Figure
+fig = plt.figure(2)
+ax = fig.add_subplot(111)
+ax.set_xlim(-0.6, 0.5)
+ax.set_ylim(0.0, 2.0)
+ax.grid(False)
+
+# One Ellipse
+i=2
+x = vodoFeatures.data[i][0]
+z = vodoFeatures.data[i][2]
+pos = np.array([x,z])
+cov = np.array([[vodoFeatures.cov[i][0][0], vodoFeatures.cov[i][0][2]],
+                [vodoFeatures.cov[i][2][0], vodoFeatures.cov[i][2][2]]])
+
+def eigsorted(cov):
+    vals, vecs = np.linalg.eigh(cov)
+    order = vals.argsort()[::-1]
+    return vals[order], vecs[:,order]
+
+vals, vecs = eigsorted(cov)
+theta = np.degrees(np.arctan2(*vecs[:,0][::-1]))+30
+nstd=15
+
+# Width and height are "full" widths, not radius
+width, height = 2 * nstd * np.sqrt(vals)
+ellip = patches.Ellipse(xy=pos, width=width, height=height, angle=theta, alpha=0.5, color='green')
+e1 = patches.Arc((x,z), width, height, angle=theta, linewidth=2, fill=False, zorder=2)
+
+plt.plot(x,z, linestyle='none', marker='o', color='red')
+ax.add_artist(ellip)
+ax.add_patch(e1)
+plt.show(block=False)
+
+plt.savefig('figures/feature_uncertainty.png')
+
 
