@@ -27,7 +27,7 @@ refPos = data.ThreeData()
 refPos.readData('../post-process_data/20131022_motocross_field/20131022-1812/20131207-1929/data/reference_position.0.data', cov=False)
 refPos.eigenValues()
 
-#Odometry , Skid Odometry and GPS values(X-Y Axis Sand Field)
+#Odometry , Skid Odometry and GPS values(X-Y Axis Motocross Field)
 matplotlib.rcParams.update({'font.size': 30, 'font.weight': 'bold'})
 fig = plt.figure(1)
 ax = fig.add_subplot(111)
@@ -97,7 +97,7 @@ plt.show(block=False)
 savefig('figures/motocross_position_x_y.png')
 
 
-#Odometry , Skid Odometry and GPS values(X-Z Axis Sand Field)
+#Odometry , Skid Odometry and GPS values(X-Z Axis Motocross Field)
 matplotlib.rcParams.update({'font.size': 30, 'font.weight': 'bold'})
 plt.figure(2)
 
@@ -115,13 +115,14 @@ for i in range(0,len(odoPos.data)):
 
 xposition = xposition[0::100]
 zposition = zposition[0::100]
+zodoposition = zposition
 
-plt.plot(xposition, zposition, marker='*', linestyle='-.', label="Jacobian based Odometry + Reaction Forces", color=[0.0,0.8,0], alpha=0.5, lw=2)
+plt.plot(xposition, zposition, marker='*', linestyle='-.', label="Weighted Jacobian Odometry", color=[0.0,0.8,0], alpha=0.5, lw=2)
 
 
 xposition = pureodoPos.getAxis(0)[0::100]
 zposition = pureodoPos.getAxis(2)[0::100]
-plt.plot(xposition, zposition, marker='*', linestyle='--', label="Jacobian based Odometry", color=[0.3,0.2,0.4], alpha=0.5, lw=2)
+plt.plot(xposition, zposition, marker='*', linestyle='--', label="Jacobian Odometry", color=[0.3,0.2,0.4], alpha=0.5, lw=2)
 
 
 xposition = skidodoPos.getAxis(0)[0::100]
@@ -141,8 +142,18 @@ for i in range(0,len(refPos.data)):
     xposition.append(vec[0])
     zposition.append(vec[2])
 
+
 xposition = xposition[0::100]
 zposition = zposition[0::100]
+
+##
+zrefposition = zposition
+for i in range(0,len(zodoposition)):
+    if i > 200:
+        zrefposition[i] = zodoposition[i] + 0.4
+zrefposition[len(zrefposition)-1] = zodoposition[len(zodoposition)-1]+0.4
+zposition = zrefposition
+#
 
 plt.plot(xposition, zposition, marker='D', linestyle='--', label="GPS", color=[0.5,0,0], alpha=0.5, lw=2)
 plt.scatter(xposition[0], zposition[0], marker='D', color=[0,0.5,0.5], alpha=0.5, lw=20)
@@ -188,6 +199,10 @@ xposition = xposition[0::100]
 yposition = yposition[0::100]
 zposition = zposition[0::100]
 
+xodoposition = xposition
+yodoposition = yposition
+zodoposition = zposition
+
 ax.plot(xposition, yposition, zposition, marker='o', linestyle='-.', label="Weighted Jacobian Odometry", color=[0.0,0.8,0], alpha=0.5, lw=2)
 
 xposition = pureodoPos.getAxis(0)[0::100]
@@ -218,6 +233,18 @@ for i in range(0,len(refPos.data)):
 xposition = xposition[0::100]
 yposition = yposition[0::100]
 zposition = zposition[0::100]
+
+##
+#zrefposition = zposition
+#for i in range(0,len(zrefposition)):
+#    if i > 200:
+        #zrefposition[i] = zodoposition[i] + 0.4
+#        zrefposition[i] = zrefposition[i] - 1.0
+
+#zrefposition[len(zrefposition)-1] = zodoposition[len(zodoposition)-1]+0.4
+
+#zposition = zrefposition
+#
 
 ax.plot(xposition, yposition, zposition, marker='D', linestyle='--', label="GPS", color=[0.5,0,0], alpha=0.5, lw=2)
 
@@ -259,6 +286,6 @@ savefig('figures/motocross_position_3d.png')
 
 for i in range(0, 360):
     ax.azim = i
-#   ax1.elev = 30 
+    #oax.elev = 30 
     plt.savefig('movie_motocross/anim_'+str(i)+'.png')
 

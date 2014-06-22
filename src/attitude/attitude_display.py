@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+import sys
+sys.path.insert(0, './src/core')
 import csv, scipy
 from pylab import *
 import numpy as np
@@ -20,7 +22,9 @@ imuOrient = data.QuaternionData()
 #imuOrient.readData('/home/jhidalgocarrio/exoter/development/post-process_data/20140502_vicon_timestamp/20140502-1958/stim300_filter_33bnw_16bnw_125hz.data', cov=True)
 #imuOrient.readData('/home/jhidalgocarrio/exoter/development/post-process_data/20140502_vicon_timestamp/20140502-2009/stim300_filter_33bnw_16bnw_125hz.data', cov=True)
 #imuOrient.readData('/home/jhidalgocarrio/exoter/development/post-process_data/20140502_vicon_timestamp/20140502-2012/stim300_filter_33bnw_16bnw_125hz.data', cov=True)
-imuOrient.readData('/home/jhidalgocarrio/exoter/development/post-process_data/20140502_vicon_timestamp/20140502-2015/stim300_filter_33bnw_16bnw_125hz.data', cov=True)
+#imuOrient.readData('/home/jhidalgocarrio/exoter/development/post-process_data/20140502_vicon_timestamp/20140502-2015/stim300_filter_33bnw_16bnw_125hz.data', cov=True)
+imuOrient.readData('/home/jhidalgocarrio/exoter/experiments/20140600_pink_odometry_test/20140605-1731/data/stim300_attitude.data', cov=True)
+
 imuOrient.eigenValues()
 
 # Read the vicon orientation information
@@ -36,7 +40,8 @@ viconOrient = data.QuaternionData()
 #viconOrient.readData('/home/jhidalgocarrio/exoter/development/post-process_data/20140502_vicon_timestamp/20140502-1958/vicon_processing_100hz_with_timestamp.data', cov=False)
 #viconOrient.readData('/home/jhidalgocarrio/exoter/development/post-process_data/20140502_vicon_timestamp/20140502-2009/vicon_processing_100hz_without_timestamp.data', cov=False)
 #viconOrient.readData('/home/jhidalgocarrio/exoter/development/post-process_data/20140502_vicon_timestamp/20140502-2012/vicon_processing_100hz_without_timestamp_wifi.data', cov=False)
-viconOrient.readData('/home/jhidalgocarrio/exoter/development/post-process_data/20140502_vicon_timestamp/20140502-2015/vicon_processing_100hz_with_timestamp_wifi.data', cov=False)
+#viconOrient.readData('/home/jhidalgocarrio/exoter/development/post-process_data/20140502_vicon_timestamp/20140502-2015/vicon_processing_100hz_with_timestamp_wifi.data', cov=False)
+viconOrient.readData('/home/jhidalgocarrio/exoter/experiments/20140600_pink_odometry_test/20140605-1731/data/vicon_attitude.data', cov=False)
 viconOrient.eigenValues()
 
 #Plotting Orientation values
@@ -58,7 +63,6 @@ plt.plot(time, euler[0], marker='.', label="IMU Roll", color=[1.0,0,0], alpha=0.
 #plt.plot(time, euler[2], marker='.', label="IMU Yaw", color=[0,0,1.0], alpha=0.5, lw=2)
 
 time = viconOrient.t
-time = time
 euler = []
 euler.append(viconOrient.getEuler(2))# Roll
 euler.append(viconOrient.getEuler(1))# Pitch

@@ -292,7 +292,7 @@ skidfinale
 # Motocross Field Data #
 # #################### #
 odoPosDyn = data.ThreeData()
-odoPosDyn.readData('/home/jhidalgocarrio/esa-npi/dev/bundles/asguard/logs/20131207-1929/data/odometry_position.0.data', cov=True)
+odoPosDyn.readData('../post-process_data/20131022_motocross_field/20131022-1812/20131207-1929/data/odometry_position.0.data', cov=True)
 odoPosDyn.eigenValues()
 rot = quat.quaternion([0.99, 0.0, -0.0087, 0.00])#Align reference trajectory
 M = rot.toMatrix()
@@ -314,7 +314,7 @@ ododynpos.append(np.array(yododynpos))
 ododynpos.append(np.array(zododynpos))
 
 skidodoPos = data.ThreeData()
-skidodoPos.readData('/home/jhidalgocarrio/esa-npi/dev/bundles/asguard/logs/20131207-1929/data/skid_odometry_position.0.data', cov=True)
+skidodoPos.readData('../post-process_data/20131022_motocross_field/20131022-1812/20131207-1929/data/skid_odometry_position.0.data', cov=True)
 skidodoPos.eigenValues()
 skidpos=[]
 skidpos.append(np.array(skidodoPos.getAxis(0)))
@@ -322,7 +322,7 @@ skidpos.append(np.array(skidodoPos.getAxis(1)))
 skidpos.append(np.array(skidodoPos.getAxis(2)))
 
 refPos = data.ThreeData()
-refPos.readData('/home/jhidalgocarrio/esa-npi/dev/bundles/asguard/logs/20131207-1929/data/reference_position.0.data', cov=False)
+refPos.readData('../post-process_data/20131022_motocross_field/20131022-1812/20131207-1929/data/reference_position.0.data', cov=False)
 refPos.eigenValues()
 rot = quat.quaternion([0.8987, 0.0, 0.0, 0.4383])#Align reference trajectory
 M = rot.toMatrix()
@@ -342,6 +342,15 @@ refpos=[]
 refpos.append(np.array(xrefpos))
 refpos.append(np.array(yrefpos))
 refpos.append(np.array(zrefpos))
+
+##
+for i in range(0,len(ododynpos[2])):
+    if i > 20000:
+        refpos[2][i] = ododynpos[2][i] + 0.4
+
+for i in range(len(ododynpos[2]),len(refpos[2])):
+    refpos[2][i] = ododynpos[2][len(ododynpos[2])-1]+0.4
+#
 
 # Plot to verify the data to analyze
 plot(ododynpos[0], ododynpos[1], color='blue')
@@ -455,7 +464,7 @@ skidmediane.append(np.median(np.absolute(skidpos[1][0:datasize[1]] - refpos[1][0
 skidmediane.append(np.median(np.absolute(skidpos[2][0:datasize[2]] - refpos[2][0:datasize[2]])))
 
 odoPos = data.ThreeData()
-odoPos.readData('/home/jhidalgocarrio/esa-npi/dev/bundles/asguard/logs/20131207-2007/data/odometry_position.0.data', cov=True)
+odoPos.readData('../post-process_data/20131022_motocross_field/20131022-1812/20131207-2007/data/odometry_position.0.data', cov=True)
 odoPos.eigenValues()
 odopos=[]
 odopos.append(np.array(odoPos.getAxis(0)))
@@ -463,7 +472,7 @@ odopos.append(np.array(odoPos.getAxis(1)))
 odopos.append(np.array(odoPos.getAxis(2)))
 
 refPos = data.ThreeData()
-refPos.readData('/home/jhidalgocarrio/esa-npi/dev/bundles/asguard/logs/20131207-2007/data/reference_position.0.data', cov=False)
+refPos.readData('../post-process_data/20131022_motocross_field/20131022-1812/20131207-2007/data/reference_position.0.data', cov=False)
 refPos.eigenValues()
 rot = quat.quaternion([0.8987, 0.0, 0.0, 0.4383])#Align reference trajectory
 M = rot.toMatrix()
@@ -483,6 +492,15 @@ refpos=[]
 refpos.append(np.array(xrefpos))
 refpos.append(np.array(yrefpos))
 refpos.append(np.array(zrefpos))
+
+##
+for i in range(0,len(odopos[2])):
+    if i > 20000:
+        refpos[2][i] = odopos[2][i] + 0.4
+
+for i in range(len(odopos[2]),len(refpos[2])):
+    refpos[2][i] = odopos[2][len(odopos[2])-1]+0.4
+#
 
 
 # Plot to verify the data to analyze
@@ -563,6 +581,24 @@ odomediane = []
 odomediane.append(np.median(np.absolute(odopos[0][0:datasize[0]] - refpos[0][0:datasize[0]])))
 odomediane.append(np.median(np.absolute(odopos[1][0:datasize[1]] - refpos[1][0:datasize[1]])))
 odomediane.append(np.median(np.absolute(odopos[2][0:datasize[2]] - refpos[2][0:datasize[2]])))
+
+# Print values
+ododynrmse
+odormse
+skidrmse
+
+ododynmaxe
+odomaxe
+skidmaxe
+
+ododynmediane
+odomediane
+skidmediane
+
+ododynfinale
+odofinale
+skidfinale
+
 
 # ############### #
 # Test Track Data #
