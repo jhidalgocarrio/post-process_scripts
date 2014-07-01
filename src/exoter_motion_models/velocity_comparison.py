@@ -11,12 +11,14 @@ import datadisplay as data
 
 #ExoTeR Odometry
 odometry = data.ThreeData()
-odometry.readData('/home/jhidalgocarrio/exoter/development/post-process_data/20140600_pink_odometry_test/20140605-1731/pose_odo_velocity.0.data', cov=True)
+#odometry.readData('/home/jhidalgocarrio/exoter/development/post-process_data/20140600_pink_odometry_test/20140605-1731/pose_odo_velocity.0.data', cov=True)
+odometry.readData('/home/jhidalgocarrio/exoter/development/post-process_data/20140600_pink_odometry_test/20140630-1847/pose_odo_velocity.0.data', cov=True)
 odometry.eigenValues()
 
 #Vicon Pose
 vicon = data.ThreeData()
-vicon.readData('/home/jhidalgocarrio/exoter/development/post-process_data/20140600_pink_odometry_test/20140605-1731/pose_ref_velocity.0.data', cov=False)
+#vicon.readData('/home/jhidalgocarrio/exoter/development/post-process_data/20140600_pink_odometry_test/20140605-1731/pose_ref_velocity.0.data', cov=False)
+vicon.readData('/home/jhidalgocarrio/exoter/development/post-process_data/20140600_pink_odometry_test/20140630-1847/pose_ref_velocity.0.data', cov=False)
 vicon.eigenValues()
 
 #IMU Acc
