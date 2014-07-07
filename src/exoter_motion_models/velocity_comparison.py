@@ -43,7 +43,7 @@ plt.grid(True)
 plt.legend(prop={'size':25})
 plt.show(block=False)
 
-plt.figure(1)
+plt.figure(2)
 values = odometry.getAxis(1)
 plt.plot(odometry.time, values,
         marker='.', label="Odometry Velocity Y-axis", color=[1,0,0], lw=2)

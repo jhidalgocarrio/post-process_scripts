@@ -139,6 +139,13 @@ class ThreeData:
 
         return values
 
+    def getCov(self, axis=0):
+	values = []
+	for i in range(0,len(self.data)):
+            values.append(self.cov[i][0:axis+1, 0:axis+1])
+
+        return values
+
     def getStd(self, axis=0, levelconf=1):
 	values = []
 	for i in range(0,len(self.data)):
