@@ -23,7 +23,8 @@ vicon.eigenValues()
 
 #IMU Acc
 imu = data.ThreeData()
-imu.readData('/home/jhidalgocarrio/exoter/development/post-process_data/20140600_pink_odometry_test/20140605-1731/inertial_samples_acc.0.data', cov=False)
+#imu.readData('/home/jhidalgocarrio/exoter/development/post-process_data/20140600_pink_odometry_test/20140605-1731/inertial_samples_acc.0.data', cov=False)
+imu.readData('/home/jhidalgocarrio/exoter/development/post-process_data/20140600_pink_odometry_test/20140630-1847/inertial_samples_acc.0.data', cov=False)
 imu.eigenValues()
 
 
@@ -102,6 +103,17 @@ plt.plot(imu.time, imu.getAxis(1),
         marker='.', label="IMU Acc Y-axis", color=[0.3,1,0], lw=2)
 plt.plot(imu.time, np.cumsum(velimu[1]),
         marker='.', label="IMU Velocity Y-axis", color=[0,1,0], lw=2)
+plt.ylabel(r'Velocity [$m/s$]')
+plt.xlabel(r'Time [$s$]')
+plt.grid(True)
+plt.legend(prop={'size':25})
+plt.show(block=False)
+
+plt.figure(1)
+plt.plot(imu.time, imu.getAxis(2),
+        marker='.', label="IMU Acc Z-axis", color=[0.3,0,1], lw=2)
+plt.plot(imu.time, np.cumsum(velimu[2]),
+        marker='.', label="IMU Velocity Z-axis", color=[0,0,1], lw=2)
 plt.ylabel(r'Velocity [$m/s$]')
 plt.xlabel(r'Time [$s$]')
 plt.grid(True)
