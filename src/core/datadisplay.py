@@ -184,7 +184,7 @@ class QuaternionData:
 	
     def f(self):
         return 'hello world'
-    
+
     def readData(self,filename, cov=False):
 	
 	for row in csv.reader(open(filename, 'rb'), delimiter=' ', quotechar='|'):
@@ -241,6 +241,28 @@ class QuaternionData:
 
 	plt.show(block=False)
 
+    #Euler in [Yaw, Pitch and Roll]
+    def getEuler(self, axis):
+	values = []
+	for i in range(0,len(self.data)):
+	    values.append(self.data[i].toEuler()[axis])
+
+        return values
+
+    def getCov(self, axis=0):
+	values = []
+	for i in range(0,len(self.data)):
+            values.append(self.cov[i][0:axis+1, 0:axis+1])
+
+        return values
+
+    def getStd(self, axis=0, levelconf=1):
+	values = []
+	for i in range(0,len(self.data)):
+	    values.append((levelconf*sqrt(self.var[i][axis])))
+
+        return values
+
     def getStdMax(self, axis=0, levelconf=1):
         values = []
 	sdmax=[]
@@ -258,14 +280,6 @@ class QuaternionData:
             sdmin.append(values[i]-(levelconf*sqrt(self.var[i][axis])))
 
         return sdmin
-
-    #Euler in [Yaw, Pitch and Roll]
-    def getEuler(self, axis):
-	values = []
-	for i in range(0,len(self.data)):
-	    values.append(self.data[i].toEuler()[axis])
-
-        return values
 
 
 class OneData:

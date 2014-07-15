@@ -15,15 +15,16 @@ import cov_ellipse as cov
 #ExoTeR Odometry
 odometry = data.ThreeData()
 odometry.readData('/home/jhidalgocarrio/exoter/development/post-process_data/20140600_pink_odometry_test/20140630-1847/pose_odo_position.0.data', cov=True)
-odometry.readData('/home/jhidalgocarrio/exoter/development/post-process_data/20140600_pink_odometry_test/20140630-1847/pose_odo_position.post_process.0.data', cov=True)
+#odometry.readData('/home/jhidalgocarrio/exoter/development/post-process_data/20140600_pink_odometry_test/20140630-1847/pose_odo_position.post_process.0.data', cov=True)
 odometry.eigenValues()
 
 #Vicon Pose
 vicon = data.ThreeData()
-vicon.readData('/home/jhidalgocarrio/exoter/development/post-process_data/20140600_pink_odometry_test/20140630-1847/pose_ref_position.0.data', cov=False)
+#vicon.readData('/home/jhidalgocarrio/exoter/development/post-process_data/20140600_pink_odometry_test/20140630-1847/pose_ref_position.0.data', cov=False)
+vicon.readData('/home/jhidalgocarrio/exoter/development/post-process_data/20140715-1618_vicon_uncertainty/pose_ref_position.0.data', cov=True)
 vicon.eigenValues()
 
-#Position comparison
+#Position comparison X-Y plane
 matplotlib.rcParams.update({'font.size': 30, 'font.weight': 'bold'})
 fig = plt.figure(1)
 ax = fig.add_subplot(111)
@@ -37,7 +38,7 @@ xposition = odometry.getAxis(0)[0::10]
 yposition = odometry.getAxis(1)[0::10]
 xycov = odometry.getCov(1)[0::10]
 for i in range(0, len(xycov)):
-    cov.plot_cov_ellipse(xycov[i], pos=[xposition[i], yposition[i]],
+    cov.plot_cov_ellipse(xycov[i], pos=[xposition[i], yposition[i]], nstd=3,
                     linewidth=2, alpha=0.5, facecolor='green', edgecolor='black')
 
 xposition = vicon.getAxis(0)
@@ -52,6 +53,14 @@ ax.annotate(r'End', xy=(xposition[len(xposition)-1], yposition[len(yposition)-1]
                                 xytext=(-40, +40), textcoords='offset points', fontsize=22,
                                 arrowprops=dict(arrowstyle="->", connectionstyle="arc3,rad=.2", lw=2.0))
 
+xposition = vicon.getAxis(0)[0::100]
+yposition = vicon.getAxis(1)[0::100]
+xycov = vicon.getCov(1)[0::100]
+for i in range(0, len(xycov)):
+    cov.plot_cov_ellipse(xycov[i], pos=[xposition[i], yposition[i]], nstd=3,
+                    linewidth=2, alpha=0.2, facecolor=[0.4,0,0.4], edgecolor='black')
+
+
 
 
 plt.xlabel(r'X [$m$]', fontsize=35, fontweight='bold')
@@ -60,7 +69,7 @@ plt.grid(True)
 ax.legend(loc=4, prop={'size':30})
 plt.show(block=False)
 
-#3D Plotting GPS values
+#3D Plotting values
 from mpl_toolkits.mplot3d import Axes3D
 from mpl_toolkits.mplot3d import proj3d
 fig = plt.figure()
