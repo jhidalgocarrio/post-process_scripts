@@ -20,8 +20,8 @@ odometry.eigenValues()
 
 #Vicon Pose
 vicon = data.ThreeData()
-#vicon.readData('/home/jhidalgocarrio/exoter/development/post-process_data/20140600_pink_odometry_test/20140630-1847/pose_ref_position.0.data', cov=False)
-vicon.readData('/home/jhidalgocarrio/exoter/development/post-process_data/20140715-1618_vicon_uncertainty/pose_ref_position.0.data', cov=True)
+vicon.readData('/home/jhidalgocarrio/exoter/development/post-process_data/20140600_pink_odometry_test/20140630-1847/pose_ref_position.0.data', cov=False)
+#vicon.readData('/home/jhidalgocarrio/exoter/development/post-process_data/20140715-1618_vicon_uncertainty/pose_ref_position.0.data', cov=True)
 vicon.eigenValues()
 
 #Position comparison X-Y plane
@@ -32,7 +32,7 @@ ax = fig.add_subplot(111)
 plt.rc('text', usetex=False)# activate latex text rendering
 xposition = odometry.getAxis(0)
 yposition = odometry.getAxis(1)
-ax.plot(xposition, yposition, marker='^', linestyle='-', label="Odometry pose", color=[0,0.5,1], lw=2)
+ax.plot(xposition, yposition, marker='^', linestyle='-', label="Odometry pose 25Hz realtime", color=[0,0.2,1], lw=2)
 
 xposition = odometry.getAxis(0)[0::10]
 yposition = odometry.getAxis(1)[0::10]
@@ -68,6 +68,8 @@ plt.ylabel(r'Y [$m$]', fontsize=35, fontweight='bold')
 plt.grid(True)
 ax.legend(loc=4, prop={'size':30})
 plt.show(block=False)
+
+savefig('odometry_exoter_different_ferquencies_x_y_zoom2.png')
 
 #3D Plotting values
 from mpl_toolkits.mplot3d import Axes3D
