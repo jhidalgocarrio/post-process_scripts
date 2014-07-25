@@ -1,5 +1,41 @@
 #!/usr/bin/env python
 
+
+##################################
+#path_imu_orient_file = '/home/jhidalgocarrio/exoter/development/post-process_data/20140422_stim300_vs_vicon/20140422-1505/stim300_filter_33bnw_16bnw_125hz.data'
+#path_imu_orient_file = '/home/jhidalgocarrio/exoter/development/post-process_data/20140422_stim300_vs_vicon/20140422-1539/stim300_filter_33bnw_16bnw_125hz.data'
+#path_imu_orient_file = '/home/jhidalgocarrio/exoter/development/post-process_data/20140422_stim300_vs_vicon/20140423-1923/stim300_filter_33bnw_16bnw_125hz.data'
+#path_imu_orient_file = '/home/jhidalgocarrio/exoter/development/post-process_data/20140422_stim300_vs_vicon/20140423-1942/stim300_filter_33bnw_16bnw_125hz.data'
+#path_imu_orient_file = '/home/jhidalgocarrio/exoter/development/post-process_data/20140422_stim300_vs_vicon/20140425-1923/stim300_filter_33bnw_16bnw_125hz.data'
+#path_imu_orient_file = '/home/jhidalgocarrio/exoter/development/post-process_data/20140422_stim300_vs_vicon/20140429-1429/stim300_filter_33bnw_16bnw_125hz.data'
+
+# Time stamp tests
+#path_imu_orient_file = '/home/jhidalgocarrio/exoter/development/post-process_data/20140502_vicon_timestamp/20140502-1958/stim300_filter_33bnw_16bnw_125hz.data'
+#path_imu_orient_file = '/home/jhidalgocarrio/exoter/development/post-process_data/20140502_vicon_timestamp/20140502-2009/stim300_filter_33bnw_16bnw_125hz.data'
+#path_imu_orient_file = '/home/jhidalgocarrio/exoter/development/post-process_data/20140502_vicon_timestamp/20140502-2012/stim300_filter_33bnw_16bnw_125hz.data'
+#path_imu_orient_file = '/home/jhidalgocarrio/exoter/development/post-process_data/20140502_vicon_timestamp/20140502-2015/stim300_filter_33bnw_16bnw_125hz.data'
+#path_imu_orient_file = '/home/jhidalgocarrio/exoter/experiments/20140600_pink_odometry/20140605-1731/data/stim300_attitude.data'
+
+path_imu_orient_file = '/home/jhidalgocarrio/exoter/development/post-process_data/20140723_pink_odometry/20140723-1845/pose_odo_orientation.0.data'
+
+#path_reference_orient_file = '/home/jhidalgocarrio/exoter/development/post-process_data/20140422_stim300_vs_vicon/20140422-1505/vicon_processing_100hz.data'
+#path_reference_orient_file = '/home/jhidalgocarrio/exoter/development/post-process_data/20140422_stim300_vs_vicon/20140422-1539/vicon_processing_100hz.data'
+#path_reference_orient_file = '/home/jhidalgocarrio/exoter/development/post-process_data/20140422_stim300_vs_vicon/20140423-1923/vicon_processing_100hz.data'
+#path_reference_orient_file = '/home/jhidalgocarrio/exoter/development/post-process_data/20140422_stim300_vs_vicon/20140423-1942/vicon_processing_100hz.data'
+#path_reference_orient_file = '/home/jhidalgocarrio/exoter/development/post-process_data/20140422_stim300_vs_vicon/20140425-1923/vicon_processing_100hz.data'
+#path_reference_orient_file = '/home/jhidalgocarrio/exoter/development/post-process_data/20140422_stim300_vs_vicon/20140429-1429/vicon_processing_100hz.data'
+
+# Time stamp tests
+#path_reference_orient_file = '/home/jhidalgocarrio/exoter/development/post-process_data/20140502_vicon_timestamp/20140502-1958/vicon_processing_100hz_with_timestamp.data'
+#path_reference_orient_file = '/home/jhidalgocarrio/exoter/development/post-process_data/20140502_vicon_timestamp/20140502-2009/vicon_processing_100hz_without_timestamp.data'
+#path_reference_orient_file = '/home/jhidalgocarrio/exoter/development/post-process_data/20140502_vicon_timestamp/20140502-2012/vicon_processing_100hz_without_timestamp_wifi.data'
+#path_reference_orient_file = '/home/jhidalgocarrio/exoter/development/post-process_data/20140502_vicon_timestamp/20140502-2015/vicon_processing_100hz_with_timestamp_wifi.data'
+#path_reference_orient_file = '/home/jhidalgocarrio/exoter/experiments/20140600_pink_odometry/20140605-1731/data/vicon_attitude.data'
+
+path_reference_orient_file = '/home/jhidalgocarrio/exoter/development/post-process_data/20140723_pink_odometry/20140723-1845/pose_ref_orientation.0.data'
+
+##################################
+
 import sys
 sys.path.insert(0, './src/core')
 import csv, scipy
@@ -11,38 +47,12 @@ import datadisplay as data
 
 # Read the imu orientation information
 imuOrient = data.QuaternionData()
-#imuOrient.readData('/home/jhidalgocarrio/exoter/development/post-process_data/20140422_stim300_vs_vicon/20140422-1505/stim300_filter_33bnw_16bnw_125hz.data', cov=True)
-#imuOrient.readData('/home/jhidalgocarrio/exoter/development/post-process_data/20140422_stim300_vs_vicon/20140422-1539/stim300_filter_33bnw_16bnw_125hz.data', cov=True)
-#imuOrient.readData('/home/jhidalgocarrio/exoter/development/post-process_data/20140422_stim300_vs_vicon/20140423-1923/stim300_filter_33bnw_16bnw_125hz.data', cov=True)
-#imuOrient.readData('/home/jhidalgocarrio/exoter/development/post-process_data/20140422_stim300_vs_vicon/20140423-1942/stim300_filter_33bnw_16bnw_125hz.data', cov=True)
-#imuOrient.readData('/home/jhidalgocarrio/exoter/development/post-process_data/20140422_stim300_vs_vicon/20140425-1923/stim300_filter_33bnw_16bnw_125hz.data', cov=True)
-#imuOrient.readData('/home/jhidalgocarrio/exoter/development/post-process_data/20140422_stim300_vs_vicon/20140429-1429/stim300_filter_33bnw_16bnw_125hz.data', cov=True)
-
-# Time stamp tests
-#imuOrient.readData('/home/jhidalgocarrio/exoter/development/post-process_data/20140502_vicon_timestamp/20140502-1958/stim300_filter_33bnw_16bnw_125hz.data', cov=True)
-#imuOrient.readData('/home/jhidalgocarrio/exoter/development/post-process_data/20140502_vicon_timestamp/20140502-2009/stim300_filter_33bnw_16bnw_125hz.data', cov=True)
-#imuOrient.readData('/home/jhidalgocarrio/exoter/development/post-process_data/20140502_vicon_timestamp/20140502-2012/stim300_filter_33bnw_16bnw_125hz.data', cov=True)
-#imuOrient.readData('/home/jhidalgocarrio/exoter/development/post-process_data/20140502_vicon_timestamp/20140502-2015/stim300_filter_33bnw_16bnw_125hz.data', cov=True)
-imuOrient.readData('/home/jhidalgocarrio/exoter/experiments/20140600_pink_odometry_test/20140605-1731/data/stim300_attitude.data', cov=True)
-
+imuOrient.readData(path_imu_orient_file, cov=True)
 imuOrient.eigenValues()
 
 # Read the vicon orientation information
 viconOrient = data.QuaternionData()
-#viconOrient.readData('/home/jhidalgocarrio/exoter/development/post-process_data/20140422_stim300_vs_vicon/20140422-1505/vicon_processing_100hz.data', cov=False)
-#viconOrient.readData('/home/jhidalgocarrio/exoter/development/post-process_data/20140422_stim300_vs_vicon/20140422-1539/vicon_processing_100hz.data', cov=False)
-#viconOrient.readData('/home/jhidalgocarrio/exoter/development/post-process_data/20140422_stim300_vs_vicon/20140423-1923/vicon_processing_100hz.data', cov=False)
-#viconOrient.readData('/home/jhidalgocarrio/exoter/development/post-process_data/20140422_stim300_vs_vicon/20140423-1942/vicon_processing_100hz.data', cov=False)
-#viconOrient.readData('/home/jhidalgocarrio/exoter/development/post-process_data/20140422_stim300_vs_vicon/20140425-1923/vicon_processing_100hz.data', cov=False)
-#viconOrient.readData('/home/jhidalgocarrio/exoter/development/post-process_data/20140422_stim300_vs_vicon/20140429-1429/vicon_processing_100hz.data', cov=False)
-
-# Time stamp tests
-#viconOrient.readData('/home/jhidalgocarrio/exoter/development/post-process_data/20140502_vicon_timestamp/20140502-1958/vicon_processing_100hz_with_timestamp.data', cov=False)
-#viconOrient.readData('/home/jhidalgocarrio/exoter/development/post-process_data/20140502_vicon_timestamp/20140502-2009/vicon_processing_100hz_without_timestamp.data', cov=False)
-#viconOrient.readData('/home/jhidalgocarrio/exoter/development/post-process_data/20140502_vicon_timestamp/20140502-2012/vicon_processing_100hz_without_timestamp_wifi.data', cov=False)
-#viconOrient.readData('/home/jhidalgocarrio/exoter/development/post-process_data/20140502_vicon_timestamp/20140502-2015/vicon_processing_100hz_with_timestamp_wifi.data', cov=False)
-#viconOrient.readData('/home/jhidalgocarrio/exoter/experiments/20140600_pink_odometry_test/20140605-1731/data/vicon_attitude.data', cov=False)
-viconOrient.readData('/home/jhidalgocarrio/exoter/development/post-process_data/20140715-1618_vicon_uncertainty/pose_ref_orientation.0.data', cov=True)
+viconOrient.readData(path_reference_orient_file, cov=True)
 viconOrient.eigenValues()
 
 #Plotting Orientation values
@@ -59,19 +69,27 @@ euler[0][:] = [x * 180.00/math.pi for x in euler[0] ]#convert to degrees
 euler[1][:] = [x * 180.00/math.pi for x in euler[1] ]#convert to degrees
 euler[2][:] = [x * 180.00/math.pi for x in euler[2] ]#convert to degrees
 
-plt.plot(time, euler[0], marker='.', label="IMU Roll", color=[1.0,0,0], alpha=0.5, lw=2)
-#plt.plot(time, euler[1], marker='.', label="IMU Pitch", color=[0,1.0,0], alpha=0.5, lw=2)
-#plt.plot(time, euler[2], marker='.', label="IMU Yaw", color=[0,0,1.0], alpha=0.5, lw=2)
+axis = 2
+if axis == 0:
+    label_text = "IMU Roll"
+    color_value = [1.0,0,0]
+elif axis  == 1:
+    label_text = "IMU Pitch"
+    color_value = [0.0,1.0,0]
+else:
+    label_text = "IMU Yaw"
+    color_value = [0.0,0.0,1.0]
 
+plt.plot(time, euler[axis], marker='.', label=label_text, color=color_value, alpha=0.5, lw=2)
 
 # Orientation Std
 stdeulerpos=[];
 for i in range(0,len(time)):
-    stdeulerpos.append(euler[0][i] + imuOrient.getStd(axis=0, levelconf=3)[i])
+    stdeulerpos.append(euler[axis][i] + np.nan_to_num(imuOrient.getStd(axis=0, levelconf=3)[i]))
 
 stdeulerneg=[];
 for i in range(0,len(time)):
-    stdeulerneg.append(euler[0][i] - imuOrient.getStd(axis=0, levelconf=3)[i])
+    stdeulerneg.append(euler[axis][i] - np.nan_to_num(imuOrient.getStd(axis=0, levelconf=3)[i]))
 
 plt.plot(time, stdeulerpos, marker='.', color="grey", alpha=1.0, lw=1)
 plt.plot(time, stdeulerneg, marker='.', color="grey", alpha=1.0, lw=1)
@@ -89,22 +107,30 @@ euler[0][:] = [x * 180.00/math.pi for x in euler[0] ]#convert to degrees
 euler[1][:] = [x * 180.00/math.pi for x in euler[1] ]#convert to degrees
 euler[2][:] = [x * 180.00/math.pi for x in euler[2] ]#convert to degrees
 
-plt.plot(time, euler[0], marker='.', label="Vicon Roll", color=[0.7,0,0], alpha=0.5, lw=2)
-#plt.plot(time, euler[1], marker='.', label="Vicon Pitch", color=[0,0.5,0], alpha=0.5, lw=2)
-#plt.plot(time, euler[2], marker='.', label="Vicon Yaw", color=[0,0.4,0.5], alpha=0.5, lw=2)
+if axis == 0:
+    label_text = "Vicon Roll"
+    color_value = [0.7,0.4,0]
+elif axis  == 1:
+    label_text = "Vicon Pitch"
+    color_value = [0.4,0.7,0]
+else:
+    label_text = "Vicon Yaw"
+    color_value = [0,0.4,0.7]
+
+plt.plot(time, euler[axis], marker='.', label=label_text, color=color_value, alpha=0.5, lw=2)
 
 # Orientation Std
 stdeulerpos=[];
 for i in range(0,len(time)):
-    stdeulerpos.append(euler[0][i] +  np.nan_to_num(viconOrient.getStd(axis=0, levelconf=3)[i]))
+    stdeulerpos.append(euler[axis][i] +  np.nan_to_num(viconOrient.getStd(axis=0, levelconf=3)[i]))
 
 stdeulerneg=[];
 for i in range(0,len(time)):
-    stdeulerneg.append(euler[0][i] - np.nan_to_num(viconOrient.getStd(axis=0, levelconf=3)[i]))
+    stdeulerneg.append(euler[axis][i] - np.nan_to_num(viconOrient.getStd(axis=0, levelconf=3)[i]))
 
 
-plt.plot(time, stdeulerpos, marker='.', label="Std (+)", color="grey", alpha=1.0, lw=1)
-plt.plot(time, stdeulerneg, marker='.', label="Std (-)", color="grey", alpha=1.0, lw=1)
+plt.plot(time, stdeulerpos, marker='.', label=r'$\pm 3\sigma$', color="grey", alpha=1.0, lw=1)
+plt.plot(time, stdeulerneg, marker='.', color="grey", alpha=1.0, lw=1)
 
 
 plt.xlabel(r'Time [$s$]')

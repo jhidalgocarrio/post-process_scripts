@@ -5,8 +5,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-#spamReader = csv.reader(open('/home/jhidalgocarrio/exoter/experiments/20140605_pink_odometry_test/20140605-1731/data/left_passive_position.data', 'rb'), delimiter=' ', quotechar='|')
-spamReader = csv.reader(open('/home/jhidalgocarrio/exoter/experiments/20140605_pink_odometry_test/20140605-1731/data/left_passive_position_localization_frontend.data', 'rb'), delimiter=' ', quotechar='|')
+#spamReader = csv.reader(open('/home/jhidalgocarrio/exoter/experiments/20140605_pink_odometry/20140605-1731/data/left_passive_position.data', 'rb'), delimiter=' ', quotechar='|')
+spamReader = csv.reader(open('/home/jhidalgocarrio/exoter/experiments/20140605_pink_odometry/20140605-1731/data/left_passive_position_localization_frontend.data', 'rb'), delimiter=' ', quotechar='|')
 
 #spamReader = csv.reader(open('/home/jhidalgocarrio/exoter/experiments/20140603_passive_joints/20140604-1134/left_passive_position.data', 'rb'), delimiter=' ', quotechar='|')
 #spamReader = csv.reader(open('/home/jhidalgocarrio/exoter/experiments/20140603_passive_joints/20140604-1134/left_passive_position_localization_frontend.data', 'rb'), delimiter=' ', quotechar='|')
