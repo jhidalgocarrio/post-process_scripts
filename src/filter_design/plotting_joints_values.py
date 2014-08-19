@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 
 
 #spamReader = csv.reader(open('/home/jhidalgocarrio/exoter/experiments/20140605_pink_odometry/20140605-1731/data/left_passive_position.data', 'rb'), delimiter=' ', quotechar='|')
-spamReader = csv.reader(open('/home/jhidalgocarrio/exoter/experiments/20140605_pink_odometry/20140605-1731/data/left_passive_position_localization_frontend.data', 'rb'), delimiter=' ', quotechar='|')
+#spamReader = csv.reader(open('/home/jhidalgocarrio/exoter/experiments/20140605_pink_odometry/20140605-1731/data/left_passive_position_localization_frontend.data', 'rb'), delimiter=' ', quotechar='|')
 
 #spamReader = csv.reader(open('/home/jhidalgocarrio/exoter/experiments/20140603_passive_joints/20140604-1134/left_passive_position.data', 'rb'), delimiter=' ', quotechar='|')
 #spamReader = csv.reader(open('/home/jhidalgocarrio/exoter/experiments/20140603_passive_joints/20140604-1134/left_passive_position_localization_frontend.data', 'rb'), delimiter=' ', quotechar='|')
@@ -16,6 +16,9 @@ spamReader = csv.reader(open('/home/jhidalgocarrio/exoter/experiments/20140605_p
 
 #spamReader = csv.reader(open('/home/jhidalgocarrio/exoter/experiments/20140522-2014_new_transformer/20140529-1903/left_passive_position.data', 'rb'), delimiter=' ', quotechar='|')
 #spamReader = csv.reader(open('/home/jhidalgocarrio/exoter/experiments/20140522-2014_new_transformer/20140529-1903/left_passive_position_localization_frontend.data', 'rb'), delimiter=' ', quotechar='|')
+
+#spamReader = csv.reader(open('/home/jhidalgocarrio/exoter/experiments/20140818_passive_joints/20140818-1715/left_passive_position.data', 'rb'), delimiter=' ', quotechar='|')
+spamReader = csv.reader(open('/home/jhidalgocarrio/exoter/experiments/20140818_passive_joints/20140818-1715/left_passive_position_localization_frontend.data', 'rb'), delimiter=' ', quotechar='|')
 
 time=[]
 joint=[]

@@ -8,10 +8,10 @@ from matplotlib.patches import Polygon
 from scipy.signal import filter_design as fd
 import scipy.signal as sig
 
-spamReader = csv.reader(open('/home/jhidalgocarrio/exoter/experiments/20140605_pink_odometry/20140605-1731/data/left_passive_position.data', 'rb'), delimiter=' ', quotechar='|')
-
+#spamReader = csv.reader(open('/home/jhidalgocarrio/exoter/experiments/20140605_pink_odometry/20140605-1731/data/left_passive_position.data', 'rb'), delimiter=' ', quotechar='|')
 #spamReader = csv.reader(open('/home/jhidalgocarrio/exoter/experiments/20140522-2014_new_transformer/20140529-1903/left_passive_position.data', 'rb'), delimiter=' ', quotechar='|')
 #spamReader = csv.reader(open('/home/jhidalgocarrio/exoter/experiments/20140603_passive_joints/20140604-1134/left_passive_position_localization_frontend.data', 'rb'), delimiter=' ', quotechar='|')
+spamReader = csv.reader(open('/home/jhidalgocarrio/exoter/experiments/20140818_passive_joints/20140818-1715/left_passive_position.data', 'rb'), delimiter=' ', quotechar='|')
 
 time=[]
 joint=[]
@@ -34,8 +34,8 @@ t = delta_t * r_[0:len(time)]
 # The Nyquist rate of the signal.
 nyq_rate = sample_rate / 2.
 
-# The cutoff frequency of the filter: 1KHz
-cutoff_hz = 0.1
+# The cutoff frequency of the filter (in Hz)
+cutoff_hz = 1.0
 
 # Length of the filter (number of coefficients, i.e. the filter order + 1)
 numtaps = 26
@@ -46,7 +46,7 @@ numtaps = 26
 
 # Specification for our filter
 Wp = cutoff_hz/nyq_rate # Cutoff frequency
-Ws = (cutoff_hz+1.5)/nyq_rate   # Stop frequency 
+Ws = (cutoff_hz+1.5)/nyq_rate   # Stop frequency
 Rp = 1     # passband maximum loss (gpass)
 As = 42      # stoppand min attenuation (gstop)
 
@@ -83,7 +83,7 @@ Wp = cutoff_hz/nyq_rate
 # Use firwin to create a lowpass FIR filter
 Filters['fir_hamming'] = sig.firwin(numtaps, cutoff = Wp, window = "hamming")
 
-# Use firwin to create a lowpass FIR filter
+# Use firwin to create a lowpass FIR filter. The 1.0 is the a coefficient for FIR
 jointfilter['fir_hamming'] = sig.lfilter(Filters['fir_hamming'], 1.0, joint)
 
 
