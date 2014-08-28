@@ -110,8 +110,10 @@ def update_position(e):
 fig.canvas.mpl_connect('button_release_event', update_position)
 plt.show(block=False)
 
+#
+#Plot the position color is quality based
+#
 
-#Plot the position
 fig, ax = plt.subplots()
 
 xposition = np.asarray(gnss.getAxis(0))
@@ -136,6 +138,39 @@ cax = ax.imshow(image_data, interpolation='nearest', cmap=cmap)
 
 cbar = fig.colorbar(cax, ticks=[-1, 0, 1])# orientation='horizontal')
 cbar.ax.set_xticklabels(['Low', 'Medium', 'High'])# horizontal colorbar
+
+#ax.legend(handles=[blue_patch] )
+plt.xlabel(r'X [$m$]', fontsize=35, fontweight='bold')
+plt.ylabel(r'Y [$m$]', fontsize=35, fontweight='bold')
+plt.grid(True)
+plt.xlim(xposition.min(), xposition.max())
+plt.ylim(yposition.min(), yposition.max())
+plt.show(block=False)
+
+#
+#Plot the position color is number of satellites track (continuous color map)
+#
+fig, ax = plt.subplots()
+
+number_satellites = np.asarray(number_satellites)
+xposition = np.asarray(gnss.getAxis(0))
+yposition = np.asarray(gnss.getAxis(1))
+
+points = np.array([xposition, yposition]).T.reshape(-1, 1, 2)
+segments = np.concatenate([points[:-1], points[1:]], axis=1)
+
+lc = LineCollection(segments, cmap=plt.get_cmap('Blues'), norm=plt.Normalize(0.00, number_satellites.max()))
+lc.set_array(number_satellites)
+lc.set_linewidth(3)
+
+ax.add_collection(lc)
+
+image_data = np.clip([xposition, yposition], number_satellites.min(), number_satellites.max())
+cax = ax.imshow(image_data, interpolation='nearest', cmap=plt.get_cmap('Blues'))
+
+cbar = fig.colorbar(cax, ticks=[number_satellites.min(), number_satellites.mean(), number_satellites.max()])# orientation='horizontal')
+#cbar.ax.set_xticklabels(['Low', 'Medium', 'High'])# horizontal colorbar
+ax.set_title('GNSS Test - Color based on number of satellites tracked')
 
 #ax.legend(handles=[blue_patch] )
 plt.xlabel(r'X [$m$]', fontsize=35, fontweight='bold')
