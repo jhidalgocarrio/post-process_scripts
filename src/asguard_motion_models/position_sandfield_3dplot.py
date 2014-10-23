@@ -1,3 +1,5 @@
+import sys
+sys.path.insert(0, './src/core')
 import datadisplay as data
 from random import gauss
 import csv, scipy

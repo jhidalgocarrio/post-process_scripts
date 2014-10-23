@@ -2,10 +2,12 @@
 
 #######################################
 #path_odometry_file = '/home/jhidalgocarrio/exoter/development/post-process_data/20140600_pink_odometry/20140605-1731/pose_odo_velocity.0.data'
-path_odometry_file = '/home/jhidalgocarrio/exoter/development/post-process_data/20140723_pink_odometry/20140723-1845/pose_odo_velocity.0.data'
+#path_odometry_file = '/home/jhidalgocarrio/exoter/development/post-process_data/20140723_pink_odometry/20140723-1845/pose_odo_velocity.0.data'
+path_odometry_file = '/home/jhidalgocarrio/exoter/development/post-process_data/20141023_pink_test/20141023-2001/pose_odo_velocity.0.data'
 
 #path_reference_file = '/home/jhidalgocarrio/exoter/development/post-process_data/20140600_pink_odometry/20140605-1731/pose_ref_velocity.0.data'
-path_reference_file = '/home/jhidalgocarrio/exoter/development/post-process_data/20140723_pink_odometry/20140723-1845/pose_ref_velocity.0.data'
+#path_reference_file = '/home/jhidalgocarrio/exoter/development/post-process_data/20140723_pink_odometry/20140723-1845/pose_ref_velocity.0.data'
+path_reference_file = '/home/jhidalgocarrio/exoter/development/post-process_data/20141023_pink_test/20141023-2001/pose_ref_velocity.0.data'
 #######################################
 
 
