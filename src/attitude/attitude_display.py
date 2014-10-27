@@ -16,7 +16,8 @@
 #path_imu_orient_file = '/home/jhidalgocarrio/exoter/development/post-process_data/20140502_vicon_timestamp/20140502-2015/stim300_filter_33bnw_16bnw_125hz.data'
 #path_imu_orient_file = '/home/jhidalgocarrio/exoter/experiments/20140600_pink_odometry/20140605-1731/data/stim300_attitude.data'
 
-path_imu_orient_file = '/home/jhidalgocarrio/exoter/development/post-process_data/20140723_pink_odometry/20140723-1845/pose_odo_orientation.0.data'
+#path_imu_orient_file = '/home/jhidalgocarrio/exoter/development/post-process_data/20140723_pink_odometry/20140723-1845/pose_odo_orientation.0.data'
+path_imu_orient_file = '/home/jhidalgocarrio/exoter/development/post-process_data/20140911_decos_field/20140911-1805/pose_imu_orientation.0.data'
 
 #path_reference_orient_file = '/home/jhidalgocarrio/exoter/development/post-process_data/20140422_stim300_vs_vicon/20140422-1505/vicon_processing_100hz.data'
 #path_reference_orient_file = '/home/jhidalgocarrio/exoter/development/post-process_data/20140422_stim300_vs_vicon/20140422-1539/vicon_processing_100hz.data'
@@ -33,6 +34,7 @@ path_imu_orient_file = '/home/jhidalgocarrio/exoter/development/post-process_dat
 #path_reference_orient_file = '/home/jhidalgocarrio/exoter/experiments/20140600_pink_odometry/20140605-1731/data/vicon_attitude.data'
 
 path_reference_orient_file = '/home/jhidalgocarrio/exoter/development/post-process_data/20140723_pink_odometry/20140723-1845/pose_ref_orientation.0.data'
+path_reference_orient_file = '/home/jhidalgocarrio/exoter/development/post-process_data/20140911_decos_field/20140911-1805/pose_ref_orientation.0.data'
 
 ##################################
 
@@ -49,7 +51,6 @@ import datadisplay as data
 imuOrient = data.QuaternionData()
 imuOrient.readData(path_imu_orient_file, cov=True)
 imuOrient.eigenValues()
-
 # Read the vicon orientation information
 viconOrient = data.QuaternionData()
 viconOrient.readData(path_reference_orient_file, cov=True)
@@ -69,7 +70,7 @@ euler[0][:] = [x * 180.00/math.pi for x in euler[0] ]#convert to degrees
 euler[1][:] = [x * 180.00/math.pi for x in euler[1] ]#convert to degrees
 euler[2][:] = [x * 180.00/math.pi for x in euler[2] ]#convert to degrees
 
-axis = 2
+axis = 1
 if axis == 0:
     label_text = "IMU Roll"
     color_value = [1.0,0,0]
