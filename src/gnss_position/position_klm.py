@@ -9,7 +9,8 @@ import  matplotlib.pyplot as plt
 import simplekml
 
 #######################################
-path_reference_file_two = '/home/jhidalgocarrio/exoter/development/post-process_data/20140827_gnss_estec_lap/gnss_lat_long_quality.1.data'
+#path_reference_file_two = '/home/jhidalgocarrio/exoter/development/post-process_data/20140827_gnss_estec_lap/gnss_lat_long_quality.1.data'
+path_reference_file_two = '/home/jhidalgocarrio/exoter/development/post-process_data/20140911_decos_field/20140911-1805/gnss_lat_long_quality.0.data'
 #######################################
 
 spamReader = csv.reader(open(path_reference_file_two, 'rb'), delimiter=' ', quotechar='|')
@@ -48,7 +49,8 @@ lin = kml.newlinestring(name="GNSS ESTEC Test", description="ARL Pitukos Traject
 lin.style.linestyle.color = 'ff0000ff'  # Red
 lin.style.linestyle.width= 10  # 10 pixels
 
-kml.save("gnss_estec_tour.kml")
+#kml.save("gnss_estec_tour.kml")
+kml.save("gnss_decos_20140911-1805.kml")
 
 
 

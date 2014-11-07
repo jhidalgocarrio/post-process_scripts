@@ -78,7 +78,7 @@ plt.grid(True)
 ax.legend(loc=4, prop={'size':30})
 plt.show(block=False)
 
-savefig('odometry_exoter_different_ferquencies_x_y_zoom2.png')
+savefig('odometry_exoter_different_frequencies_x_y_zoom2.png')
 
 #3D Plotting values
 from mpl_toolkits.mplot3d import Axes3D
