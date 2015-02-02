@@ -37,8 +37,8 @@ def plot_cov_ellipse(cov, pos, nstd=3, ax=None, **kwargs):
 
     # Width and height are "full" widths, not radius
     width, height = 2 * nstd * np.sqrt(vals)
-    print vals
-    print vecs
+    print (vals)
+    print (vecs)
     ellip = Ellipse(xy=pos, width=width, height=height, angle=theta, **kwargs)
 
     ax.add_artist(ellip)

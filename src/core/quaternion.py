@@ -128,7 +128,7 @@ class quaternion(object):
         """
         w,x,y,z = self.__q
         sqw = w*w
-    	sqx = x*x
+        sqx = x*x
         sqy = y*y
         sqz = z*z
         unit = sqx + sqy + sqz + sqw # if normalised is one, otherwise is correction factor 
@@ -257,12 +257,12 @@ if __name__ == "__main__":
     c = quaternion(np.array([0.2,1.0,0.3,-0.1]))
     d = quaternion(c)
 
-    print "a:",a
-    print "b:",b
-    print "c:",c
-    print "d:",d
-    print "c':",c.conj()
-    print "c*b:", c*b
-    print "c*b*c':",c * b * c.conj()
-    print "c*v*c':",c*b.asArray()[1:4]*c.conj()
-    print "c.rot(v):",c.rot(b.asArray()[1:4])
+    print ("a:",a)
+    print ("b:",b)
+    print ("c:",c)
+    print ("d:",d)
+    print ("c':",c.conj())
+    print ("c*b:", c*b)
+    print ("c*b*c':",c * b * c.conj())
+    print ("c*v*c':",c*b.asArray()[1:4]*c.conj())
+    print ("c.rot(v):",c.rot(b.asArray()[1:4]))
