@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import csv, scipy
+import csv
 from pylab import *
 import numpy as np
 import matplotlib.pyplot as plt
@@ -25,7 +25,7 @@ class ThreeData:
 
     def readData(self,filename, cov=False):
 	
-        for row in csv.reader(open(filename, 'rb'), delimiter=' ', quotechar='|'):
+        for row in csv.reader(open(filename, 'r'), delimiter=' ', quotechar='|'):
             #print row
             self.atime.append(float(row[0])/1000000) #absolute time
             self.data.append(np.array([float(row[1]), float(row[2]), float(row[3])]))
@@ -35,15 +35,15 @@ class ThreeData:
                     [float(row[10]), float(row[11]), float(row[12])]])
                 self.cov.append(matrix)
 
-            atime = self.atime
-            self.time.append(0.00)
-            for i in range(0,len(atime)-1):
-                tbody = float(atime[i+1]) - float(atime[i])
-                self.delta.append(tbody)
-                tbody = float(atime[i+1]) - float(atime[0])
-                self.time.append(tbody)
+        atime = self.atime
+        self.time.append(0.00)
+        for i in range(0,len(atime)-1):
+            tbody = float(atime[i+1]) - float(atime[i])
+            self.delta.append(tbody)
+            tbody = float(atime[i+1]) - float(atime[0])
+            self.time.append(tbody)
 
-            self.t = mean(self.delta) * r_[0:len(self.atime)]
+        self.t = mean(self.delta) * np.r_[0:len(self.atime)]
 	
     def eigenValues(self):
         #Eigen values are the axis of the ellipsoid
@@ -182,7 +182,7 @@ class QuaternionData:
 
     def readData(self,filename, cov=False):
 	
-        for row in csv.reader(open(filename, 'rb'), delimiter=' ', quotechar='|'):
+        for row in csv.reader(open(filename, 'r'), delimiter=' ', quotechar='|'):
             #print row
             self.atime.append(float(row[0])/1000000) #absolute time
             self.data.append(quat.quaternion([float(row[4]), float(row[1]), float(row[2]), float(row[3])]))
@@ -291,7 +291,7 @@ class OneData:
         return 'hello world'
 
     def readData(self,filename, cov=False):
-        for row in csv.reader(open(filename, 'rb'), delimiter=' ', quotechar='|'):
+        for row in csv.reader(open(filename, 'r'), delimiter=' ', quotechar='|'):
             #print row
             self.time.append(float(row[0])/1000000)
             self.data.append(np.array([float(row[1])]))

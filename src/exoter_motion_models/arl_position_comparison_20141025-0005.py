@@ -1,17 +1,17 @@
 #!/usr/bin/env python
 
 #######################################
-path_odometry_file = '/home/jhidalgocarrio/exoter/development/post-process_data/20141024_planetary_lab/20141025-0005/pose_odo_position.0.data'
+path_odometry_file = '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141025-0005/pose_odo_position.0.data'
 
-path_skid_file = '/home/jhidalgocarrio/exoter/development/post-process_data/20141024_planetary_lab/20141025-0005/pose_skid_position.0.data'
+path_skid_file = '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141025-0005/pose_skid_position.0.data'
 
-path_reference_file = '/home/jhidalgocarrio/exoter/development/post-process_data/20141024_planetary_lab/20141025-0005/pose_ref_position.0.data'
+path_reference_file = '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141025-0005/pose_ref_position.0.data'
 #######################################
 
 
 import sys
 sys.path.insert(0, './src/core')
-import csv, scipy
+import csv
 from pylab import *
 import numpy as np
 import matplotlib.pyplot as plt
@@ -36,6 +36,25 @@ skid.eigenValues()
 reference = data.ThreeData()
 reference.readData(path_reference_file, cov=True)
 reference.eigenValues()
+
+#Position comparison versus time
+matplotlib.rcParams.update({'font.size': 30, 'font.weight': 'bold'})
+fig = plt.figure(1)
+ax = fig.add_subplot(111)
+
+plt.rc('text', usetex=False)# activate latex text rendering
+time = odometry.time
+xposition = odometry.getAxis(1)
+ax.plot(time, xposition, marker='o', linestyle='-.', label="Jacobian Odometry", color=[0.3,0.2,0.4], lw=2)
+time = reference.time
+xposition = reference.getAxis(1)
+ax.plot(time, xposition, marker='D', linestyle='--', label="Vicon Reference", color=[0.5,0,0], alpha=0.5, lw=2)
+
+plt.xlabel(r'X [$m$]', fontsize=35, fontweight='bold')
+plt.ylabel(r'Y [$m$]', fontsize=35, fontweight='bold')
+plt.grid(True)
+ax.legend(loc=1, prop={'size':30})
+plt.show(block=False)
 
 #Position comparison X-Y plane
 matplotlib.rcParams.update({'font.size': 30, 'font.weight': 'bold'})
