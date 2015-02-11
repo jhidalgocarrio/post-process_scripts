@@ -426,19 +426,19 @@ plt.show(block=False)
 #######################
 ## LOAD ANOTHER TEST ##
 #######################
-joints_position_file = '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141025-2317/joints_position.0.data'
+joints_position_file = '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141024-2317/joints_position.0.data'
 
-joints_speed_file = '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141025-2317/joints_speed.0.data'
+joints_speed_file = '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141024-2317/joints_speed.0.data'
 
-pose_ref_velocity_file =  '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141025-2317/pose_ref_velocity.0.data'
+pose_ref_velocity_file =  '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141024-2317/pose_ref_velocity.0.data'
 
-pose_odo_velocity_file =  '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141025-2317/pose_odo_velocity.0.data'
+pose_odo_velocity_file =  '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141024-2317/pose_odo_velocity.0.data'
 
-pose_imu_orientation_file =  '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141025-2317/pose_imu_orientation.0.data'
+pose_imu_orientation_file =  '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141024-2317/pose_imu_orientation.0.data'
 
-pose_imu_angular_velocity_file =  '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141025-2317/pose_imu_angular_velocity.0.data'
+pose_imu_angular_velocity_file =  '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141024-2317/pose_imu_angular_velocity.0.data'
 
-pose_imu_acceleration_file =  '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141025-2317/pose_imu_acceleration.0.data'
+pose_imu_acceleration_file =  '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141024-2317/pose_imu_acceleration.0.data'
 #######################################
 
 # Reference Robot Velocity
