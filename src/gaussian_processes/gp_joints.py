@@ -5,6 +5,8 @@ joints_position_file = '/home/javi/exoter/development/post-process_data/20141024
 
 joints_speed_file = '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141027-2034/joints_speed.0.data'
 
+joints_effort_file = '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141027-2034/joints_effort.0.data'
+
 pose_ref_position_file =  '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141027-2034/pose_ref_position.0.data'
 
 pose_ref_velocity_file =  '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141027-2034/pose_ref_velocity.0.data'
