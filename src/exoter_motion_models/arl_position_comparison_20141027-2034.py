@@ -44,14 +44,14 @@ ax = fig.add_subplot(111)
 
 plt.rc('text', usetex=False)# activate latex text rendering
 time = odometry.time
-xposition = odometry.getAxis(1)
+xposition = odometry.getAxis(2)
 ax.plot(time, xposition, marker='o', linestyle='-.', label="Jacobian Odometry", color=[0.3,0.2,0.4], lw=2)
 time = reference.time
-xposition = reference.getAxis(1)
+xposition = reference.getAxis(2)
 ax.plot(time, xposition, marker='D', linestyle='--', label="Vicon Reference", color=[0.5,0,0], alpha=0.5, lw=2)
 
-plt.xlabel(r'X [$m$]', fontsize=35, fontweight='bold')
-plt.ylabel(r'Y [$m$]', fontsize=35, fontweight='bold')
+plt.xlabel(r'Time [$s$]', fontsize=35, fontweight='bold')
+plt.ylabel(r'Distance [$m$]', fontsize=35, fontweight='bold')
 plt.grid(True)
 ax.legend(loc=1, prop={'size':30})
 plt.show(block=False)

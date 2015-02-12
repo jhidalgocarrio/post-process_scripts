@@ -3,7 +3,7 @@
 #######################################
 path_odometry_file = '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141025-0005/pose_odo_position.0.data'
 
-path_skid_file = '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141025-0005/pose_skid_position.0.data'
+#path_skid_file = '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141025-0005/pose_skid_position.0.data'
 
 path_reference_file = '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141025-0005/pose_ref_position.0.data'
 #######################################
@@ -27,9 +27,9 @@ odometry.readData(path_odometry_file, cov=True)
 odometry.eigenValues()
 
 #Skid Odometry
-skid = data.ThreeData()
-skid.readData(path_skid_file, cov=True)
-skid.eigenValues()
+#skid = data.ThreeData()
+#skid.readData(path_skid_file, cov=True)
+#skid.eigenValues()
 
 
 #Vicon Pose
@@ -44,14 +44,14 @@ ax = fig.add_subplot(111)
 
 plt.rc('text', usetex=False)# activate latex text rendering
 time = odometry.time
-xposition = odometry.getAxis(1)
+xposition = odometry.getAxis(2)
 ax.plot(time, xposition, marker='o', linestyle='-.', label="Jacobian Odometry", color=[0.3,0.2,0.4], lw=2)
 time = reference.time
-xposition = reference.getAxis(1)
+xposition = reference.getAxis(2)
 ax.plot(time, xposition, marker='D', linestyle='--', label="Vicon Reference", color=[0.5,0,0], alpha=0.5, lw=2)
 
-plt.xlabel(r'X [$m$]', fontsize=35, fontweight='bold')
-plt.ylabel(r'Y [$m$]', fontsize=35, fontweight='bold')
+plt.xlabel(r'Time [$s$]', fontsize=35, fontweight='bold')
+plt.ylabel(r'Distance [$m$]', fontsize=35, fontweight='bold')
 plt.grid(True)
 ax.legend(loc=1, prop={'size':30})
 plt.show(block=False)
@@ -66,13 +66,13 @@ xposition = odometry.getAxis(0)[0::50]
 yposition = odometry.getAxis(1)[0::50]
 ax.plot(xposition, yposition, marker='o', linestyle='-.', label="Jacobian Odometry", color=[0.3,0.2,0.4], lw=2)
 
-xposition = odometry.getAxis(0)[0::50]# reduce number of points
-yposition = odometry.getAxis(1)[0::50]
-xycov = odometry.getCov(1)[0::10]
-for i in range(0, len(xycov)):
-    cov.plot_cov_ellipse(xycov[i], pos=[xposition[i], yposition[i]], nstd=3,
-                    linewidth=2, alpha=0.5, facecolor='green', edgecolor='black')
-
+#xposition = odometry.getAxis(0)[0::50]# reduce number of points
+#yposition = odometry.getAxis(1)[0::50]
+#xycov = odometry.getCov(1)[0::10]
+#for i in range(0, len(xycov)):
+#    cov.plot_cov_ellipse(xycov[i], pos=[xposition[i], yposition[i]], nstd=3,
+#                    linewidth=2, alpha=0.5, facecolor='green', edgecolor='black')
+#
 xposition = skid.getAxis(0)[0::50]
 yposition = skid.getAxis(1)[0::50]
 ax.plot(xposition, yposition, marker='x', linestyle='--', label="Planar Odometry", color=[0,0.5,1], lw=2)
@@ -90,13 +90,13 @@ ax.annotate(r'End', xy=(xposition[len(xposition)-1], yposition[len(yposition)-1]
                                 xytext=(-40, +40), textcoords='offset points', fontsize=22,
                                 arrowprops=dict(arrowstyle="->", connectionstyle="arc3,rad=.2", lw=2.0))
 
-xposition = reference.getAxis(0)[0::100]
-yposition = reference.getAxis(1)[0::100]
-xycov = reference.getCov(1)[0::100]
-for i in range(0, len(xycov)):
-    cov.plot_cov_ellipse(xycov[i], pos=[xposition[i], yposition[i]], nstd=3,
-                    linewidth=2, alpha=0.2, facecolor=[0.4,0,0.4], edgecolor='black')
-
+#xposition = reference.getAxis(0)[0::100]
+#yposition = reference.getAxis(1)[0::100]
+#xycov = reference.getCov(1)[0::100]
+#for i in range(0, len(xycov)):
+#    cov.plot_cov_ellipse(xycov[i], pos=[xposition[i], yposition[i]], nstd=3,
+#                    linewidth=2, alpha=0.2, facecolor=[0.4,0,0.4], edgecolor='black')
+#
 
 plt.xlabel(r'X [$m$]', fontsize=35, fontweight='bold')
 plt.ylabel(r'Y [$m$]', fontsize=35, fontweight='bold')
