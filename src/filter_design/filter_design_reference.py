@@ -46,7 +46,11 @@ odometry_velocity.readData(pose_odo_velocity_file, cov=True)
 odometry_velocity.eigenValues()
 
 #######################################
-
+# Remove the initial values
+#[b,a] = butter(5,.7);
+#N = 50; % change this to suit your needs
+#    yNew = filtfilt(b,a,[y(N:-1:1);y];
+#yNew = yNew(N+1:end);
 
 #Position comparison versus time
 matplotlib.rcParams.update({'font.size': 30, 'font.weight': 'bold'})
