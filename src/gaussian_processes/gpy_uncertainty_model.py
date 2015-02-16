@@ -1,19 +1,21 @@
 #!/usr/bin/env python
 
 #######################################
-joints_position_file = '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141027-2034/joints_position.0.data'
+joints_position_file = '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141024-2202/joints_position.0.data'
 
-joints_speed_file = '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141027-2034/joints_speed.0.data'
+joints_speed_file = '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141024-2202/joints_speed.0.data'
 
-pose_ref_velocity_file =  '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141027-2034/pose_ref_velocity.0.data'
+joints_effort_file = '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141024-2202/joints_effort.0.data'
 
-pose_odo_velocity_file =  '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141027-2034/pose_odo_velocity.0.data'
+pose_ref_velocity_file =  '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141024-2202/pose_ref_velocity.0.data'
 
-pose_imu_orientation_file =  '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141027-2034/pose_imu_orientation.0.data'
+pose_odo_velocity_file =  '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141024-2202/pose_odo_velocity.0.data'
 
-pose_imu_angular_velocity_file =  '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141027-2034/pose_imu_angular_velocity.0.data'
+pose_imu_orientation_file =  '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141024-2202/pose_imu_orientation.0.data'
 
-pose_imu_acceleration_file =  '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141027-2034/pose_imu_acceleration.0.data'
+pose_imu_angular_velocity_file =  '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141024-2202/pose_imu_angular_velocity.0.data'
+
+pose_imu_acceleration_file =  '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141024-2202/pose_imu_acceleration.0.data'
 #######################################
 
 import sys
@@ -60,7 +62,7 @@ imu_gyro.eigenValues()
 names = "left_passive", "fl_mimic", "fl_walking", "fl_steer", "fl_drive", "fl_contact", "fl_translation", "fl_slipx", "fl_slipy", "fl_slipz", "ml_mimic", "ml_walking", "ml_drive", "ml_contact", "ml_translation", "ml_slipx", "ml_slipy", "ml_slipz", "rear_passive", "rl_mimic", "rl_walking", "rl_steer", "rl_drive", "rl_contact", "rl_translation", "rl_slipx", "rl_slipy", "rl_slipz", "rr_mimic", "rr_walking", "rr_steer", "rr_drive", "rr_contact", "rr_translation", "rr_slipx", "rr_slipy", "rr_slipz", "right_passive", "fr_mimic", "fr_walking", "fr_steer", "fr_drive", "fr_contact", "fr_translation", "fr_slipx", "fr_slipy", "fr_slipz", "mr_mimic", "mr_walking", "mr_drive", "mr_contact", "mr_translation", "mr_slipx", "mr_slipy", "mr_slipz"
 
 robot_joints = js.Joints(names)
-robot_joints.readData(joints_position_file, joints_speed_file)
+robot_joints.readData(joints_position_file, joints_speed_file, joints_effort_file)
 
 ###################
 ### IIR FILTER  ###
@@ -74,8 +76,8 @@ sample_rate = 1.0/delta_t
 nyq_rate = 0.5 * sample_rate
 
 # The cutoff frequency of the filter (in Hz)
-low_cut_hz = 0.5
-high_cut_hz = 0.5
+low_cut_hz = 2
+high_cut_hz = 2.4
 
 # Length of the filter (number of coefficients, i.e. the filter order + 1)
 filter_order = 8
@@ -92,6 +94,7 @@ filters['butter'] = sig.butter(filter_order, [lowcup, highcup], btype='lowpass')
 ####################
 
 reference  = sig.lfilter(filters['butter'][0], filters['butter'][1], np.row_stack((reference_velocity.getAxis(0), reference_velocity.getAxis(1), reference_velocity.getAxis(2))))
+#reference  = np.row_stack((reference_velocity.getAxis(0), reference_velocity.getAxis(1), reference_velocity.getAxis(2)))
 reference = np.column_stack(reference)
 
 odometry  = sig.lfilter(filters['butter'][0], filters['butter'][1], np.row_stack((odometry_velocity.getAxis(0), odometry_velocity.getAxis(1), odometry_velocity.getAxis(2))))
@@ -119,6 +122,11 @@ ax.plot(odometry_velocity.time, xvelocity, marker='o', linestyle='-.', label="Od
 xvelocity = error[:,0]
 xtime = np.array(reference_velocity.time[0:length])
 ax.plot(xtime, xvelocity, marker='o', linestyle='-', label="Error Velocity", color=[0.5,0.0,0.0], lw=2)
+
+effort = robot_joints.getEffort("fl_drive")[0:length]
+xtime = np.array(reference_velocity.time[0:length])
+ax.plot(xtime, effort, linestyle='-.', label="FL Effort", color=[0.5,0.4,0.5], lw=1)
+
 
 plt.xlabel(r'X [$m$]', fontsize=35, fontweight='bold')
 plt.ylabel(r'Y [$m$]', fontsize=35, fontweight='bold')
@@ -210,7 +218,7 @@ Y = np.column_stack(Y)
 #ker = GPy.kern.RBF(input_dim = X.shape[1], ARD=True)
 ker_rbf = GPy.kern.RBF(input_dim = X.shape[1], ARD=False)
 ker_white = GPy.kern.White(input_dim = X.shape[1])
-ker = ker_white + ker_rbf
+ker = ker_rbf + ker_white
 
 # create simple GP model
 m = GPy.models.GPRegression(X, Y, kernel=ker)
@@ -256,7 +264,7 @@ plt.rc('text', usetex=False)# activate latex text rendering
 xvelocity = reference_velocity.getAxis(0)
 ax.plot(reference_velocity.time, xvelocity, linestyle='-.', label="Reference Velocity", color=[0.3,0.2,0.4], lw=2)
 
-#[mean1, var1] = m.predict(X, full_cov=True)
+[mean1, var1] = m.predict(X, full_cov=True)
 variance = mean1[:,0] * mean1[:,0]
 sigma = np.sqrt(variance)
 
