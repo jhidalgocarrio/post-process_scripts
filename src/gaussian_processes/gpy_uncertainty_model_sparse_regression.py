@@ -74,8 +74,8 @@ sample_rate = 1.0/delta_t
 nyq_rate = 0.5 * sample_rate
 
 # The cutoff frequency of the filter (in Hz)
-low_cut_hz = 0.1
-high_cut_hz = 0.1
+low_cut_hz = 1.0
+high_cut_hz = 1.0
 
 # Length of the filter (number of coefficients, i.e. the filter order + 1)
 filter_order = 8
@@ -95,8 +95,7 @@ np.random.seed(1)
 
 #################
 # Joints Inputs #
-joints_first = sig.filtfilt(filters['butter'][0], filters['butter'][1],
-                        np.row_stack((
+joints_first = np.row_stack((
                         robot_joints.getSpeed("fl_translation"),
                         robot_joints.getSpeed("fr_translation"),
                         robot_joints.getSpeed("ml_translation"),
@@ -111,19 +110,17 @@ joints_first = sig.filtfilt(filters['butter'][0], filters['butter'][1],
                         robot_joints.getPosition("right_passive"),
                         robot_joints.getPosition("rear_passive")
                         ))
-                        )
 joints_first = np.column_stack(joints_first)
 
 ##################
 # Inertia Inputs #
-inertia_first = sig.filtfilt(filters['butter'][0], filters['butter'][1], np.row_stack((imu_acc.getAxis(0), imu_acc.getAxis(1), imu_acc.getAxis(2),
-                                                                                        imu_gyro.getAxis(0), imu_gyro.getAxis(1), imu_gyro.getAxis(2))))
+inertia_first = np.row_stack((imu_acc.getAxis(0), imu_acc.getAxis(1), imu_acc.getAxis(2)))
 inertia_first = np.column_stack(inertia_first)
 
 ######################
 # Orientation Inputs #
 # Roll and Pitch angles in that order #
-orient_first  = sig.filtfilt(filters['butter'][0], filters['butter'][1], np.row_stack((imu_orient.getEuler(2), imu_orient.getEuler(1))))
+orient_first  = np.row_stack((imu_orient.getEuler(2), imu_orient.getEuler(1)))
 orient_first = np.column_stack(orient_first)
 
 ###########################
@@ -193,7 +190,7 @@ plt.show(block=False)
 # GP Multidimensional vector
 #X = np.column_stack((joints[:,0:2])) #Only two joints
 #X = np.column_stack((joints[0:dimension, :], inertia[0:dimension], orient[0:dimension]))
-X = np.column_stack((joints[0:length, :], orient[0:length]))
+X = np.column_stack((joints[0:length, :], inertia[0:length], orient[0:length]))
 
 # GP Multidimensional vector
 Y =  np.column_stack((error))
@@ -206,7 +203,7 @@ Y = np.column_stack(Y)
 #####################
 # Sparse Regression #
 #####################
-dim = 1000
+dim = 500
 Z = np.zeros(shape=(dim, X.shape[1]))
 idx = 0
 
@@ -219,10 +216,10 @@ for i in range (0, joints.shape[1]):
 
 ########################
 # Inertia Sparse Inputs #
-#for i in range (0, inertia.shape[1]):
-#    print idx
-#    Z[:,idx] = np.random.uniform(min(inertia[:,i]), max(inertia[:,i]), dim)
-#    idx = idx + 1
+for i in range (0, inertia.shape[1]):
+    print idx
+    Z[:,idx] = np.random.uniform(min(inertia[:,i]), max(inertia[:,i]), dim)
+    idx = idx + 1
 
 ########################
 # Orient Sparse Inputs #
@@ -238,7 +235,7 @@ for i in range (0, orient.shape[1]):
 ker_rbf = GPy.kern.RBF(input_dim = X.shape[1], ARD=False)
 ker_white = GPy.kern.White(input_dim = X.shape[1])
 ker_matern = GPy.kern.Matern52(input_dim=1, variance=1., lengthscale=1.)
-ker = ker_matern
+ker = ker_matern # + ker_white
 
 # create simple GP model
 m = GPy.models.SparseGPRegression(X, Y, kernel=ker, Z=Z)
@@ -326,8 +323,7 @@ robot_joints.readData(joints_position_file, joints_speed_file)
 #######################################
 # Form the New Inputs to predict
 # Joints Inputs #
-joints_second = sig.filtfilt(filters['butter'][0], filters['butter'][1],
-                        np.row_stack((
+joints_second = np.row_stack((
                         robot_joints.getSpeed("fl_translation"),
                         robot_joints.getSpeed("fr_translation"),
                         robot_joints.getSpeed("ml_translation"),
@@ -342,26 +338,23 @@ joints_second = sig.filtfilt(filters['butter'][0], filters['butter'][1],
                         robot_joints.getPosition("right_passive"),
                         robot_joints.getPosition("rear_passive")
                         ))
-                        )
 joints_second = np.column_stack(joints_second)
 
 ##################
 # Inertia Inputs #
-inertia_second = sig.filtfilt(filters['butter'][0], filters['butter'][1], np.row_stack((imu_acc.getAxis(0), imu_acc.getAxis(1), imu_acc.getAxis(2),
-                                                                                        imu_gyro.getAxis(0), imu_gyro.getAxis(1), imu_gyro.getAxis(2))))
+inertia_second = np.row_stack((imu_acc.getAxis(0), imu_acc.getAxis(1), imu_acc.getAxis(2)))
 inertia_second = np.column_stack(inertia_second)
 
 ######################
 # Orientation Inputs #
 # Roll and Pitch angles in that order #
-orient_second  = sig.filtfilt(filters['butter'][0], filters['butter'][1], np.row_stack((imu_orient.getEuler(2), imu_orient.getEuler(1))))
+orient_second = np.row_stack((imu_orient.getEuler(2), imu_orient.getEuler(1)))
 orient_second = np.column_stack(orient_second)
 
 ###########################
 # Create Reference Output #
-reference_second  = sig.filtfilt(filters['butter'][0], filters['butter'][1], np.row_stack((reference_velocity.getAxis(0), reference_velocity.getAxis(1), reference_velocity.getAxis(2))))
+reference_second = sig.filtfilt(filters['butter'][0], filters['butter'][1], np.row_stack((reference_velocity.getAxis(0), reference_velocity.getAxis(1), reference_velocity.getAxis(2))))
 reference_second = np.column_stack(reference_second)
-
 
 ###########################
 # Create Odometry Output #
@@ -425,7 +418,7 @@ plt.show(block=False)
 # GP Multidimensional vector
 #X = np.column_stack((joints[:,0:2])) #Only two joints
 #X = np.column_stack((joints[0:dimension, :], inertia[0:dimension], orient[0:dimension]))
-X = np.column_stack((joints[0:length, :], orient[0:length]))
+X = np.column_stack((joints[0:length, :], inertia[0:length], orient[0:length]))
 
 # GP Multidimensional vector
 Y =  np.column_stack((error))
@@ -438,7 +431,7 @@ Y = np.column_stack(Y)
 #####################
 # Sparse Regression #
 #####################
-dim = 1000
+dim = 500
 Z = np.zeros(shape=(dim, X.shape[1]))
 idx = 0
 
@@ -451,10 +444,10 @@ for i in range (0, joints.shape[1]):
 
 ########################
 # Inertia Sparse Inputs #
-#for i in range (0, inertia.shape[1]):
-#    print idx
-#    Z[:,idx] = np.random.uniform(min(inertia[:,i]), max(inertia[:,i]), dim)
-#    idx = idx + 1
+for i in range (0, inertia.shape[1]):
+    print idx
+    Z[:,idx] = np.random.uniform(min(inertia[:,i]), max(inertia[:,i]), dim)
+    idx = idx + 1
 
 ########################
 # Orient Sparse Inputs #
@@ -468,7 +461,7 @@ m = GPy.models.SparseGPRegression(X, Y, kernel=ker, Z=Z)
 
 print m
 # optimize and plot
-m.optimize(messages=True, max_f_eval=1000)
+m.optimize(messages=True, max_f_eval=100)
 print(m)
 
 ##################
@@ -517,21 +510,6 @@ pose_imu_angular_velocity_file =  '/home/javi/exoter/development/post-process_da
 pose_imu_acceleration_file =  '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141024-2202/pose_imu_acceleration.0.data'
 #######################################
 
-import sys
-sys.path.insert(0, './src/core')
-import numpy as np
-from pylab import *
-from matplotlib import pyplot as plt
-import quaternion as quat
-import datadisplay as data
-import cov_ellipse as cov
-import joints as js
-import GPy
-
-from scipy import integrate
-from scipy.signal import filter_design as fd
-import scipy.signal as sig
-
 # Reference Robot Velocity
 reference_velocity = data.ThreeData()
 reference_velocity.readData(pose_ref_velocity_file, cov=True)
@@ -571,8 +549,7 @@ np.random.seed(1)
 
 #################
 # Joints Inputs #
-joints_third = sig.filtfilt(filters['butter'][0], filters['butter'][1],
-                        np.row_stack((
+joints_third = np.row_stack((
                         robot_joints.getSpeed("fl_translation"),
                         robot_joints.getSpeed("fr_translation"),
                         robot_joints.getSpeed("ml_translation"),
@@ -587,29 +564,27 @@ joints_third = sig.filtfilt(filters['butter'][0], filters['butter'][1],
                         robot_joints.getPosition("right_passive"),
                         robot_joints.getPosition("rear_passive")
                         ))
-                        )
 joints_third = np.column_stack(joints_third)
 
 ##################
 # Inertia Inputs #
-inertia_third = sig.filtfilt(filters['butter'][0], filters['butter'][1], np.row_stack((imu_acc.getAxis(0), imu_acc.getAxis(1), imu_acc.getAxis(2),
-                                                                                        imu_gyro.getAxis(0), imu_gyro.getAxis(1), imu_gyro.getAxis(2))))
+inertia_third = np.row_stack((imu_acc.getAxis(0), imu_acc.getAxis(1), imu_acc.getAxis(2)))
 inertia_third = np.column_stack(inertia_third)
 
 ######################
 # Orientation Inputs #
 # Roll and Pitch angles in that order #
-orient_third  = sig.filtfilt(filters['butter'][0], filters['butter'][1], np.row_stack((imu_orient.getEuler(2), imu_orient.getEuler(1))))
+orient_third = np.row_stack((imu_orient.getEuler(2), imu_orient.getEuler(1)))
 orient_third = np.column_stack(orient_third)
 
 ###########################
 # Create Reference Output #
-reference_third  = sig.filtfilt(filters['butter'][0], filters['butter'][1], np.row_stack((reference_velocity.getAxis(0), reference_velocity.getAxis(1), reference_velocity.getAxis(2))))
+reference_third = sig.filtfilt(filters['butter'][0], filters['butter'][1], np.row_stack((reference_velocity.getAxis(0), reference_velocity.getAxis(1), reference_velocity.getAxis(2))))
 reference_third = np.column_stack(reference_third)
 
 ###########################
 # Create Odometry Output #
-odometry_third  = sig.filtfilt(filters['butter'][0], filters['butter'][1], np.row_stack((odometry_velocity.getAxis(0), odometry_velocity.getAxis(1), odometry_velocity.getAxis(2))))
+odometry_third = sig.filtfilt(filters['butter'][0], filters['butter'][1], np.row_stack((odometry_velocity.getAxis(0), odometry_velocity.getAxis(1), odometry_velocity.getAxis(2))))
 odometry_third = np.column_stack(odometry_third)
 
 ####################
@@ -669,7 +644,7 @@ plt.show(block=False)
 # GP Multidimensional vector
 #X = np.column_stack((joints[:,0:2])) #Only two joints
 #X = np.column_stack((joints[0:dimension, :], inertia[0:dimension], orient[0:dimension]))
-X = np.column_stack((joints[0:length, :], orient[0:length]))
+X = np.column_stack((joints[0:length, :], inertia[0:length], orient[0:length]))
 
 # GP Multidimensional vector
 Y =  np.column_stack((error))
@@ -682,7 +657,7 @@ Y = np.column_stack(Y)
 #####################
 # Sparse Regression #
 #####################
-dim = 1000
+dim = 500
 Z = np.zeros(shape=(dim, X.shape[1]))
 idx = 0
 
@@ -695,10 +670,10 @@ for i in range (0, joints.shape[1]):
 
 ########################
 # Inertia Sparse Inputs #
-#for i in range (0, inertia.shape[1]):
-#    print idx
-#    Z[:,idx] = np.random.uniform(min(inertia[:,i]), max(inertia[:,i]), dim)
-#    idx = idx + 1
+for i in range (0, inertia.shape[1]):
+    print idx
+    Z[:,idx] = np.random.uniform(min(inertia[:,i]), max(inertia[:,i]), dim)
+    idx = idx + 1
 
 ########################
 # Orient Sparse Inputs #
@@ -713,7 +688,7 @@ m = GPy.models.SparseGPRegression(X, Y, kernel=ker, Z=Z)
 
 print m
 # optimize and plot
-m.optimize(messages=True, max_f_eval=1000)
+m.optimize(messages=True, max_f_eval=100)
 print(m)
 
 ##################
@@ -809,8 +784,7 @@ joints = np.column_stack((
                         ))
 ##################
 # Inertia Inputs #
-inertia = np.column_stack((imu_acc.getAxis(0), imu_acc.getAxis(1), imu_acc.getAxis(2),
-                           imu_gyro.getAxis(0), imu_gyro.getAxis(1), imu_gyro.getAxis(2)))
+inertia = np.column_stack((imu_acc.getAxis(0), imu_acc.getAxis(1), imu_acc.getAxis(2)))
 
 ######################
 # Orientation Inputs #
@@ -847,7 +821,7 @@ orient = np.delete(orient, randomvector, 0)
 orient = orient.astype('float32')
 
 # GP Multidimensional vector
-Xp = np.column_stack((joints, orient))
+Xp = np.column_stack((joints, inertia, orient))
 
 ##################
 #Reference and GP Velocity comparison X-Time
@@ -863,9 +837,9 @@ ax.plot(reference_velocity.time, xvelocity, linestyle='-.', label="Reference Vel
 variance = mean1[:,0] * mean1[:,0]
 
 xtime = np.array(odometry_velocity.time)
-xtime = np.delete(xtime, randomvector, 0)
+#xtime = np.delete(xtime, randomvector, 0)
 xvelocity = odometry_velocity.getAxis(0)
-xvelocity = np.delete(xvelocity, randomvector, 0)
+#xvelocity = np.delete(xvelocity, randomvector, 0)
 sigma = np.sqrt(variance[0:len(xvelocity)])
 
 ax.plot(xtime, xvelocity, linestyle='-.', label="Odometry Velocity", color=[0.0,0.0,1.0], lw=3)
@@ -953,8 +927,7 @@ joints = np.column_stack((
                         ))
 ##################
 # Inertia Inputs #
-inertia = np.column_stack((imu_acc.getAxis(0), imu_acc.getAxis(1), imu_acc.getAxis(2),
-                           imu_gyro.getAxis(0), imu_gyro.getAxis(1), imu_gyro.getAxis(2)))
+inertia = np.column_stack((imu_acc.getAxis(0), imu_acc.getAxis(1), imu_acc.getAxis(2)))
 
 ######################
 # Orientation Inputs #
@@ -963,35 +936,35 @@ orient = np.column_stack((imu_orient.getEuler(2), imu_orient.getEuler(1)))
 
 ###################################################################
 # Create the random vector for sub sampling the whole data values #
-percentage = 2.0
-dimension = min (len(odometry_velocity.time), len(reference_velocity.time))
+#percentage = 2.0
+#dimension = min (len(odometry_velocity.time), len(reference_velocity.time))
+#
+#randomvector = np.array([])
+#for i in range(0, int(percentage * dimension)):
+#    randomvector = np.append(randomvector, np.random.randint(0, dimension))
+#
+#randomvector = sorted(randomvector)
+#randomvector = np.unique(randomvector)
+#vectoridx = np.setdiff1d(xrange(dimension), randomvector)
+#
+#print('Vector length for GP Data is: ', len(vectoridx))
+#
+#vectoridx = np.row_stack((vectoridx))
 
-randomvector = np.array([])
-for i in range(0, int(percentage * dimension)):
-    randomvector = np.append(randomvector, np.random.randint(0, dimension))
-
-randomvector = sorted(randomvector)
-randomvector = np.unique(randomvector)
-vectoridx = np.setdiff1d(xrange(dimension), randomvector)
-
-print('Vector length for GP Data is: ', len(vectoridx))
-
-vectoridx = np.row_stack((vectoridx))
-
-# Sub sampling the joints inputs #
-joints = np.delete(joints, randomvector, 0)
-joints = joints.astype('float32')
-
-# Sub sampling the inertia #
-inertia = np.delete(inertia, randomvector, 0)
-inertia = inertia.astype('float32')
-
-# Sub sampling the orientation #
-orient = np.delete(orient, randomvector, 0)
-orient = orient.astype('float32')
+## Sub sampling the joints inputs #
+#joints = np.delete(joints, randomvector, 0)
+#joints = joints.astype('float32')
+#
+## Sub sampling the inertia #
+#inertia = np.delete(inertia, randomvector, 0)
+#inertia = inertia.astype('float32')
+#
+## Sub sampling the orientation #
+#orient = np.delete(orient, randomvector, 0)
+#orient = orient.astype('float32')
 
 # GP Multidimensional vector
-Xp = np.column_stack((joints, orient))
+Xp = np.column_stack((joints, inertia, orient))
 
 ##################
 #Reference and GP Velocity comparison X-Time
@@ -1007,9 +980,9 @@ ax.plot(reference_velocity.time, xvelocity, linestyle='-.', label="Reference Vel
 variance = mean2[:,0] * mean2[:,0]
 
 xtime = np.array(odometry_velocity.time)
-xtime = np.delete(xtime, randomvector, 0)
+#xtime = np.delete(xtime, randomvector, 0)
 xvelocity = odometry_velocity.getAxis(0)
-xvelocity = np.delete(xvelocity, randomvector, 0)
+#xvelocity = np.delete(xvelocity, randomvector, 0)
 sigma = np.sqrt(variance[0:len(xvelocity)])
 
 ax.plot(xtime, xvelocity, linestyle='-.', label="Odometry Velocity", color=[0.0,0.0,1.0], lw=3)
@@ -1026,4 +999,13 @@ plt.ylabel(r'Velocity [$m/s$]', fontsize=35, fontweight='bold')
 plt.grid(True)
 ax.legend(loc=1, prop={'size':30})
 plt.show(block=False)
+
+
+####################################################################################################################################################################################
+# SAVE WORKSPACE
+####################################################################################################################################################################################
+
+data.save_object(m, r'./data/gaussian_processes/gpy_uncertainty_model.out')
+otro = data.open_object('./data/gpy_model.out')
+
 

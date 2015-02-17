@@ -5,6 +5,16 @@ from pylab import *
 import numpy as np
 import matplotlib.pyplot as plt
 import quaternion as quat
+import pickle
+
+
+def save_object(obj, filename):
+    with open(filename, 'wb') as output:
+        pickle.dump(obj, output, pickle.HIGHEST_PROTOCOL)
+
+def open_object(filename):
+    with open(filename, 'rb') as input:
+        return pickle.load(input)
 
 def func(x):
     return (x-3)*(x-5)*(x-7)+85
