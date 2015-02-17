@@ -203,7 +203,7 @@ Y = np.column_stack(Y)
 #####################
 # Sparse Regression #
 #####################
-dim = 500
+dim = 1000
 Z = np.zeros(shape=(dim, X.shape[1]))
 idx = 0
 
@@ -244,29 +244,6 @@ print m
 # optimize and plot
 m.optimize(messages=True, max_f_eval=1000)
 print(m)
-
-##################
-## PLOT VALUES ##
-##################
-
-#Reference and GP Velocity comparison X-Time
-matplotlib.rcParams.update({'font.size': 30, 'font.weight': 'bold'})
-fig = plt.figure(1)
-ax = fig.add_subplot(111)
-
-plt.rc('text', usetex=False)# activate latex text rendering
-xvelocity = error[:,0]
-ax.plot(xvelocity, marker='o', linestyle='-.', label="Reference Velocity", color=[0.3,0.2,0.4], lw=2)
-
-[mean1, var1] = m.predict(X, full_cov=True)
-xvelocity = mean1[:,0]
-ax.plot(xvelocity, marker='o', linestyle='-.', label="GP Velocity", color=[0,0.5,1.0], lw=2)
-
-plt.xlabel(r'X [$m$]', fontsize=35, fontweight='bold')
-plt.ylabel(r'Y [$m$]', fontsize=35, fontweight='bold')
-plt.grid(True)
-ax.legend(loc=1, prop={'size':30})
-plt.show(block=False)
 
 
 ######################################################################################################################################################################################################
@@ -431,7 +408,7 @@ Y = np.column_stack(Y)
 #####################
 # Sparse Regression #
 #####################
-dim = 500
+dim = 1000
 Z = np.zeros(shape=(dim, X.shape[1]))
 idx = 0
 
@@ -461,31 +438,8 @@ m = GPy.models.SparseGPRegression(X, Y, kernel=ker, Z=Z)
 
 print m
 # optimize and plot
-m.optimize(messages=True, max_f_eval=100)
+m.optimize(messages=True, max_f_eval=500)
 print(m)
-
-##################
-## PLOT VALUES ##
-##################
-
-#Reference and GP Velocity comparison X-Time
-matplotlib.rcParams.update({'font.size': 30, 'font.weight': 'bold'})
-fig = plt.figure(1)
-ax = fig.add_subplot(111)
-
-plt.rc('text', usetex=False)# activate latex text rendering
-xvelocity = error[:,0]
-ax.plot(xvelocity, marker='o', linestyle='-.', label="Reference Velocity", color=[0.3,0.2,0.4], lw=2)
-
-[mean1, var1] = m.predict(X, full_cov=True)
-xvelocity = mean1[:,0]
-ax.plot(xvelocity, marker='o', linestyle='-.', label="GP Velocity", color=[0,0.5,1.0], lw=2)
-
-plt.xlabel(r'X [$m$]', fontsize=35, fontweight='bold')
-plt.ylabel(r'Y [$m$]', fontsize=35, fontweight='bold')
-plt.grid(True)
-ax.legend(loc=1, prop={'size':30})
-plt.show(block=False)
 
 
 ######################################################################################################################################################################################################
@@ -657,7 +611,7 @@ Y = np.column_stack(Y)
 #####################
 # Sparse Regression #
 #####################
-dim = 500
+dim = 1000
 Z = np.zeros(shape=(dim, X.shape[1]))
 idx = 0
 
@@ -688,31 +642,8 @@ m = GPy.models.SparseGPRegression(X, Y, kernel=ker, Z=Z)
 
 print m
 # optimize and plot
-m.optimize(messages=True, max_f_eval=100)
+m.optimize(messages=True, max_f_eval=500)
 print(m)
-
-##################
-## PLOT VALUES ##
-##################
-
-#Reference and GP Velocity comparison X-Time
-matplotlib.rcParams.update({'font.size': 30, 'font.weight': 'bold'})
-fig = plt.figure(1)
-ax = fig.add_subplot(111)
-
-plt.rc('text', usetex=False)# activate latex text rendering
-xvelocity = error[:,0]
-ax.plot(xvelocity, marker='o', linestyle='-.', label="Reference Velocity", color=[0.3,0.2,0.4], lw=2)
-
-[mean1, var1] = m.predict(X, full_cov=True)
-xvelocity = mean1[:,0]
-ax.plot(xvelocity, marker='o', linestyle='-.', label="GP Velocity", color=[0,0.5,1.0], lw=2)
-
-plt.xlabel(r'X [$m$]', fontsize=35, fontweight='bold')
-plt.ylabel(r'Y [$m$]', fontsize=35, fontweight='bold')
-plt.grid(True)
-ax.legend(loc=1, prop={'size':30})
-plt.show(block=False)
 
 
 ####################################################################################################################################################################################
@@ -1005,7 +936,7 @@ plt.show(block=False)
 # SAVE WORKSPACE
 ####################################################################################################################################################################################
 
-data.save_object(m, r'./data/gaussian_processes/gpy_uncertainty_model.out')
-otro = data.open_object('./data/gpy_model.out')
+#data.save_object(m, r'./data/gaussian_processes/gpy_uncertainty_model_1000_sparse_regression.out')
+#otro = data.open_object('./data/gpy_model.out')
 
 
