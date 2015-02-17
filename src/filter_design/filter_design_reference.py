@@ -99,10 +99,10 @@ sample_rate = 1.0/delta_t
 nyq_rate = sample_rate / 2.
 
 # The cutoff frequency of the filter (in Hz)
-cutoff_hz = 0.3
+cutoff_hz = 66
 
 # Length of the filter (number of coefficients, i.e. the filter order + 1)
-numtaps = 8
+numtaps = 4
 
 ###################
 ### IIR FILTER  ###
