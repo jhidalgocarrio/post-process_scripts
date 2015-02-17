@@ -141,7 +141,7 @@ class Joints:
         for i in range(0, len(self.position)):
             position_array = np.append(position_array, self.position[i][jointidx])
 
-        return position_array
+        return position_array.astype('float32')
 
     def getSpeed(self, jointname = None):
 
@@ -156,7 +156,7 @@ class Joints:
         for i in range(0, len(self.speed)):
             speed_array = np.append(speed_array, self.speed[i][jointidx])
 
-        return speed_array
+        return speed_array.astype('float32')
 
     def getEffort(self, jointname = None):
 
@@ -171,5 +171,5 @@ class Joints:
         for i in range(0, len(self.effort)):
             effort_array = np.append(effort_array, self.effort[i][jointidx])
 
-        return effort_array
+        return effort_array.astype('float32')
 
