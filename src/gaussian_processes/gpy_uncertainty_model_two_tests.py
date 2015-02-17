@@ -95,7 +95,8 @@ np.random.seed(1)
 
 #################
 # Joints Inputs #
-joints_first = np.column_stack((
+joints_first = sig.filtfilt(filters['butter'][0], filters['butter'][1],
+                        np.row_stack((
                         robot_joints.getSpeed("fl_translation"),
                         robot_joints.getSpeed("fr_translation"),
                         robot_joints.getSpeed("ml_translation"),
@@ -110,6 +111,9 @@ joints_first = np.column_stack((
                         robot_joints.getPosition("right_passive"),
                         robot_joints.getPosition("rear_passive")
                         ))
+                        )
+joints_first = np.column_stack(joints_first)
+
 ##################
 # Inertia Inputs #
 inertia_first = sig.filtfilt(filters['butter'][0], filters['butter'][1], np.row_stack((imu_acc.getAxis(0), imu_acc.getAxis(1), imu_acc.getAxis(2),
@@ -233,7 +237,8 @@ for i in range (0, orient.shape[1]):
 # want one lengthscale parameter per dimension (ie the GP is not isotropic).
 ker_rbf = GPy.kern.RBF(input_dim = X.shape[1], ARD=False)
 ker_white = GPy.kern.White(input_dim = X.shape[1])
-ker = ker_rbf# + ker_white
+ker_matern = GPy.kern.Matern52(input_dim=1, variance=1., lengthscale=1.)
+ker = ker_matern
 
 # create simple GP model
 m = GPy.models.SparseGPRegression(X, Y, kernel=ker, Z=Z)
@@ -321,7 +326,8 @@ robot_joints.readData(joints_position_file, joints_speed_file)
 #######################################
 # Form the New Inputs to predict
 # Joints Inputs #
-joints_second = np.column_stack((
+joints_second = sig.filtfilt(filters['butter'][0], filters['butter'][1],
+                        np.row_stack((
                         robot_joints.getSpeed("fl_translation"),
                         robot_joints.getSpeed("fr_translation"),
                         robot_joints.getSpeed("ml_translation"),
@@ -336,6 +342,9 @@ joints_second = np.column_stack((
                         robot_joints.getPosition("right_passive"),
                         robot_joints.getPosition("rear_passive")
                         ))
+                        )
+joints_second = np.column_stack(joints_second)
+
 ##################
 # Inertia Inputs #
 inertia_second = sig.filtfilt(filters['butter'][0], filters['butter'][1], np.row_stack((imu_acc.getAxis(0), imu_acc.getAxis(1), imu_acc.getAxis(2),
@@ -562,7 +571,8 @@ np.random.seed(1)
 
 #################
 # Joints Inputs #
-joints_third = np.column_stack((
+joints_third = sig.filtfilt(filters['butter'][0], filters['butter'][1],
+                        np.row_stack((
                         robot_joints.getSpeed("fl_translation"),
                         robot_joints.getSpeed("fr_translation"),
                         robot_joints.getSpeed("ml_translation"),
@@ -577,6 +587,9 @@ joints_third = np.column_stack((
                         robot_joints.getPosition("right_passive"),
                         robot_joints.getPosition("rear_passive")
                         ))
+                        )
+joints_third = np.column_stack(joints_third)
+
 ##################
 # Inertia Inputs #
 inertia_third = sig.filtfilt(filters['butter'][0], filters['butter'][1], np.row_stack((imu_acc.getAxis(0), imu_acc.getAxis(1), imu_acc.getAxis(2),
@@ -834,7 +847,7 @@ orient = np.delete(orient, randomvector, 0)
 orient = orient.astype('float32')
 
 # GP Multidimensional vector
-Xp = np.column_stack((joints, inertia, orient))
+Xp = np.column_stack((joints, orient))
 
 ##################
 #Reference and GP Velocity comparison X-Time
@@ -978,7 +991,7 @@ orient = np.delete(orient, randomvector, 0)
 orient = orient.astype('float32')
 
 # GP Multidimensional vector
-Xp = np.column_stack((joints, inertia, orient))
+Xp = np.column_stack((joints, orient))
 
 ##################
 #Reference and GP Velocity comparison X-Time
