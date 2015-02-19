@@ -53,12 +53,23 @@ class ThreeData:
             tbody = float(atime[i+1]) - float(atime[0])
             self.time.append(tbody)
 
+        self.delta.append(self.delta[len(self.delta)-1])
         self.t = mean(self.delta) * np.r_[0:len(self.atime)]
+
+        # Convert to np array
+        self.atime = np.asarray(self.atime)
+        self.time = np.asarray(self.time)
+        self.delta = np.asarray(self.delta)
+        self.t = np.asarray(self.t)
+        self.data = np.asarray(self.data)
+        self.cov = np.asarray(self.cov)
 	
     def eigenValues(self):
         #Eigen values are the axis of the ellipsoid
         for i in range(0,len(self.cov)):
             self.var.append(linalg.eigvals(self.cov[i]))
+
+        self.var = np.asarray(self.var)
 
     def plot_axis(self, fign=1, axis=0, cov=False, levelconf=1, grid=False, linecolor=[1,0,0]):
 	
@@ -176,6 +187,21 @@ class ThreeData:
 
         return sdmin
 
+    def delete(self, index_to_remove):
+        """Delete internal data from the index specified in temindex """
+
+        indexes = np.setdiff1d(xrange(len(self.data)), index_to_remove)
+
+        self.atime = self.atime[indexes]
+        self.time = self.time[indexes]
+        self.delta = self.delta[indexes]
+        self.t = self.t[indexes]
+        self.data = self.data[indexes]
+        if len(self.cov) > 0:
+            self.cov = self.cov[indexes]
+        if len(self.var) > 0:
+            self.var = self.var[indexes]
+
 class QuaternionData:
 
     def __init__(self):
@@ -213,13 +239,21 @@ class QuaternionData:
             tbody = float(atime[i+1]) - float(atime[0])
             self.time.append(tbody)
 
-
+        self.delta.append(self.delta[len(self.delta)-1])
         self.t = mean(self.delta) * r_[0:len(self.atime)]
 	
+        # Convert to np array
+        self.atime = np.asarray(self.atime)
+        self.time = np.asarray(self.time)
+        self.delta = np.asarray(self.delta)
+        self.t = np.asarray(self.t)
+        self.cov = np.asarray(self.cov)
+
     def eigenValues(self):
         #Eigen values are the axis of the ellipsoid
         for i in range(0,len(self.cov)):
 	        self.var.append(linalg.eigvals(self.cov[i]))
+        self.var = np.asarray(self.var)
 
     def plot_euler(self, fign=1, axis=0, cov=False, levelconf=1, grid=False, linecolor=[1,0,0]):
 	
@@ -286,6 +320,31 @@ class QuaternionData:
 
         return sdmin
 
+    def delete(self, index_to_remove):
+        """Delete internal data from the index specified in temindex """
+
+        indexes = np.setdiff1d(xrange(len(self.data)), index_to_remove)
+
+        self.atime = self.atime[indexes]
+        self.time = self.time[indexes]
+        self.delta = self.delta[indexes]
+        self.t = self.t[indexes]
+
+        #convert quaternion to array and remove outliers
+        dataq = np.asarray(self.data)
+        dataq = dataq[indexes]
+
+        #Get back to list of quaternions
+        self.data = []
+        for q in dataq:
+            self.data.append(quat.quaternion([float(q[0]), float(q[1]), float(q[2]), float(q[3])]))
+
+        if len(self.cov) > 0:
+            self.cov = self.cov[indexes]
+        if len(self.var) > 0:
+            self.var = self.var[indexes]
+
+
 
 class OneData:
 
@@ -317,7 +376,18 @@ class OneData:
             tbody = float(time[i+1]) - float(time[i])
             self.delta.append(tbody)
 
+        self.delta.append(self.delta[len(self.delta)-1])
         self.t = mean(self.delta) * r_[0:len(self.time)]
+
+        # Convert to np array
+        self.atime = np.asarray(self.atime)
+        self.time = np.asarray(self.time)
+        self.delta = np.asarray(self.delta)
+        self.t = np.asarray(self.t)
+        self.data = np.asarray(self.data)
+        self.cov = np.asarray(self.cov)
+        self.var = np.asarray(self.var)
+
 	
     def plot_axis(self, fign=1, axis=0, cov=False, levelconf=1, grid=False, linecolor=[1,0,0]):
 	
@@ -343,4 +413,20 @@ class OneData:
             plt.grid(True)
 
         plt.show(block=False)
+
+    def delete(self, index_to_remove):
+        """Delete internal data from the index specified in temindex """
+
+        indexes = np.setdiff1d(xrange(len(self.data)), index_to_remove)
+
+        self.atime = self.atime[indexes]
+        self.time = self.time[indexes]
+        self.delta = self.delta[indexes]
+        self.t = self.t[indexes]
+        self.data = self.data[indexes]
+        if len(self.cov) > 0:
+            self.cov = self.cov[indexes]
+        if len(self.var) > 0:
+            self.var = self.var[indexes]
+
 

@@ -1,19 +1,24 @@
 #!/usr/bin/env python
 
+path = '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141024-2138/'
 #######################################
-joints_position_file = '/home/javi/exoter/development/post-process_data/20141023_pink_test/20141023-2011/joints_position.0.data'
+joints_position_file = path + 'joints_position.0.data'
 
-joints_speed_file = '/home/javi/exoter/development/post-process_data/20141023_pink_test/20141023-2011/joints_speed.0.data'
+joints_speed_file = path + 'joints_speed.0.data'
 
-pose_ref_velocity_file =  '/home/javi/exoter/development/post-process_data/20141023_pink_test/20141023-2011/pose_ref_velocity.0.data'
+delta_pose_ref_position_file =  path + 'delta_pose_ref_position.0.data'
 
-pose_odo_velocity_file =  '/home/javi/exoter/development/post-process_data/20141023_pink_test/20141023-2011/pose_odo_velocity.0.data'
+delta_pose_ref_velocity_file =  path + 'delta_pose_ref_velocity.0.data'
 
-pose_imu_orientation_file =  '/home/javi/exoter/development/post-process_data/20141023_pink_test/20141023-2011/pose_imu_orientation.0.data'
+delta_pose_odo_position_file =  path + 'delta_pose_odo_position.0.data'
 
-pose_imu_angular_velocity_file =  '/home/javi/exoter/development/post-process_data/20141023_pink_test/20141023-2011/pose_imu_angular_velocity.0.data'
+delta_pose_odo_velocity_file =  path + 'delta_pose_odo_velocity.0.data'
 
-pose_imu_acceleration_file =  '/home/javi/exoter/development/post-process_data/20141023_pink_test/20141023-2011/pose_imu_acceleration.0.data'
+pose_imu_orientation_file =  path + 'pose_imu_orientation.0.data'
+
+pose_imu_angular_velocity_file =  path + 'pose_imu_angular_velocity.0.data'
+
+pose_imu_acceleration_file =  path + 'pose_imu_acceleration.0.data'
 #######################################
 
 import sys
@@ -31,36 +36,50 @@ from scipy import integrate
 from scipy.signal import filter_design as fd
 import scipy.signal as sig
 
+
 # Reference Robot Velocity
 reference_velocity = data.ThreeData()
-reference_velocity.readData(pose_ref_velocity_file, cov=True)
-reference_velocity.eigenValues()
+reference_velocity.readData(delta_pose_ref_velocity_file, cov=True)
+#reference_velocity.eigenValues()
 
 # Odometry Robot Velocity
 odometry_velocity = data.ThreeData()
-odometry_velocity.readData(pose_odo_velocity_file, cov=True)
-odometry_velocity.eigenValues()
+odometry_velocity.readData(delta_pose_odo_velocity_file, cov=True)
+#odometry_velocity.eigenValues()
 
 # IMU orientation
 imu_orient = data.QuaternionData()
 imu_orient.readData(pose_imu_orientation_file, cov=True)
-imu_orient.eigenValues()
+#imu_orient.eigenValues()
 
 # IMU acceleration
 imu_acc = data.ThreeData()
 imu_acc.readData(pose_imu_acceleration_file, cov=False)
-imu_acc.eigenValues()
+#imu_acc.eigenValues()
 
 # IMU Angular Velocity
 imu_gyro = data.ThreeData()
 imu_gyro.readData(pose_imu_angular_velocity_file, cov=False)
-imu_gyro.eigenValues()
+#imu_gyro.eigenValues()
 
 # Robot Joints Position and Speed
 names = "left_passive", "fl_mimic", "fl_walking", "fl_steer", "fl_drive", "fl_contact", "fl_translation", "fl_slipx", "fl_slipy", "fl_slipz", "ml_mimic", "ml_walking", "ml_drive", "ml_contact", "ml_translation", "ml_slipx", "ml_slipy", "ml_slipz", "rear_passive", "rl_mimic", "rl_walking", "rl_steer", "rl_drive", "rl_contact", "rl_translation", "rl_slipx", "rl_slipy", "rl_slipz", "rr_mimic", "rr_walking", "rr_steer", "rr_drive", "rr_contact", "rr_translation", "rr_slipx", "rr_slipy", "rr_slipz", "right_passive", "fr_mimic", "fr_walking", "fr_steer", "fr_drive", "fr_contact", "fr_translation", "fr_slipx", "fr_slipy", "fr_slipz", "mr_mimic", "mr_walking", "mr_drive", "mr_contact", "mr_translation", "mr_slipx", "mr_slipy", "mr_slipz"
 
 robot_joints = js.Joints(names)
 robot_joints.readData(joints_position_file, joints_speed_file)
+
+########################
+### REMOVE OUTLIERS  ###
+########################
+temindex = np.where(np.isnan(reference_velocity.data[:,0]))
+temindex = np.asarray(temindex)
+
+reference_velocity.delete(temindex)
+odometry_velocity.delete(temindex)
+imu_orient.delete(temindex)
+imu_gyro.delete(temindex)
+imu_acc.delete(temindex)
+robot_joints.delete(temindex)
 
 ###################
 ### IIR FILTER  ###

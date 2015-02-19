@@ -106,7 +106,18 @@ class Joints:
             self.delta.append(tbody)
             tbody = float(atime[i+1]) - float(atime[0])
             self.time.append(tbody)
+
+        self.delta.append(self.delta[len(self.delta)-1])
         self.t = mean(self.delta) * r_[0:len(self.atime)]
+
+        # Convert to np array
+        self.atime = np.asarray(self.atime)
+        self.time = np.asarray(self.time)
+        self.delta = np.asarray(self.delta)
+        self.t = np.asarray(self.t)
+        self.position = np.asarray(self.position)
+        self.speed = np.asarray(self.speed)
+        self.effort = np.asarray(self.effort)
 
     def getJoint(self, jointname = None):
 
@@ -172,4 +183,19 @@ class Joints:
             effort_array = np.append(effort_array, self.effort[i][jointidx])
 
         return effort_array.astype('float32')
+
+    def delete(self, index_to_remove):
+        """Delete internal data from the index specified in temindex """
+
+        indexes = np.setdiff1d(xrange(len(self.time)), index_to_remove)
+
+        self.atime = self.atime[indexes]
+        self.time = self.time[indexes]
+        self.delta = self.delta[indexes]
+        self.t = self.t[indexes]
+        self.position = self.position[indexes]
+        self.speed = self.speed[indexes]
+        if len(self.effort) > 0:
+            self.effort = self.effort[indexes]
+
 
