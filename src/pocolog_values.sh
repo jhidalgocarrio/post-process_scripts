@@ -40,6 +40,11 @@ if [ $# -ge $NUM_ARGUMENTS ]; then
     pocolog ${args[0]}/exoter_perception.0.log -s /localization_frontend.inertial_samples_out --field time,acc > pose_imu_acceleration.0.data
     echo 'Attitude Samples... [DONE]'
 
+
+    # Remove first to lines of the files (pocolog headers)
+    sed -i '1,2d' *.data
+    echo 'Remove file headers... [DONE]'
+
 else
     echo Number of arguments passed: $#
     echo "You need to specify the path to the log-folder"
