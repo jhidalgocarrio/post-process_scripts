@@ -1,41 +1,11 @@
 #!/usr/bin/env python
 
+path = '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141024-2138/'
 
 ##################################
-#path_imu_orient_file = '/home/jhidalgocarrio/exoter/development/post-process_data/20140422_stim300_vs_vicon/20140422-1505/stim300_filter_33bnw_16bnw_125hz.data'
-#path_imu_orient_file = '/home/jhidalgocarrio/exoter/development/post-process_data/20140422_stim300_vs_vicon/20140422-1539/stim300_filter_33bnw_16bnw_125hz.data'
-#path_imu_orient_file = '/home/jhidalgocarrio/exoter/development/post-process_data/20140422_stim300_vs_vicon/20140423-1923/stim300_filter_33bnw_16bnw_125hz.data'
-#path_imu_orient_file = '/home/jhidalgocarrio/exoter/development/post-process_data/20140422_stim300_vs_vicon/20140423-1942/stim300_filter_33bnw_16bnw_125hz.data'
-#path_imu_orient_file = '/home/jhidalgocarrio/exoter/development/post-process_data/20140422_stim300_vs_vicon/20140425-1923/stim300_filter_33bnw_16bnw_125hz.data'
-#path_imu_orient_file = '/home/jhidalgocarrio/exoter/development/post-process_data/20140422_stim300_vs_vicon/20140429-1429/stim300_filter_33bnw_16bnw_125hz.data'
+pose_imu_orient_file = path + 'pose_imu_orientation.0.data'
 
-# Time stamp tests
-#path_imu_orient_file = '/home/jhidalgocarrio/exoter/development/post-process_data/20140502_vicon_timestamp/20140502-1958/stim300_filter_33bnw_16bnw_125hz.data'
-#path_imu_orient_file = '/home/jhidalgocarrio/exoter/development/post-process_data/20140502_vicon_timestamp/20140502-2009/stim300_filter_33bnw_16bnw_125hz.data'
-#path_imu_orient_file = '/home/jhidalgocarrio/exoter/development/post-process_data/20140502_vicon_timestamp/20140502-2012/stim300_filter_33bnw_16bnw_125hz.data'
-#path_imu_orient_file = '/home/jhidalgocarrio/exoter/development/post-process_data/20140502_vicon_timestamp/20140502-2015/stim300_filter_33bnw_16bnw_125hz.data'
-#path_imu_orient_file = '/home/jhidalgocarrio/exoter/experiments/20140600_pink_odometry/20140605-1731/data/stim300_attitude.data'
-
-#path_imu_orient_file = '/home/jhidalgocarrio/exoter/development/post-process_data/20140723_pink_odometry/20140723-1845/pose_odo_orientation.0.data'
-path_imu_orient_file = '/home/jhidalgocarrio/exoter/development/post-process_data/20140911_decos_field/20140911-1805/pose_imu_orientation.0.data'
-
-#path_reference_orient_file = '/home/jhidalgocarrio/exoter/development/post-process_data/20140422_stim300_vs_vicon/20140422-1505/vicon_processing_100hz.data'
-#path_reference_orient_file = '/home/jhidalgocarrio/exoter/development/post-process_data/20140422_stim300_vs_vicon/20140422-1539/vicon_processing_100hz.data'
-#path_reference_orient_file = '/home/jhidalgocarrio/exoter/development/post-process_data/20140422_stim300_vs_vicon/20140423-1923/vicon_processing_100hz.data'
-#path_reference_orient_file = '/home/jhidalgocarrio/exoter/development/post-process_data/20140422_stim300_vs_vicon/20140423-1942/vicon_processing_100hz.data'
-#path_reference_orient_file = '/home/jhidalgocarrio/exoter/development/post-process_data/20140422_stim300_vs_vicon/20140425-1923/vicon_processing_100hz.data'
-#path_reference_orient_file = '/home/jhidalgocarrio/exoter/development/post-process_data/20140422_stim300_vs_vicon/20140429-1429/vicon_processing_100hz.data'
-
-# Time stamp tests
-#path_reference_orient_file = '/home/jhidalgocarrio/exoter/development/post-process_data/20140502_vicon_timestamp/20140502-1958/vicon_processing_100hz_with_timestamp.data'
-#path_reference_orient_file = '/home/jhidalgocarrio/exoter/development/post-process_data/20140502_vicon_timestamp/20140502-2009/vicon_processing_100hz_without_timestamp.data'
-#path_reference_orient_file = '/home/jhidalgocarrio/exoter/development/post-process_data/20140502_vicon_timestamp/20140502-2012/vicon_processing_100hz_without_timestamp_wifi.data'
-#path_reference_orient_file = '/home/jhidalgocarrio/exoter/development/post-process_data/20140502_vicon_timestamp/20140502-2015/vicon_processing_100hz_with_timestamp_wifi.data'
-#path_reference_orient_file = '/home/jhidalgocarrio/exoter/experiments/20140600_pink_odometry/20140605-1731/data/vicon_attitude.data'
-
-path_reference_orient_file = '/home/jhidalgocarrio/exoter/development/post-process_data/20140723_pink_odometry/20140723-1845/pose_ref_orientation.0.data'
-path_reference_orient_file = '/home/jhidalgocarrio/exoter/development/post-process_data/20140911_decos_field/20140911-1805/pose_ref_orientation.0.data'
-
+pose_ref_orient_file = path + 'pose_ref_orientation.0.data'
 ##################################
 
 import sys
@@ -48,29 +18,48 @@ import quaternion as quat
 import datadisplay as data
 
 # Read the imu orientation information
-imuOrient = data.QuaternionData()
-imuOrient.readData(path_imu_orient_file, cov=True)
-imuOrient.eigenValues()
+imu_orient = data.QuaternionData()
+imu_orient.readData(pose_imu_orient_file, cov=True)
+
 # Read the vicon orientation information
-viconOrient = data.QuaternionData()
-viconOrient.readData(path_reference_orient_file, cov=True)
-viconOrient.eigenValues()
+reference_orient = data.QuaternionData()
+reference_orient.readData(pose_ref_orient_file, cov=True)
+
+########################
+### REMOVE OUTLIERS  ###
+########################
+temindex = np.where(np.isnan(reference_orient.cov[:,0,0]))
+temindex = np.asarray(temindex)
+
+imu_orient.delete(temindex)
+reference_orient.delete(temindex)
+
+################################
+### COMPUTE COV EIGENVALUES  ###
+################################
+imu_orient.eigenValues()
+reference_orient.eigenValues()
+
 
 #Plotting Orientation values
-plt.figure(1)
-time = imuOrient.t
-euler = []
-euler.append(imuOrient.getEuler(2))# Roll
-euler.append(imuOrient.getEuler(1))# Pitch
-euler.append(imuOrient.getEuler(0))# Yaw
+matplotlib.rcParams.update({'font.size': 30, 'font.weight': 'bold'})
+fig = plt.figure(1)
+ax = fig.add_subplot(111)
+plt.rc('text', usetex=False)# activate latex text rendering
 
-euler[2] = euler[2] - euler[2][0] # set yaw staring at zero
+time = imu_orient.t
+euler = []
+euler.append(imu_orient.getEuler(2))# Roll
+euler.append(imu_orient.getEuler(1))# Pitch
+euler.append(imu_orient.getEuler(0))# Yaw
+
+#euler[2] = euler[2] - euler[2][0] # set yaw staring at zero
 
 euler[0][:] = [x * 180.00/math.pi for x in euler[0] ]#convert to degrees
 euler[1][:] = [x * 180.00/math.pi for x in euler[1] ]#convert to degrees
 euler[2][:] = [x * 180.00/math.pi for x in euler[2] ]#convert to degrees
 
-axis = 1
+axis = 2
 if axis == 0:
     label_text = "IMU Roll"
     color_value = [1.0,0,0]
@@ -81,28 +70,26 @@ else:
     label_text = "IMU Yaw"
     color_value = [0.0,0.0,1.0]
 
-plt.plot(time, euler[axis], marker='.', label=label_text, color=color_value, alpha=0.5, lw=2)
+# IMU Orientation
+sigma = imu_orient.getStd(axis=axis, levelconf = 3)
+ax.plot(time, euler[axis], marker='.', label=label_text, color=color_value, alpha=0.5, lw=2)
+ax.fill(np.concatenate([time, time[::-1]]),
+        np.concatenate([euler[axis] - sigma,
+                       (euler[axis] + sigma)[::-1]]),
+        alpha=.5, fc='b', ec='None', label='95% confidence interval')
 
-# Orientation Std
-stdeulerpos=[];
-for i in range(0,len(time)):
-    stdeulerpos.append(euler[axis][i] + np.nan_to_num(imuOrient.getStd(axis=0, levelconf=3)[i]))
-
-stdeulerneg=[];
-for i in range(0,len(time)):
-    stdeulerneg.append(euler[axis][i] - np.nan_to_num(imuOrient.getStd(axis=0, levelconf=3)[i]))
-
-plt.plot(time, stdeulerpos, marker='.', color="grey", alpha=1.0, lw=1)
-plt.plot(time, stdeulerneg, marker='.', color="grey", alpha=1.0, lw=1)
+ax.plot(time, (euler[axis] - sigma), color="black", alpha=1.0, lw=1.0)
+ax.plot(time, (euler[axis] + sigma), color="black", alpha=1.0, lw=1.0)
 
 
-time = viconOrient.t
+
+time = reference_orient.t
 euler = []
-euler.append(viconOrient.getEuler(2))# Roll
-euler.append(viconOrient.getEuler(1))# Pitch
-euler.append(viconOrient.getEuler(0))# Yaw
+euler.append(reference_orient.getEuler(2))# Roll
+euler.append(reference_orient.getEuler(1))# Pitch
+euler.append(reference_orient.getEuler(0))# Yaw
 
-euler[2] = euler[2] - euler[2][0] #set yaw starting at zero
+#euler[2] = euler[2] - euler[2][0] #set yaw starting at zero
 
 euler[0][:] = [x * 180.00/math.pi for x in euler[0] ]#convert to degrees
 euler[1][:] = [x * 180.00/math.pi for x in euler[1] ]#convert to degrees
@@ -118,20 +105,17 @@ else:
     label_text = "Vicon Yaw"
     color_value = [0,0.4,0.7]
 
-plt.plot(time, euler[axis], marker='.', label=label_text, color=color_value, alpha=0.5, lw=2)
+# Reference Orientation
+sigma = reference_orient.getStd(axis=axis, levelconf = 3)
+ax.plot(time, euler[axis], marker='.', label=label_text, color=color_value, alpha=0.5, lw=2)
+ax.fill(np.concatenate([time, time[::-1]]),
+        np.concatenate([euler[axis] - sigma,
+                       (euler[axis] + sigma)[::-1]]),
+        alpha=.5, fc='b', ec='None', label='95% confidence interval')
 
-# Orientation Std
-stdeulerpos=[];
-for i in range(0,len(time)):
-    stdeulerpos.append(euler[axis][i] +  np.nan_to_num(viconOrient.getStd(axis=0, levelconf=3)[i]))
+ax.plot(time, (euler[axis] - sigma), color="black", alpha=1.0, lw=1.0)
+ax.plot(time, (euler[axis] + sigma), color="black", alpha=1.0, lw=1.0)
 
-stdeulerneg=[];
-for i in range(0,len(time)):
-    stdeulerneg.append(euler[axis][i] - np.nan_to_num(viconOrient.getStd(axis=0, levelconf=3)[i]))
-
-
-plt.plot(time, stdeulerpos, marker='.', label=r'$\pm 3\sigma$', color="grey", alpha=1.0, lw=1)
-plt.plot(time, stdeulerneg, marker='.', color="grey", alpha=1.0, lw=1)
 
 
 plt.xlabel(r'Time [$s$]')
@@ -145,11 +129,11 @@ from matplotlib.collections import LineCollection
 fig = plt.figure(2)
 ax = fig.add_subplot(111)
 
-time = imuOrient.t
+time = imu_orient.t
 euler = []
-euler.append(imuOrient.getEuler(2))# Roll
-euler.append(imuOrient.getEuler(1))# Pitch
-euler.append(imuOrient.getEuler(0))# Yaw
+euler.append(imu_orient.getEuler(2))# Roll
+euler.append(imu_orient.getEuler(1))# Pitch
+euler.append(imu_orient.getEuler(0))# Yaw
 
 euler[2] = euler[2] - euler[2][0] # set yaw staring at zero
 
@@ -159,11 +143,11 @@ euler[2][:] = [x * 180.00/math.pi for x in euler[2] ]#convert to degrees
 
 ax.plot(time, euler[0], marker='.', label="IMU Roll", color=[1.0,0,0], alpha=0.5, lw=2)
 
-time = viconOrient.t
+time = reference_orient.t
 euler = []
-euler.append(viconOrient.getEuler(2))# Roll
-euler.append(viconOrient.getEuler(1))# Pitch
-euler.append(viconOrient.getEuler(0))# Yaw
+euler.append(reference_orient.getEuler(2))# Roll
+euler.append(reference_orient.getEuler(1))# Pitch
+euler.append(reference_orient.getEuler(0))# Yaw
 
 euler[2] = euler[2] - euler[2][0] #set yaw starting at zero
 
@@ -173,7 +157,7 @@ euler[2][:] = [x * 180.00/math.pi for x in euler[2] ]#convert to degrees
 
 
 #Line width
-uncer = np.nan_to_num(np.array(viconOrient.getStd(axis=0, levelconf=3))).real
+uncer = np.nan_to_num(np.array(reference_orient.getStd(axis=axis, levelconf=3))).real
 lwidths = 0.5 + 300 * uncer[:-1]
 
 
@@ -197,18 +181,18 @@ plt.show(block=False)
 
 # Time stamp statistics
 deltaimu = []
-for i in range(0,len(imuOrient.t)-1):
+for i in range(0,len(imu_orient.t)-1):
     #print time[i]
-    timu = float(imuOrient.t[i+1]) - float(imuOrient.t[i])
+    timu = float(imu_orient.t[i+1]) - float(imu_orient.t[i])
     deltaimu.append(timu)
 
 deltaimu_t = mean(deltaimu)
 
 
 deltavicon = []
-for i in range(0,len(viconOrient.t)-1):
+for i in range(0,len(reference_orient.t)-1):
     #print time[i]
-    tvicon = float(viconOrient.t[i+1]) - float(viconOrient.t[i])
+    tvicon = float(reference_orient.t[i+1]) - float(reference_orient.t[i])
     deltavicon.append(tvicon)
 
 deltavicon_t = mean(deltavicon)
@@ -220,7 +204,7 @@ from matplotlib.collections import LineCollection
 x=linspace(0,4*pi,373)
 y=cos(x)
 y=euler[0][0:373]
-temp = np.nan_to_num(np.array(viconOrient.getStd(axis=0, levelconf=3)))[:-1].real[0:373]
+temp = np.nan_to_num(np.array(reference_orient.getStd(axis=axis, levelconf=3)))[:-1].real[0:373]
 lwidths = 300 * temp[:-1]
 points = np.array([x, y]).T.reshape(-1, 1, 2)
 segments = np.concatenate([points[:-1], points[1:]], axis=1)

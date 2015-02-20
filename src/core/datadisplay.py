@@ -156,18 +156,11 @@ class ThreeData:
 
         return values
 
-    def getCov(self, axis=0):
-        values = []
-        for i in range(0,len(self.data)):
-                values.append(self.cov[i][0:axis+1, 0:axis+1])
-
-        return values
+    def getCov(self):
+        return np.array(self.cov[:,axis])
 
     def getStd(self, axis=0, levelconf=1):
-        values = []
-        for i in range(0,len(self.data)):
-            values.append((levelconf*sqrt(self.var[i][axis])))
-        return values
+        return np.array(levelconf*np.sqrt(self.var[:,axis]))
 
     def getStdMax(self, axis=0, levelconf=1):
         values = []
@@ -288,19 +281,11 @@ class QuaternionData:
 
         return values
 
-    def getCov(self, axis=0):
-        values = []
-        for i in range(0,len(self.data)):
-                values.append(self.cov[i][0:axis+1, 0:axis+1])
-
-        return values
+    def getCov(self):
+        return np.array(self.cov[:,axis])
 
     def getStd(self, axis=0, levelconf=1):
-        values = []
-        for i in range(0,len(self.data)):
-            values.append((levelconf*sqrt(self.var[i][axis])))
-
-        return values
+        return np.array(levelconf*np.sqrt(self.var[:,axis]))
 
     def getStdMax(self, axis=0, levelconf=1):
         values = []
