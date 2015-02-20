@@ -36,31 +36,33 @@ from scipy import integrate
 from scipy.signal import filter_design as fd
 import scipy.signal as sig
 
+# Reference Robot Position
+reference_position = data.ThreeData()
+reference_position.readData(delta_pose_ref_position_file, cov=True)
 
 # Reference Robot Velocity
 reference_velocity = data.ThreeData()
 reference_velocity.readData(delta_pose_ref_velocity_file, cov=True)
-#reference_velocity.eigenValues()
+
+# Odometry Robot Position
+odometry_position = data.ThreeData()
+odometry_position.readData(delta_pose_odo_position_file, cov=True)
 
 # Odometry Robot Velocity
 odometry_velocity = data.ThreeData()
 odometry_velocity.readData(delta_pose_odo_velocity_file, cov=True)
-#odometry_velocity.eigenValues()
 
 # IMU orientation
 imu_orient = data.QuaternionData()
 imu_orient.readData(pose_imu_orientation_file, cov=True)
-#imu_orient.eigenValues()
 
 # IMU acceleration
 imu_acc = data.ThreeData()
 imu_acc.readData(pose_imu_acceleration_file, cov=False)
-#imu_acc.eigenValues()
 
 # IMU Angular Velocity
 imu_gyro = data.ThreeData()
 imu_gyro.readData(pose_imu_angular_velocity_file, cov=False)
-#imu_gyro.eigenValues()
 
 # Robot Joints Position and Speed
 names = "left_passive", "fl_mimic", "fl_walking", "fl_steer", "fl_drive", "fl_contact", "fl_translation", "fl_slipx", "fl_slipy", "fl_slipz", "ml_mimic", "ml_walking", "ml_drive", "ml_contact", "ml_translation", "ml_slipx", "ml_slipy", "ml_slipz", "rear_passive", "rl_mimic", "rl_walking", "rl_steer", "rl_drive", "rl_contact", "rl_translation", "rl_slipx", "rl_slipy", "rl_slipz", "rr_mimic", "rr_walking", "rr_steer", "rr_drive", "rr_contact", "rr_translation", "rr_slipx", "rr_slipy", "rr_slipz", "right_passive", "fr_mimic", "fr_walking", "fr_steer", "fr_drive", "fr_contact", "fr_translation", "fr_slipx", "fr_slipy", "fr_slipz", "mr_mimic", "mr_walking", "mr_drive", "mr_contact", "mr_translation", "mr_slipx", "mr_slipy", "mr_slipz"
@@ -74,12 +76,25 @@ robot_joints.readData(joints_position_file, joints_speed_file)
 temindex = np.where(np.isnan(reference_velocity.data[:,0]))
 temindex = np.asarray(temindex)
 
+reference_position.delete(temindex)
 reference_velocity.delete(temindex)
+odometry_position.delete(temindex)
 odometry_velocity.delete(temindex)
 imu_orient.delete(temindex)
 imu_gyro.delete(temindex)
 imu_acc.delete(temindex)
 robot_joints.delete(temindex)
+
+################################
+### COMPUTE COV EIGENVALUES  ###
+################################
+reference_position.eigenValues()
+reference_velocity.eigenValues()
+odometry_position.eigenValues()
+odometry_velocity.eigenValues()
+imu_orient.eigenValues()
+imu_acc.eigenValues()
+imu_gyro.eigenValues()
 
 ###################
 ### IIR FILTER  ###
@@ -93,8 +108,8 @@ sample_rate = 1.0/delta_t
 nyq_rate = 0.5 * sample_rate
 
 # The cutoff frequency of the filter (in Hz)
-low_cut_hz = 1.0
-high_cut_hz = 1.0
+low_cut_hz = 0.5
+high_cut_hz = 0.5
 
 # Length of the filter (number of coefficients, i.e. the filter order + 1)
 filter_order = 8
@@ -144,12 +159,14 @@ orient_first = np.column_stack(orient_first)
 
 ###########################
 # Create Reference Output #
-reference_first  = sig.filtfilt(filters['butter'][0], filters['butter'][1], np.row_stack((reference_velocity.getAxis(0), reference_velocity.getAxis(1), reference_velocity.getAxis(2))))
+reference_first  = sig.filtfilt(filters['butter'][0], filters['butter'][1], np.row_stack((reference_position.getAxis(0), reference_position.getAxis(1), reference_position.getAxis(2))))
+#reference_first  = sig.filtfilt(filters['butter'][0], filters['butter'][1], np.row_stack((reference_velocity.getAxis(0), reference_velocity.getAxis(1), reference_velocity.getAxis(2))))
 reference_first = np.column_stack(reference_first)
 
 ###########################
 # Create Odometry Output #
-odometry_first  = sig.filtfilt(filters['butter'][0], filters['butter'][1], np.row_stack((odometry_velocity.getAxis(0), odometry_velocity.getAxis(1), odometry_velocity.getAxis(2))))
+odometry_first  = sig.filtfilt(filters['butter'][0], filters['butter'][1], np.row_stack((odometry_position.getAxis(0), odometry_position.getAxis(1), odometry_position.getAxis(2))))
+#odometry_first  = sig.filtfilt(filters['butter'][0], filters['butter'][1], np.row_stack((odometry_velocity.getAxis(0), odometry_velocity.getAxis(1), odometry_velocity.getAxis(2))))
 odometry_first = np.column_stack(odometry_first)
 
 ####################
