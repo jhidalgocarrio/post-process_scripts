@@ -3,9 +3,11 @@
 path = '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141024-2138/'
 
 ##################################
-pose_imu_orient_file = path + 'pose_imu_orientation.0.data'
+pose_odo_orient_file = path + 'pose_odo_orientation.0.data'
 
 pose_ref_orient_file = path + 'pose_ref_orientation.0.data'
+
+pose_imu_orient_file = path + 'pose_odo_orientation.0.data'
 ##################################
 
 import sys
@@ -17,13 +19,17 @@ import matplotlib.pyplot as plt
 import quaternion as quat
 import datadisplay as data
 
+# Read the odometry orientation information
+odometry_orient = data.QuaternionData()
+odometry_orient.readData(pose_odo_orient_file, cov=True)
+
+# Read the reference orientation information
+reference_orient = data.QuaternionData()
+reference_orient.readData(pose_ref_orient_file, cov=True)
+
 # Read the imu orientation information
 imu_orient = data.QuaternionData()
 imu_orient.readData(pose_imu_orient_file, cov=True)
-
-# Read the vicon orientation information
-reference_orient = data.QuaternionData()
-reference_orient.readData(pose_ref_orient_file, cov=True)
 
 ########################
 ### REMOVE OUTLIERS  ###
@@ -31,14 +37,16 @@ reference_orient.readData(pose_ref_orient_file, cov=True)
 temindex = np.where(np.isnan(reference_orient.cov[:,0,0]))
 temindex = np.asarray(temindex)
 
-imu_orient.delete(temindex)
+odometry_orient.delete(temindex)
 reference_orient.delete(temindex)
+imu_orient.delete(temindex)
 
 ################################
 ### COMPUTE COV EIGENVALUES  ###
 ################################
-imu_orient.eigenValues()
+odometry_orient.eigenValues()
 reference_orient.eigenValues()
+imu_orient.eigenValues()
 
 
 #Plotting Orientation values
@@ -59,7 +67,7 @@ euler[0][:] = [x * 180.00/math.pi for x in euler[0] ]#convert to degrees
 euler[1][:] = [x * 180.00/math.pi for x in euler[1] ]#convert to degrees
 euler[2][:] = [x * 180.00/math.pi for x in euler[2] ]#convert to degrees
 
-axis = 2
+axis = 0
 if axis == 0:
     label_text = "IMU Roll"
     color_value = [1.0,0,0]
