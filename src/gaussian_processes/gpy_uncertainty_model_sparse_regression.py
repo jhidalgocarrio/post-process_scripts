@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+#######################################
 path = '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141024-2138/'
 #######################################
 joints_position_file = path + 'joints_position.0.data'
@@ -108,8 +109,8 @@ sample_rate = 1.0/delta_t
 nyq_rate = 0.5 * sample_rate
 
 # The cutoff frequency of the filter (in Hz)
-low_cut_hz = 0.5
-high_cut_hz = 0.5
+low_cut_hz = 1.0
+high_cut_hz = 1.0
 
 # Length of the filter (number of coefficients, i.e. the filter order + 1)
 filter_order = 8
@@ -287,51 +288,88 @@ print(m)
 ######################
 ## LOAD SECOND TEST ##
 ######################
-joints_position_file = '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141025-0005/joints_position.0.data'
-
-joints_speed_file = '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141025-0005/joints_speed.0.data'
-
-pose_ref_velocity_file =  '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141025-0005/pose_ref_velocity.0.data'
-
-pose_odo_velocity_file =  '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141025-0005/pose_odo_velocity.0.data'
-
-pose_imu_orientation_file =  '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141025-0005/pose_imu_orientation.0.data'
-
-pose_imu_angular_velocity_file =  '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141025-0005/pose_imu_angular_velocity.0.data'
-
-pose_imu_acceleration_file =  '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141025-0005/pose_imu_acceleration.0.data'
 #######################################
+path = '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141024-2202/'
+#######################################
+joints_position_file = path + 'joints_position.0.data'
+
+joints_speed_file = path + 'joints_speed.0.data'
+
+delta_pose_ref_position_file =  path + 'delta_pose_ref_position.0.data'
+
+delta_pose_ref_velocity_file =  path + 'delta_pose_ref_velocity.0.data'
+
+delta_pose_odo_position_file =  path + 'delta_pose_odo_position.0.data'
+
+delta_pose_odo_velocity_file =  path + 'delta_pose_odo_velocity.0.data'
+
+pose_imu_orientation_file =  path + 'pose_imu_orientation.0.data'
+
+pose_imu_angular_velocity_file =  path + 'pose_imu_angular_velocity.0.data'
+
+pose_imu_acceleration_file =  path + 'pose_imu_acceleration.0.data'
+#######################################
+
+# Reference Robot Position
+reference_position = data.ThreeData()
+reference_position.readData(delta_pose_ref_position_file, cov=True)
 
 # Reference Robot Velocity
 reference_velocity = data.ThreeData()
-reference_velocity.readData(pose_ref_velocity_file, cov=True)
-reference_velocity.eigenValues()
+reference_velocity.readData(delta_pose_ref_velocity_file, cov=True)
+
+# Odometry Robot Position
+odometry_position = data.ThreeData()
+odometry_position.readData(delta_pose_odo_position_file, cov=True)
 
 # Odometry Robot Velocity
 odometry_velocity = data.ThreeData()
-odometry_velocity.readData(pose_odo_velocity_file, cov=True)
-odometry_velocity.eigenValues()
+odometry_velocity.readData(delta_pose_odo_velocity_file, cov=True)
 
 # IMU orientation
 imu_orient = data.QuaternionData()
 imu_orient.readData(pose_imu_orientation_file, cov=True)
-imu_orient.eigenValues()
 
 # IMU acceleration
 imu_acc = data.ThreeData()
 imu_acc.readData(pose_imu_acceleration_file, cov=False)
-imu_acc.eigenValues()
 
 # IMU Angular Velocity
 imu_gyro = data.ThreeData()
 imu_gyro.readData(pose_imu_angular_velocity_file, cov=False)
-imu_gyro.eigenValues()
 
 # Robot Joints Position and Speed
 names = "left_passive", "fl_mimic", "fl_walking", "fl_steer", "fl_drive", "fl_contact", "fl_translation", "fl_slipx", "fl_slipy", "fl_slipz", "ml_mimic", "ml_walking", "ml_drive", "ml_contact", "ml_translation", "ml_slipx", "ml_slipy", "ml_slipz", "rear_passive", "rl_mimic", "rl_walking", "rl_steer", "rl_drive", "rl_contact", "rl_translation", "rl_slipx", "rl_slipy", "rl_slipz", "rr_mimic", "rr_walking", "rr_steer", "rr_drive", "rr_contact", "rr_translation", "rr_slipx", "rr_slipy", "rr_slipz", "right_passive", "fr_mimic", "fr_walking", "fr_steer", "fr_drive", "fr_contact", "fr_translation", "fr_slipx", "fr_slipy", "fr_slipz", "mr_mimic", "mr_walking", "mr_drive", "mr_contact", "mr_translation", "mr_slipx", "mr_slipy", "mr_slipz"
 
 robot_joints = js.Joints(names)
 robot_joints.readData(joints_position_file, joints_speed_file)
+
+########################
+### REMOVE OUTLIERS  ###
+########################
+temindex = np.where(np.isnan(reference_velocity.data[:,0]))
+temindex = np.asarray(temindex)
+
+reference_position.delete(temindex)
+reference_velocity.delete(temindex)
+odometry_position.delete(temindex)
+odometry_velocity.delete(temindex)
+imu_orient.delete(temindex)
+imu_gyro.delete(temindex)
+imu_acc.delete(temindex)
+robot_joints.delete(temindex)
+
+################################
+### COMPUTE COV EIGENVALUES  ###
+################################
+reference_position.eigenValues()
+reference_velocity.eigenValues()
+odometry_position.eigenValues()
+odometry_velocity.eigenValues()
+imu_orient.eigenValues()
+imu_acc.eigenValues()
+imu_gyro.eigenValues()
+
 
 #######################################
 # Form the New Inputs to predict
@@ -366,12 +404,14 @@ orient_second = np.column_stack(orient_second)
 
 ###########################
 # Create Reference Output #
-reference_second = sig.filtfilt(filters['butter'][0], filters['butter'][1], np.row_stack((reference_velocity.getAxis(0), reference_velocity.getAxis(1), reference_velocity.getAxis(2))))
+reference_second  = sig.filtfilt(filters['butter'][0], filters['butter'][1], np.row_stack((reference_position.getAxis(0), reference_position.getAxis(1), reference_position.getAxis(2))))
+#reference_second = sig.filtfilt(filters['butter'][0], filters['butter'][1], np.row_stack((reference_velocity.getAxis(0), reference_velocity.getAxis(1), reference_velocity.getAxis(2))))
 reference_second = np.column_stack(reference_second)
 
 ###########################
 # Create Odometry Output #
-odometry_second  = sig.filtfilt(filters['butter'][0], filters['butter'][1], np.row_stack((odometry_velocity.getAxis(0), odometry_velocity.getAxis(1), odometry_velocity.getAxis(2))))
+odometry_second  = sig.filtfilt(filters['butter'][0], filters['butter'][1], np.row_stack((odometry_position.getAxis(0), odometry_position.getAxis(1), odometry_position.getAxis(2))))
+#odometry_second  = sig.filtfilt(filters['butter'][0], filters['butter'][1], np.row_stack((odometry_velocity.getAxis(0), odometry_velocity.getAxis(1), odometry_velocity.getAxis(2))))
 odometry_second = np.column_stack(odometry_second)
 
 ####################
@@ -483,53 +523,88 @@ print(m)
 ######################
 ## LOAD THIRD TEST ##
 ######################
-
 #######################################
-joints_position_file = '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141024-2202/joints_position.0.data'
-
-joints_speed_file = '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141024-2202/joints_speed.0.data'
-
-pose_ref_velocity_file =  '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141024-2202/pose_ref_velocity.0.data'
-
-pose_odo_velocity_file =  '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141024-2202/pose_odo_velocity.0.data'
-
-pose_imu_orientation_file =  '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141024-2202/pose_imu_orientation.0.data'
-
-pose_imu_angular_velocity_file =  '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141024-2202/pose_imu_angular_velocity.0.data'
-
-pose_imu_acceleration_file =  '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141024-2202/pose_imu_acceleration.0.data'
+path = '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141025-0005/'
 #######################################
+joints_position_file = path + 'joints_position.0.data'
+
+joints_speed_file = path + 'joints_speed.0.data'
+
+delta_pose_ref_position_file =  path + 'delta_pose_ref_position.0.data'
+
+delta_pose_ref_velocity_file =  path + 'delta_pose_ref_velocity.0.data'
+
+delta_pose_odo_position_file =  path + 'delta_pose_odo_position.0.data'
+
+delta_pose_odo_velocity_file =  path + 'delta_pose_odo_velocity.0.data'
+
+pose_imu_orientation_file =  path + 'pose_imu_orientation.0.data'
+
+pose_imu_angular_velocity_file =  path + 'pose_imu_angular_velocity.0.data'
+
+pose_imu_acceleration_file =  path + 'pose_imu_acceleration.0.data'
+#######################################
+
+# Reference Robot Position
+reference_position = data.ThreeData()
+reference_position.readData(delta_pose_ref_position_file, cov=True)
 
 # Reference Robot Velocity
 reference_velocity = data.ThreeData()
-reference_velocity.readData(pose_ref_velocity_file, cov=True)
-reference_velocity.eigenValues()
+reference_velocity.readData(delta_pose_ref_velocity_file, cov=True)
+
+# Odometry Robot Position
+odometry_position = data.ThreeData()
+odometry_position.readData(delta_pose_odo_position_file, cov=True)
 
 # Odometry Robot Velocity
 odometry_velocity = data.ThreeData()
-odometry_velocity.readData(pose_odo_velocity_file, cov=True)
-odometry_velocity.eigenValues()
+odometry_velocity.readData(delta_pose_odo_velocity_file, cov=True)
 
 # IMU orientation
 imu_orient = data.QuaternionData()
 imu_orient.readData(pose_imu_orientation_file, cov=True)
-imu_orient.eigenValues()
 
 # IMU acceleration
 imu_acc = data.ThreeData()
 imu_acc.readData(pose_imu_acceleration_file, cov=False)
-imu_acc.eigenValues()
 
 # IMU Angular Velocity
 imu_gyro = data.ThreeData()
 imu_gyro.readData(pose_imu_angular_velocity_file, cov=False)
-imu_gyro.eigenValues()
 
 # Robot Joints Position and Speed
 names = "left_passive", "fl_mimic", "fl_walking", "fl_steer", "fl_drive", "fl_contact", "fl_translation", "fl_slipx", "fl_slipy", "fl_slipz", "ml_mimic", "ml_walking", "ml_drive", "ml_contact", "ml_translation", "ml_slipx", "ml_slipy", "ml_slipz", "rear_passive", "rl_mimic", "rl_walking", "rl_steer", "rl_drive", "rl_contact", "rl_translation", "rl_slipx", "rl_slipy", "rl_slipz", "rr_mimic", "rr_walking", "rr_steer", "rr_drive", "rr_contact", "rr_translation", "rr_slipx", "rr_slipy", "rr_slipz", "right_passive", "fr_mimic", "fr_walking", "fr_steer", "fr_drive", "fr_contact", "fr_translation", "fr_slipx", "fr_slipy", "fr_slipz", "mr_mimic", "mr_walking", "mr_drive", "mr_contact", "mr_translation", "mr_slipx", "mr_slipy", "mr_slipz"
 
 robot_joints = js.Joints(names)
 robot_joints.readData(joints_position_file, joints_speed_file)
+
+########################
+### REMOVE OUTLIERS  ###
+########################
+temindex = np.where(np.isnan(reference_velocity.data[:,0]))
+temindex = np.asarray(temindex)
+
+reference_position.delete(temindex)
+reference_velocity.delete(temindex)
+odometry_position.delete(temindex)
+odometry_velocity.delete(temindex)
+imu_orient.delete(temindex)
+imu_gyro.delete(temindex)
+imu_acc.delete(temindex)
+robot_joints.delete(temindex)
+
+################################
+### COMPUTE COV EIGENVALUES  ###
+################################
+reference_position.eigenValues()
+reference_velocity.eigenValues()
+odometry_position.eigenValues()
+odometry_velocity.eigenValues()
+imu_orient.eigenValues()
+imu_acc.eigenValues()
+imu_gyro.eigenValues()
+
 
 #########################
 ## THIRD INPUT TEST    ##
@@ -569,12 +644,14 @@ orient_third = np.column_stack(orient_third)
 
 ###########################
 # Create Reference Output #
-reference_third = sig.filtfilt(filters['butter'][0], filters['butter'][1], np.row_stack((reference_velocity.getAxis(0), reference_velocity.getAxis(1), reference_velocity.getAxis(2))))
+reference_third  = sig.filtfilt(filters['butter'][0], filters['butter'][1], np.row_stack((reference_position.getAxis(0), reference_position.getAxis(1), reference_position.getAxis(2))))
+#reference_third = sig.filtfilt(filters['butter'][0], filters['butter'][1], np.row_stack((reference_velocity.getAxis(0), reference_velocity.getAxis(1), reference_velocity.getAxis(2))))
 reference_third = np.column_stack(reference_third)
 
 ###########################
 # Create Odometry Output #
-odometry_third = sig.filtfilt(filters['butter'][0], filters['butter'][1], np.row_stack((odometry_velocity.getAxis(0), odometry_velocity.getAxis(1), odometry_velocity.getAxis(2))))
+odometry_third  = sig.filtfilt(filters['butter'][0], filters['butter'][1], np.row_stack((odometry_position.getAxis(0), odometry_position.getAxis(1), odometry_position.getAxis(2))))
+#odometry_third = sig.filtfilt(filters['butter'][0], filters['butter'][1], np.row_stack((odometry_velocity.getAxis(0), odometry_velocity.getAxis(1), odometry_velocity.getAxis(2))))
 odometry_third = np.column_stack(odometry_third)
 
 ####################
@@ -685,51 +762,86 @@ print(m)
 ####################################################################################################################################################################################
 ## LOAD EVALUATION TEST ONE
 ####################################################################################################################################################################################
-joints_position_file = '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141024-2317/joints_position.0.data'
-
-joints_speed_file = '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141024-2317/joints_speed.0.data'
-
-pose_ref_velocity_file =  '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141024-2317/pose_ref_velocity.0.data'
-
-pose_odo_velocity_file =  '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141024-2317/pose_odo_velocity.0.data'
-
-pose_imu_orientation_file =  '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141024-2317/pose_imu_orientation.0.data'
-
-pose_imu_angular_velocity_file =  '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141024-2317/pose_imu_angular_velocity.0.data'
-
-pose_imu_acceleration_file =  '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141024-2317/pose_imu_acceleration.0.data'
+path = '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141025-2317/'
 #######################################
+joints_position_file = path + 'joints_position.0.data'
+
+joints_speed_file = path + 'joints_speed.0.data'
+
+delta_pose_ref_position_file =  path + 'delta_pose_ref_position.0.data'
+
+delta_pose_ref_velocity_file =  path + 'delta_pose_ref_velocity.0.data'
+
+delta_pose_odo_position_file =  path + 'delta_pose_odo_position.0.data'
+
+delta_pose_odo_velocity_file =  path + 'delta_pose_odo_velocity.0.data'
+
+pose_imu_orientation_file =  path + 'pose_imu_orientation.0.data'
+
+pose_imu_angular_velocity_file =  path + 'pose_imu_angular_velocity.0.data'
+
+pose_imu_acceleration_file =  path + 'pose_imu_acceleration.0.data'
+#######################################
+# Reference Robot Position
+reference_position = data.ThreeData()
+reference_position.readData(delta_pose_ref_position_file, cov=True)
 
 # Reference Robot Velocity
 reference_velocity = data.ThreeData()
-reference_velocity.readData(pose_ref_velocity_file, cov=True)
-reference_velocity.eigenValues()
+reference_velocity.readData(delta_pose_ref_velocity_file, cov=True)
+
+# Odometry Robot Position
+odometry_position = data.ThreeData()
+odometry_position.readData(delta_pose_odo_position_file, cov=True)
 
 # Odometry Robot Velocity
 odometry_velocity = data.ThreeData()
-odometry_velocity.readData(pose_odo_velocity_file, cov=True)
-odometry_velocity.eigenValues()
+odometry_velocity.readData(delta_pose_odo_velocity_file, cov=True)
 
 # IMU orientation
 imu_orient = data.QuaternionData()
 imu_orient.readData(pose_imu_orientation_file, cov=True)
-imu_orient.eigenValues()
 
 # IMU acceleration
 imu_acc = data.ThreeData()
 imu_acc.readData(pose_imu_acceleration_file, cov=False)
-imu_acc.eigenValues()
 
 # IMU Angular Velocity
 imu_gyro = data.ThreeData()
 imu_gyro.readData(pose_imu_angular_velocity_file, cov=False)
-imu_gyro.eigenValues()
 
 # Robot Joints Position and Speed
 names = "left_passive", "fl_mimic", "fl_walking", "fl_steer", "fl_drive", "fl_contact", "fl_translation", "fl_slipx", "fl_slipy", "fl_slipz", "ml_mimic", "ml_walking", "ml_drive", "ml_contact", "ml_translation", "ml_slipx", "ml_slipy", "ml_slipz", "rear_passive", "rl_mimic", "rl_walking", "rl_steer", "rl_drive", "rl_contact", "rl_translation", "rl_slipx", "rl_slipy", "rl_slipz", "rr_mimic", "rr_walking", "rr_steer", "rr_drive", "rr_contact", "rr_translation", "rr_slipx", "rr_slipy", "rr_slipz", "right_passive", "fr_mimic", "fr_walking", "fr_steer", "fr_drive", "fr_contact", "fr_translation", "fr_slipx", "fr_slipy", "fr_slipz", "mr_mimic", "mr_walking", "mr_drive", "mr_contact", "mr_translation", "mr_slipx", "mr_slipy", "mr_slipz"
 
 robot_joints = js.Joints(names)
 robot_joints.readData(joints_position_file, joints_speed_file)
+
+########################
+### REMOVE OUTLIERS  ###
+########################
+temindex = np.where(np.isnan(reference_velocity.data[:,0]))
+temindex = np.asarray(temindex)
+
+reference_position.delete(temindex)
+reference_velocity.delete(temindex)
+odometry_position.delete(temindex)
+odometry_velocity.delete(temindex)
+imu_orient.delete(temindex)
+imu_gyro.delete(temindex)
+imu_acc.delete(temindex)
+robot_joints.delete(temindex)
+
+################################
+### COMPUTE COV EIGENVALUES  ###
+################################
+reference_position.eigenValues()
+reference_velocity.eigenValues()
+odometry_position.eigenValues()
+odometry_velocity.eigenValues()
+imu_orient.eigenValues()
+imu_acc.eigenValues()
+imu_gyro.eigenValues()
+
 
 #######################################
 # Form the New Inputs to predict
@@ -758,35 +870,6 @@ inertia = np.column_stack((imu_acc.getAxis(0), imu_acc.getAxis(1), imu_acc.getAx
 # Roll and Pitch angles in that order #
 orient = np.column_stack((imu_orient.getEuler(2), imu_orient.getEuler(1)))
 
-###################################################################
-# Create the random vector for sub sampling the whole data values #
-percentage = 2.0
-dimension = min (len(odometry_velocity.time), len(reference_velocity.time))
-
-randomvector = np.array([])
-for i in range(0, int(percentage * dimension)):
-    randomvector = np.append(randomvector, np.random.randint(0, dimension))
-
-randomvector = sorted(randomvector)
-randomvector = np.unique(randomvector)
-vectoridx = np.setdiff1d(xrange(dimension), randomvector)
-
-print('Vector length for GP Data is: ', len(vectoridx))
-
-vectoridx = np.row_stack((vectoridx))
-
-# Sub sampling the joints inputs #
-joints = np.delete(joints, randomvector, 0)
-joints = joints.astype('float32')
-
-# Sub sampling the inertia #
-inertia = np.delete(inertia, randomvector, 0)
-inertia = inertia.astype('float32')
-
-# Sub sampling the orientation #
-orient = np.delete(orient, randomvector, 0)
-orient = orient.astype('float32')
-
 # GP Multidimensional vector
 Xp = np.column_stack((joints, inertia, orient))
 
@@ -797,16 +880,14 @@ fig = plt.figure(1)
 ax = fig.add_subplot(111)
 
 plt.rc('text', usetex=False)# activate latex text rendering
-xvelocity = reference_velocity.getAxis(0)
-ax.plot(reference_velocity.time, xvelocity, linestyle='-.', label="Reference Velocity", color=[0.3,0.2,0.4], lw=2)
+xvelocity = reference_position.getAxis(0)
+ax.plot(reference_position.time, xvelocity, linestyle='-.', label="Reference Velocity", color=[0.3,0.2,0.4], lw=2)
 
 [mean1, var1] = m.predict(Xp, full_cov=True)
 variance = mean1[:,0] * mean1[:,0]
 
-xtime = np.array(odometry_velocity.time)
-#xtime = np.delete(xtime, randomvector, 0)
-xvelocity = odometry_velocity.getAxis(0)
-#xvelocity = np.delete(xvelocity, randomvector, 0)
+xtime = np.array(odometry_position.time)
+xvelocity = odometry_position.getAxis(0)
 sigma = np.sqrt(variance[0:len(xvelocity)])
 
 ax.plot(xtime, xvelocity, linestyle='-.', label="Odometry Velocity", color=[0.0,0.0,1.0], lw=3)
@@ -828,51 +909,85 @@ plt.show(block=False)
 ##############################
 ## LOAD EVALUATION TEST TWO ##
 ##############################
-joints_position_file = '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141027-2034/joints_position.0.data'
-
-joints_speed_file = '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141027-2034/joints_speed.0.data'
-
-pose_ref_velocity_file =  '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141027-2034/pose_ref_velocity.0.data'
-
-pose_odo_velocity_file =  '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141027-2034/pose_odo_velocity.0.data'
-
-pose_imu_orientation_file =  '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141027-2034/pose_imu_orientation.0.data'
-
-pose_imu_angular_velocity_file =  '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141027-2034/pose_imu_angular_velocity.0.data'
-
-pose_imu_acceleration_file =  '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141027-2034/pose_imu_acceleration.0.data'
+path = '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141027-2034/'
 #######################################
+joints_position_file = path + 'joints_position.0.data'
+
+joints_speed_file = path + 'joints_speed.0.data'
+
+delta_pose_ref_position_file =  path + 'delta_pose_ref_position.0.data'
+
+delta_pose_ref_velocity_file =  path + 'delta_pose_ref_velocity.0.data'
+
+delta_pose_odo_position_file =  path + 'delta_pose_odo_position.0.data'
+
+delta_pose_odo_velocity_file =  path + 'delta_pose_odo_velocity.0.data'
+
+pose_imu_orientation_file =  path + 'pose_imu_orientation.0.data'
+
+pose_imu_angular_velocity_file =  path + 'pose_imu_angular_velocity.0.data'
+
+pose_imu_acceleration_file =  path + 'pose_imu_acceleration.0.data'
+#######################################
+# Reference Robot Position
+reference_position = data.ThreeData()
+reference_position.readData(delta_pose_ref_position_file, cov=True)
 
 # Reference Robot Velocity
 reference_velocity = data.ThreeData()
-reference_velocity.readData(pose_ref_velocity_file, cov=True)
-reference_velocity.eigenValues()
+reference_velocity.readData(delta_pose_ref_velocity_file, cov=True)
+
+# Odometry Robot Position
+odometry_position = data.ThreeData()
+odometry_position.readData(delta_pose_odo_position_file, cov=True)
 
 # Odometry Robot Velocity
 odometry_velocity = data.ThreeData()
-odometry_velocity.readData(pose_odo_velocity_file, cov=True)
-odometry_velocity.eigenValues()
+odometry_velocity.readData(delta_pose_odo_velocity_file, cov=True)
 
 # IMU orientation
 imu_orient = data.QuaternionData()
 imu_orient.readData(pose_imu_orientation_file, cov=True)
-imu_orient.eigenValues()
 
 # IMU acceleration
 imu_acc = data.ThreeData()
 imu_acc.readData(pose_imu_acceleration_file, cov=False)
-imu_acc.eigenValues()
 
 # IMU Angular Velocity
 imu_gyro = data.ThreeData()
 imu_gyro.readData(pose_imu_angular_velocity_file, cov=False)
-imu_gyro.eigenValues()
 
 # Robot Joints Position and Speed
 names = "left_passive", "fl_mimic", "fl_walking", "fl_steer", "fl_drive", "fl_contact", "fl_translation", "fl_slipx", "fl_slipy", "fl_slipz", "ml_mimic", "ml_walking", "ml_drive", "ml_contact", "ml_translation", "ml_slipx", "ml_slipy", "ml_slipz", "rear_passive", "rl_mimic", "rl_walking", "rl_steer", "rl_drive", "rl_contact", "rl_translation", "rl_slipx", "rl_slipy", "rl_slipz", "rr_mimic", "rr_walking", "rr_steer", "rr_drive", "rr_contact", "rr_translation", "rr_slipx", "rr_slipy", "rr_slipz", "right_passive", "fr_mimic", "fr_walking", "fr_steer", "fr_drive", "fr_contact", "fr_translation", "fr_slipx", "fr_slipy", "fr_slipz", "mr_mimic", "mr_walking", "mr_drive", "mr_contact", "mr_translation", "mr_slipx", "mr_slipy", "mr_slipz"
 
 robot_joints = js.Joints(names)
 robot_joints.readData(joints_position_file, joints_speed_file)
+
+########################
+### REMOVE OUTLIERS  ###
+########################
+temindex = np.where(np.isnan(reference_velocity.data[:,0]))
+temindex = np.asarray(temindex)
+
+reference_position.delete(temindex)
+reference_velocity.delete(temindex)
+odometry_position.delete(temindex)
+odometry_velocity.delete(temindex)
+imu_orient.delete(temindex)
+imu_gyro.delete(temindex)
+imu_acc.delete(temindex)
+robot_joints.delete(temindex)
+
+################################
+### COMPUTE COV EIGENVALUES  ###
+################################
+reference_position.eigenValues()
+reference_velocity.eigenValues()
+odometry_position.eigenValues()
+odometry_velocity.eigenValues()
+imu_orient.eigenValues()
+imu_acc.eigenValues()
+imu_gyro.eigenValues()
 
 #######################################
 # Form the New Inputs to predict
@@ -972,7 +1087,7 @@ plt.show(block=False)
 # SAVE WORKSPACE
 ####################################################################################################################################################################################
 
-#data.save_object(m, r'./data/gaussian_processes/gpy_uncertainty_model_1000_sparse_regression.out')
+data.save_object(m, r'./data/gaussian_processes/gpy_uncertainty_model_500_sparse_regression.out')
 #otro = data.open_object('./data/gpy_model.out')
 
 
