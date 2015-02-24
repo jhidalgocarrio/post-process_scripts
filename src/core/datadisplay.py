@@ -63,11 +63,15 @@ class ThreeData:
         self.t = np.asarray(self.t)
         self.data = np.asarray(self.data)
         self.cov = np.asarray(self.cov)
+
+    def covSymmetry(self):
+        for i in range(0,len(self.cov)):
+            self.cov[i] = 0.5 * (self.cov[i] + self.cov[i].T)
 	
     def eigenValues(self):
         #Eigen values are the axis of the ellipsoid
         for i in range(0,len(self.cov)):
-            self.var.append(linalg.eigvals(self.cov[i]))
+            self.var.append(np.real(linalg.eigvals(self.cov[i]))[::-1]) #real number and in reverse order
 
         self.var = np.asarray(self.var)
 
@@ -242,10 +246,14 @@ class QuaternionData:
         self.t = np.asarray(self.t)
         self.cov = np.asarray(self.cov)
 
+    def covSymmetry(self):
+        for i in range(0,len(self.cov)):
+            self.cov[i] = 0.5 * (self.cov[i] + self.cov[i].T)
+
     def eigenValues(self):
         #Eigen values are the axis of the ellipsoid
         for i in range(0,len(self.cov)):
-	        self.var.append(linalg.eigvals(self.cov[i]))
+            self.var.append(np.real(linalg.eigvals(self.cov[i]))[::-1]) #real number and in reverse order
         self.var = np.asarray(self.var)
 
     def plot_euler(self, fign=1, axis=0, cov=False, levelconf=1, grid=False, linecolor=[1,0,0]):

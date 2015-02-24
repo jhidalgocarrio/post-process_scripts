@@ -44,8 +44,13 @@ imu_orient.delete(temindex)
 ################################
 ### COMPUTE COV EIGENVALUES  ###
 ################################
+odometry_orient.covSymmetry()
 odometry_orient.eigenValues()
+
+reference_orient.covSymmetry()
 reference_orient.eigenValues()
+
+imu_orient.covSymmetry()
 imu_orient.eigenValues()
 
 
