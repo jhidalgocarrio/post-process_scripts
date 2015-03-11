@@ -71,7 +71,7 @@ class quaternion(object):
 
     def conj(self):
         return quaternion(self.__q * np.array([1., -1., -1., -1.]))
-        
+
     def rot(self,other):
         """ Rotation of the 3d vector other.
             Assumed that self is a rotation of an csys c1 from a reference
