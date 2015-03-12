@@ -1,13 +1,14 @@
 #!/usr/bin/env python
 
-path = '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141024-2138/'
+#path = '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141024-2138/'
+path = '/home/javi/exoter/development/post-process_data/20140422_stim300_vs_vicon/20140429-1429/'
 
 ##################################
 pose_odo_orient_file = path + 'pose_odo_orientation.0.data'
 
 pose_ref_orient_file = path + 'pose_ref_orientation.0.data'
 
-pose_imu_orient_file = path + 'pose_odo_orientation.0.data'
+pose_imu_orient_file = path + 'pose_imu_orientation.0.data'
 ##################################
 
 import sys
@@ -72,7 +73,7 @@ euler[0][:] = [x * 180.00/math.pi for x in euler[0] ]#convert to degrees
 euler[1][:] = [x * 180.00/math.pi for x in euler[1] ]#convert to degrees
 euler[2][:] = [x * 180.00/math.pi for x in euler[2] ]#convert to degrees
 
-axis = 0
+axis = 1
 if axis == 0:
     label_text = "IMU Roll"
     color_value = [1.0,0,0]
