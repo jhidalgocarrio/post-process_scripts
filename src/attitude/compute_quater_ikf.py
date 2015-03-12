@@ -1,0 +1,109 @@
+#!/usr/bin/env python
+
+path = '/home/javi/exoter/development/post-process_data/20140422_stim300_vs_vicon/20140429-1429/'
+
+##################################
+pose_imu_acceleration_file =  path + 'pose_imu_acceleration.0.data' # IMU is wrt to body frame
+
+pose_imu_angular_velocity_file =  path + 'pose_imu_angular_velocity.0.data' # IMU is wrt to body frame
+
+pose_imu_inclinometer_file =  path + 'pose_imu_inclinometer.0.data' # IMU is wrt to body frame
+##################################
+
+import sys
+sys.path.insert(0, './src/core')
+import csv, scipy
+from pylab import *
+import numpy as np
+import matplotlib.pyplot as plt
+import quaternion as quat
+import datadisplay as data
+sys.path.insert(0, './src/attitude')
+import quater_ikf
+
+# Angular velocity
+gyro = data.ThreeData()
+gyro.readData(pose_imu_angular_velocity_file, cov=False)
+
+# Acceleration
+acc = data.ThreeData()
+acc.readData(pose_imu_acceleration_file, cov=False)
+
+# Inclinometers
+inc = data.ThreeData()
+inc.readData(pose_imu_inclinometer_file, cov=False)
+
+# Sensor information
+gyro_bandwidth = 33.0
+gyro_delta_t = 1.0/gyro_bandwidth
+
+acc_bandwidth = 33.0
+acc_delta_t = 1.0/acc_bandwidth
+
+inc_bandwidth = 16.0
+inc_delta_t = 1.0/inc_bandwidth
+
+# Noise Parameters
+acc_randomwalk = np.array([0.0005420144, 0.0005131682, 0.0004908665])
+gyro_randomwalk = np.array([3.320343e-05, 4.455001e-05, 4.060973e-05])
+inc_randomwalk = np.array([0.005019287, 0.005019287, 0.005019287])
+
+acc_biasinstability = np.array([0.0004368486, 0.0003441604, 0.0003097561])
+gyro_biasinstability = np.array([7.05e-06, 4.82e-06, 6.36e-06])
+inc_biasinstability = np.array([0.008292219, 0.008160451, 0.00846485])
+
+# From the Covariance matrices
+Ra = np.eye(3, dtype=double)
+Ra[0,0] = pow(acc_randomwalk[0]/sqrt(acc_delta_t), 2)
+Ra[1,1] = pow(acc_randomwalk[1]/sqrt(acc_delta_t), 2)
+Ra[2,2] = pow(acc_randomwalk[2]/sqrt(acc_delta_t), 2)
+
+
+Rg = np.eye(3, dtype=double)
+Rg[0,0] = pow(gyro_randomwalk[0]/sqrt(gyro_delta_t), 2)
+Rg[1,1] = pow(gyro_randomwalk[1]/sqrt(gyro_delta_t), 2)
+Rg[2,2] = pow(gyro_randomwalk[2]/sqrt(gyro_delta_t), 2)
+
+Ri = np.eye(3, dtype=double)
+Ri[0,0] = pow(inc_randomwalk[0]/sqrt(inc_delta_t), 2)
+Ri[1,1] = pow(inc_randomwalk[1]/sqrt(inc_delta_t), 2)
+Ri[2,2] = pow(inc_randomwalk[2]/sqrt(inc_delta_t), 2)
+
+Qba = np.eye(3, dtype=double)
+Qba[0,0] = pow(acc_biasinstability[0], 2)
+Qba[1,1] = pow(acc_biasinstability[1], 2)
+Qba[2,2] = pow(acc_biasinstability[2], 2)
+
+Qbg = np.eye(3, dtype=double)
+Qbg[0,0] = pow(gyro_biasinstability[0], 2)
+Qbg[1,1] = pow(gyro_biasinstability[1], 2)
+Qbg[2,2] = pow(gyro_biasinstability[2], 2)
+
+Qbi = np.eye(3, dtype=double)
+Qbi[0,0] = pow(inc_biasinstability[0], 2)
+Qbi[1,1] = pow(inc_biasinstability[1], 2)
+Qbi[2,2] = pow(inc_biasinstability[2], 2)
+
+# Initial covariance
+P0 = np.eye(12, dtype=double)
+P0[0:3, 0:3] = np.eye(3, dtype=double).dot(0.001)
+P0[3:6, 3:6] = np.eye(3, dtype=double).dot(0.01)
+P0[6:9, 6:9] = np.eye(3, dtype=double).dot(0.01)
+P0[9:12, 9:12] = np.eye(3, dtype=double).dot(0.01)
+
+# Adaptive parameters
+acc_m1 = 5
+acc_m2 = 5
+acc_gamma = 0.001
+
+inc_m1 = 10
+inc_m2 = 2
+inc_gamma = 0.003
+
+imu_orient, imu_euler, bahat, bghat, Qa = quater_ikf (ya = acc.data.transpose(), yg = gyro.data.transpose(), ym = None, yi=inc.data.transpose(),
+                                                tt=gyro.t, Ra=Ra, Rg=Rg, Ri=Ri,
+                                                Qba=Qba, Qbg=Qbg, Qbi=Qbi,
+                                                acc_m1 = acc_m1, acc_m2 = acc_m2, acc_gamma = acc_gamma,
+                                                inc_m1 = inc_m1, inc_m2 = inc_m2, inc_gamma = inc_gamma)
+
+

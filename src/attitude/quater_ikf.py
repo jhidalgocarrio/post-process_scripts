@@ -21,8 +21,8 @@ import numpy as np
 
 def vec2product(v):
     M = np.array([[ 0 , -v[2] , v[1]],
-                 [v[2]  , 0 , -v[0]],
-                 [-v[1] , v[0] , 0 ]])
+                  [v[2]  , 0 , -v[0]],
+                  [-v[1] , v[0] , 0 ]])
     return M
 
 def quaternion2dcm(q):
@@ -33,7 +33,7 @@ def quaternion2dcm(q):
 
     M = np.array(   [[2 * q0 * q0 + 2 * q1 * q1 - 1 , 2 * q1 * q2 + 2 * q0 * q3 , 2 * q1 * q3 - 2 * q0 * q2],
                     [2 * q1 * q2 - 2 * q0 * q3 , 2 * q0 * q0 + 2 * q2 * q2 - 1 , 2 * q2 * q3 + 2 * q0 * q1],
-                    [2 * q1 * q3 + 2 * q0 * q2 , 2 * q2 * q3 - 2 * q0 * q1 , 2 * q0 * q0 + 2 * q3 * q3 - 1]]
+                    [2 * q1 * q3 + 2 * q0 * q2 , 2 * q2 * q3 - 2 * q0 * q1 , 2 * q0 * q0 + 2 * q3 * q3 - 1]])
 
     return M
 
@@ -75,7 +75,10 @@ def dcm2quaternion (C):
 
     return q
 
-def quater_ikf(yg, ya, ym, tt, Rg, Ra, Rm, sigma_g, sigma_a, sigma_bg, sigma_ba, dip_angle):
+def quater_ikf(ya=None, yg=None, ym=None, yi=None, tt=None, Ra=None, Rg=None, Rm=None, Ri=None,
+                Qba=None, Qbg=None, Qbi=None, dip_angle=None,
+                acc_m1 = None, acc_m2 = None, acc_gamma = None,
+                inc_m1 = None, inc_m2 = None, inc_gamma = None):
 
     D2R = pi/180.0
 
@@ -87,14 +90,9 @@ def quater_ikf(yg, ya, ym, tt, Rg, Ra, Rm, sigma_g, sigma_a, sigma_bg, sigma_ba,
     gtilde = np.array([0, 0, g])
 
     # dip angle depending at location
-    alpha = dip_angle * D2R
-    mtilde = np.array([cos(alpha), 0, -sin(alpha)])
-
-    # bias update covariance
-    Qbg = np.eye(3, dtype=double).dot(0.00000000001)
-    Qba = np.eye(3, dtype=double).dot(0.00000000001)
-    Qbg0 = np.eye(3, dtype=double).dot(0.000001)
-    Qba0 = np.eye(3, dtype=double).dot(0.000001)
+    if dip_angle is not None:
+        alpha = dip_angle * D2R
+        mtilde = np.array([cos(alpha), 0, -sin(alpha)])
 
     # --------------------------------------------------------
     # Kalman Filter
@@ -107,13 +105,15 @@ def quater_ikf(yg, ya, ym, tt, Rg, Ra, Rm, sigma_g, sigma_a, sigma_bg, sigma_ba,
     eulercom4 = np.zeros((3, N),  dtype=double)
 
     Qa = np.zeros((N,3,3), dtype=double)
+    Qi = np.zeros((N,3,3), dtype=double)
 
     # estimated bias for gyroscope (bghat) and accelerometer (bahat)
     bghat = np.zeros(3, dtype=double)
     bahat = np.zeros(3, dtype=double)
+    bihat = np.zeros(3, dtype=double)
 
     # Initial orientation estimation using the TRIAD method
-    yabar = ya[:,0] / norm(ya[:,0])
+    yabar = yi[:,0] / norm(yi[:,0])
     ymbar = ym[:,0] / norm(ym[:,0])
 
     foo1 = np.cross(yabar,ymbar) / norm(np.cross(yabar,ymbar))
@@ -121,17 +121,30 @@ def quater_ikf(yg, ya, ym, tt, Rg, Ra, Rm, sigma_g, sigma_a, sigma_bg, sigma_ba,
     q4[:,0] = dcm2quaternion(C);
 
     # Kalman filter state, error covariance, process noise covariance
-    x = np.zeros(9, dtype=double)
-    P = np.zeros((9, 9), dtype=double)
-    Q = np.zeros((9, 9), dtype=double)
-    Q[0:3, 0:3] = Rg.dot(0.25)
-    Q[3:6, 3:6] = Qbg
-    Q[6:9, 6:9] = Qba
+    x = np.zeros(12, dtype=double)
+    P = np.zeros((12, 12), dtype=double)
+    Q = np.zeros((12, 12), dtype=double)
+
+    if Rg is not None:
+        Q[0:3, 0:3] = Rg.dot(0.25)
+    else:
+        raise ValueError("Rg cannot be None")
+
+    if Qbg is not None:
+        Q[3:6, 3:6] = Qbg
+    else:
+        raise ValueError("Qbg cannot be None")
+
+    if Qba is not None:
+        Q[6:9, 6:9] = Qba
+    else:
+        raise ValueError("Qba cannot be None")
+
+    if Qbi is not None:
+        Q[9:12, 9:12] = Qbi
 
     # Initial error covariance
-    P[0:3, 0:3] = np.eye(3, dtype=double).dot(0.01)
-    P[3:6, 3:6] = Qbg0
-    P[6:9, 6:9] = Qba0
+    P = P0
 
     # A matrix
     A = np.zeros((9,9), dtype=double)
@@ -150,16 +163,15 @@ def quater_ikf(yg, ya, ym, tt, Rg, Ra, Rm, sigma_g, sigma_a, sigma_bg, sigma_ba,
     r2count = 100
 
     # H1 and H2 for measurement update
-    H1 = np.zeros((3,9), dtype=double)
+    H1 = np.zeros((3,12), dtype=double)
     H1[0:3, 6:9] = np.eye(3, dtype=double)
-    H2 =  np.zeros((3,9), dtype=double)
+    H2 =  np.zeros((3,12), dtype=double)
+    H3 = np.zeros((3,12), dtype=double)
+    H3[0:3, 9:12] = np.eye(3, dtype=double)
 
-    # parameter for adaptive algorithm
-    M1 = 3
-    M2 = 3
-    gamma = 0.1
 
-    R = np.zeros((3*N,3), dtype=double)
+    R1 = np.zeros((3*N,3), dtype=double)
+    R3 = np.zeros((3*N,3), dtype=double)
 
     # Kalman filter loop
     for i in range (1,N):
@@ -195,69 +207,129 @@ def quater_ikf(yg, ya, ym, tt, Rg, Ra, Rm, sigma_g, sigma_a, sigma_bg, sigma_ba,
         Cq = quaternion2dcm(q4[:,i])
 
         # ----------------------------------------------------
-        # two step measurement update
+        # Three step measurement update
         # ----------------------------------------------------
-        H1[0:3, 0:3] = 2 * vec2product(Cq.dot(gtilde))
-        z1 = ya[:,i] - bahat - Cq*gtilde
+        if ya is not None:
 
-        # adaptive algorithm
-        fooR1 = (z1 - H1.dot(x)).dot((z1 - H1.dot(x)).transpose())
-        R[3*(i-1):3*i,:] = fooR1
-        uk = fooR1
-        for j in range(i-1, min([i-(M1-1),1])):
-            uk = uk + R[3*(j-1):3*j,:]
+            H1[0:3, 0:3] = 2 * vec2product(Cq.dot(gtilde))
+            z1 = ya[:,i] - bahat - Cq*gtilde
 
-        uk = uk / M1
+            # adaptive algorithm
+            fooR1 = (z1 - H1.dot(x)).dot((z1 - H1.dot(x)).transpose())
+            R1[3*(i-1):3*i,:] = fooR1
+            uk = fooR1
+            for j in range(i-1, min([i-(acc_m1-1),1])):
+                uk = uk + R1[3*(j-1):3*j,:]
 
-        fooR2 = H1.dot(P).dot(H1.transpose()) + Ra
+            uk = uk / acc_m1
 
-        u,s,v = np.linalg.svd(uk, full_matrices=True)
-        u1 = u[:,0]
-        u2 = u[:,1]
-        u3 = u[:,2]
+            fooR2 = H1.dot(P).dot(H1.transpose()) + Ra
 
-        lamb = np.array([ s(0) , s(1) , s(2)])
-        mu =  np.array([ u1.transpose().dot(fooR2).dot(u1) , u2.transpose().dot(fooR2).dot(u2) , u3.transpose().dot(fooR2).dot(u3)])
+            u,s,v = np.linalg.svd(uk, full_matrices=True)
+            u1 = u[:,0]
+            u2 = u[:,1]
+            u3 = u[:,2]
 
-        if (max(lamb - mu) > gamma):
-          r2count = 0
-          Qstar = max(lamb(0)-mu(0),0).dot(u1).dot(u1.transpose()) + max(lamb(1) -mu(1),0).dot(u2).dot(u2.transpose()) + max(lamb(2)-mu(2),0).dot(u3).dot(u3.transpose());
-        else:
-          r2count = r2count + 1
-          if r2count < M2:
-            Qstar = max(lamb(0)-mu(0),0).dot(u1).dot(u1.transpose()) + max(lamb(1) -mu(1),0).dot(u2).dot(u2.transpose()) + max(lamb(2)-mu(2),0).dot(u3).dot(u3.transpose());
-          else:
-            Qstar = np.zeros((3,3),dtype=double)
+            lamb = np.array([ s(0) , s(1) , s(2)])
+            mu =  np.array([ u1.transpose().dot(fooR2).dot(u1) , u2.transpose().dot(fooR2).dot(u2) , u3.transpose().dot(fooR2).dot(u3)])
 
-        #Qstar = zeros(3,3);
+            if (max(lamb - mu) > acc_gamma):
+              r2count = 0
+              Qstar = max(lamb(0)-mu(0),0).dot(u1).dot(u1.transpose()) + max(lamb(1) -mu(1),0).dot(u2).dot(u2.transpose()) + max(lamb(2)-mu(2),0).dot(u3).dot(u3.transpose());
+            else:
+              r2count = r2count + 1
+              if r2count < acc_m2:
+                Qstar = max(lamb(0)-mu(0),0).dot(u1).dot(u1.transpose()) + max(lamb(1) -mu(1),0).dot(u2).dot(u2.transpose()) + max(lamb(2)-mu(2),0).dot(u3).dot(u3.transpose());
+              else:
+                Qstar = np.zeros((3,3),dtype=double)
 
-        Qa [:,:,i] = Qstar
+            #Qstar = zeros(3,3);
 
-        Qstar
+            Qa[:,:,i] = Qstar
 
-        P1 = P
-        K1 = P1.dot(H1.transpose()).dot(np.linalg.inv(H1 * P1 * H1.transpose()) + Ra + Qstar)
-        x = x + K1.dot(z1 - H1.dot(x))
-        P = (np.eye(9, dtype=double) - K1.dot(H1)).dot(P).dot((np.eye(9, dtype=double) - K1*H1).transpose()) + K1.dot((Ra+Qstar)).dot(K1.transpose())
-        P = 0.5 * (P + P.transpose())
+            Qstar
 
-        qe = np.array([1, x[0], x[1], x[2]])
-        q4[:,i] = quaternionmul(q4[:,i],qe)
-        q4[:,i]=  q4[:,i] / norm(q4[:,i])
-        x[0:3] = np.zeros(3, dtype=double)
-        Cq = quaternion2dcm(q4[:,i])
+            P1 = P
+            K1 = P1.dot(H1.transpose()).dot(np.linalg.inv(H1 * P1 * H1.transpose()) + Ra + Qstar)
+            x = x + K1.dot(z1 - H1.dot(x))
+            P = (np.eye(9, dtype=double) - K1.dot(H1)).dot(P).dot((np.eye(9, dtype=double) - K1*H1).transpose()) + K1.dot((Ra+Qstar)).dot(K1.transpose())
+            P = 0.5 * (P + P.transpose())
 
-        H2[0:3,0:3] =  2 * vec2product(Cq.dot(mtilde))
-        z2 = ym[:,i] - Cq.dot(mtilde)
+            qe = np.array([1, x[0], x[1], x[2]])
+            q4[:,i] = quaternionmul(q4[:,i],qe)
+            q4[:,i]=  q4[:,i] / norm(q4[:,i])
+            x[0:3] = np.zeros(3, dtype=double)
+            Cq = quaternion2dcm(q4[:,i])
 
-        P2 = zeros(9,9)
-        P2[0:3, 0:3] = P[0:3, 0:3]
-        r3 = Cq.dot(np.array([0, 0, 1]))
-        K2 = np.array([[r3.dot(r3.transpose()), np.zeros((3, 6), dtype=double)], [np.zeros((6, 3), dtype=double), np.zeros((6, 6), dtype=double)]]).dot(P2).dot(H2.transpose()).dot(np.linalg.inv(H2.dot(P2).dot(H2.transpose()) + Rm));
+        if ym is not None:
+            H2[0:3,0:3] =  2 * vec2product(Cq.dot(mtilde))
+            z2 = ym[:,i] - Cq.dot(mtilde)
 
-        x = x + K2.dot((z2 - H2.dot(x)))
-        P = P - K2.dot(H2).dot(P) - P.dot(H2.transpose()).dot(K2.transpose()) + K2.dot((H2*P*H2.transpose()+Rm)).dot(K2.transpose())
-        P = 0.5 * (P + P.transpose())
+            P2 = zeros(9,9)
+            P2[0:3, 0:3] = P[0:3, 0:3]
+            r3 = Cq.dot(np.array([0, 0, 1]))
+            K2 = np.array([[r3.dot(r3.transpose()), np.zeros((3, 6), dtype=double)], [np.zeros((6, 3), dtype=double), np.zeros((6, 6), dtype=double)]]).dot(P2).dot(H2.transpose()).dot(np.linalg.inv(H2.dot(P2).dot(H2.transpose()) + Rm));
+
+            x = x + K2.dot((z2 - H2.dot(x)))
+            P = P - K2.dot(H2).dot(P) - P.dot(H2.transpose()).dot(K2.transpose()) + K2.dot((H2*P*H2.transpose()+Rm)).dot(K2.transpose())
+            P = 0.5 * (P + P.transpose())
+
+            qe = np.array([1, x[0], x[1], x[2]])
+            q4[:,i] = quaternionmul(q4[:,i],qe)
+            q4[:,i]=  q4[:,i] / norm(q4[:,i])
+            x[0:3] = np.zeros(3, dtype=double)
+            Cq = quaternion2dcm(q4[:,i])
+
+        if yi is not None:
+            H3[0:3, 0:3] = 2 * vec2product(Cq.dot(gtilde))
+            z3 = yi[:,i] - bihat - Cq*gtilde
+
+            # adaptive algorithm
+            fooR3 = (z3 - H3.dot(x)).dot((z3 - H3.dot(x)).transpose())
+            R3[3*(i-1):3*i,:] = fooR3
+            uk = fooR3
+            for j in range(i-1, min([i-(inc_m1-1),1])):
+                uk = uk + R3[3*(j-1):3*j,:]
+
+            uk = uk / inc_m1
+
+            fooR2 = H3.dot(P).dot(H3.transpose()) + Ri
+
+            u,s,v = np.linalg.svd(uk, full_matrices=True)
+            u1 = u[:,0]
+            u2 = u[:,1]
+            u3 = u[:,2]
+
+            lamb = np.array([ s(0) , s(1) , s(2)])
+            mu =  np.array([ u1.transpose().dot(fooR2).dot(u1) , u2.transpose().dot(fooR2).dot(u2) , u3.transpose().dot(fooR2).dot(u3)])
+
+            if (max(lamb - mu) > inc_gamma):
+              r2count = 0
+              Qstar = max(lamb(0)-mu(0),0).dot(u1).dot(u1.transpose()) + max(lamb(1) -mu(1),0).dot(u2).dot(u2.transpose()) + max(lamb(2)-mu(2),0).dot(u3).dot(u3.transpose());
+            else:
+              r2count = r2count + 1
+              if r2count < inc_m2:
+                Qstar = max(lamb(0)-mu(0),0).dot(u1).dot(u1.transpose()) + max(lamb(1) -mu(1),0).dot(u2).dot(u2.transpose()) + max(lamb(2)-mu(2),0).dot(u3).dot(u3.transpose());
+              else:
+                Qstar = np.zeros((3,3),dtype=double)
+
+            #Qstar = zeros(3,3);
+
+            Qi[:,:,i] = Qstar
+
+            Qstar
+
+            P3 = P
+            K3 = P3.dot(H3.transpose()).dot(np.linalg.inv(H3 * P3 * H3.transpose()) + Ri + Qstar)
+            x = x + K3.dot(z3 - H3.dot(x))
+            P = (np.eye(9, dtype=double) - K3.dot(H3)).dot(P).dot((np.eye(9, dtype=double) - K3*H3).transpose()) + K3.dot((Ri+Qstar)).dot(K3.transpose())
+            P = 0.5 * (P + P.transpose())
+
+            qe = np.array([1, x[0], x[1], x[2]])
+            q4[:,i] = quaternionmul(q4[:,i],qe)
+            q4[:,i]=  q4[:,i] / norm(q4[:,i])
+            x[0:3] = np.zeros(3, dtype=double)
+            Cq = quaternion2dcm(q4[:,i])
 
         bghat = bghat + x[3:6]
         x[3:6] = np.zeros(3, dtype=double)
@@ -270,4 +342,6 @@ def quater_ikf(yg, ya, ym, tt, Rg, Ra, Rm, sigma_g, sigma_a, sigma_bg, sigma_ba,
         q4[:,i]=  q4[:,i] / norm(q4[:,i])
         x[0:3] = np.zeros(3,dtype=double)
 
-        eulercom4[:,i] = quaternion2euler(q4[:,i]);
+        eulercom4[:,i] = quaternion2euler(q4[:,i])
+
+    return [q4, eulercom4, bahat, bghat, Qa, Qi]
