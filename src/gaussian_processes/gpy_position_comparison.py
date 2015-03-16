@@ -1,21 +1,21 @@
 #!/usr/bin/env python
 
 #######################################
-path_odometry_file = '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141027-2034/pose_odo_position.0.data'
+path_odometry_file = '/home/javi/exoter/development/data/20141024_planetary_lab/20141027-2034/pose_odo_position.0.data'
 
-#path_skid_file = '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141027-2034/pose_skid_position.0.data'
+#path_skid_file = '/home/javi/exoter/development/data/20141024_planetary_lab/20141027-2034/pose_skid_position.0.data'
 
-path_reference_file = '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141027-2034/pose_ref_position.0.data'
+path_reference_file = '/home/javi/exoter/development/data/20141024_planetary_lab/20141027-2034/pose_ref_position.0.data'
 
-joints_position_file = '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141027-2034/joints_position.0.data'
+joints_position_file = '/home/javi/exoter/development/data/20141024_planetary_lab/20141027-2034/joints_position.0.data'
 
-joints_speed_file = '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141027-2034/joints_speed.0.data'
+joints_speed_file = '/home/javi/exoter/development/data/20141024_planetary_lab/20141027-2034/joints_speed.0.data'
 
-pose_imu_orientation_file =  '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141027-2034/pose_imu_orientation.0.data'
+pose_imu_orientation_file =  '/home/javi/exoter/development/data/20141024_planetary_lab/20141027-2034/pose_imu_orientation.0.data'
 
-pose_imu_angular_velocity_file =  '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141027-2034/pose_imu_angular_velocity.0.data'
+pose_imu_angular_velocity_file =  '/home/javi/exoter/development/data/20141024_planetary_lab/20141027-2034/pose_imu_angular_velocity.0.data'
 
-pose_imu_acceleration_file =  '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141027-2034/pose_imu_acceleration.0.data'
+pose_imu_acceleration_file =  '/home/javi/exoter/development/data/20141024_planetary_lab/20141027-2034/pose_imu_acceleration.0.data'
 #######################################
 
 import sys

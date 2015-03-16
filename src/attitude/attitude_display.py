@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
-#path = '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141024-2138/'
-path = '/home/javi/exoter/development/post-process_data/20140422_stim300_vs_vicon/20140429-1429/'
+#path = '/home/javi/exoter/development/data/20141024_planetary_lab/20141024-2138/'
+path = '/home/javi/exoter/development/data/20140422_stim300_vs_vicon/20140429-1429/'
 
 ##################################
 pose_odo_orient_file = path + 'pose_odo_orientation.0.data'

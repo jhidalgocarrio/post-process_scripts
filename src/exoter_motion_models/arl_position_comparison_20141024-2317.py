@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 
 #######################################
-path_odometry_file = '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141024-2317/pose_odo_position.0.data'
+path_odometry_file = '/home/javi/exoter/development/data/20141024_planetary_lab/20141024-2317/pose_odo_position.0.data'
 
-#path_skid_file = '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141024-2317/pose_skid_position.0.data'
+#path_skid_file = '/home/javi/exoter/development/data/20141024_planetary_lab/20141024-2317/pose_skid_position.0.data'
 
-path_reference_file = '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141024-2317/pose_ref_position.0.data'
+path_reference_file = '/home/javi/exoter/development/data/20141024_planetary_lab/20141024-2317/pose_ref_position.0.data'
 #######################################
 
 

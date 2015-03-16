@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 
 #######################################
-localization_file = '/home/jhidalgocarrio/exoter/development/post-process_data/20141024_planetary_lab/20141025-0005/pose_localization_position.0.data'
+localization_file = '/home/jhidalgocarrio/exoter/development/data/20141024_planetary_lab/20141025-0005/pose_localization_position.0.data'
 
-wheel_odometry_file = '/home/jhidalgocarrio/exoter/development/post-process_data/20141024_planetary_lab/20141025-0005/pose_odo_position.0.data'
+wheel_odometry_file = '/home/jhidalgocarrio/exoter/development/data/20141024_planetary_lab/20141025-0005/pose_odo_position.0.data'
 
-visual_odometry_file = '/home/jhidalgocarrio/exoter/development/post-process_data/20141024_planetary_lab/20141025-0005/pose_visualodo_position.0.data'
+visual_odometry_file = '/home/jhidalgocarrio/exoter/development/data/20141024_planetary_lab/20141025-0005/pose_visualodo_position.0.data'
 
-path_reference_file = '/home/jhidalgocarrio/exoter/development/post-process_data/20141024_planetary_lab/20141025-0005/pose_ref_position.0.data'
+path_reference_file = '/home/jhidalgocarrio/exoter/development/data/20141024_planetary_lab/20141025-0005/pose_ref_position.0.data'
 #######################################
 
 

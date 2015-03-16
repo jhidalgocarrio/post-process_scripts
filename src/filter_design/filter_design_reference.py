@@ -1,14 +1,14 @@
 #!/usr/bin/env python
 
 #######################################
-pose_ref_position_file =  '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141027-2034/pose_ref_position.0.data'
+pose_ref_position_file =  '/home/javi/exoter/development/data/20141024_planetary_lab/20141027-2034/pose_ref_position.0.data'
 
-pose_ref_velocity_file =  '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141027-2034/pose_ref_velocity.0.data'
+pose_ref_velocity_file =  '/home/javi/exoter/development/data/20141024_planetary_lab/20141027-2034/pose_ref_velocity.0.data'
 #######################################
 # Also load Odometry info to compare the output
-pose_odo_position_file =  '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141027-2034/pose_odo_position.0.data'
+pose_odo_position_file =  '/home/javi/exoter/development/data/20141024_planetary_lab/20141027-2034/pose_odo_position.0.data'
 
-pose_odo_velocity_file =  '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141027-2034/pose_odo_velocity.0.data'
+pose_odo_velocity_file =  '/home/javi/exoter/development/data/20141024_planetary_lab/20141027-2034/pose_odo_velocity.0.data'
 #######################################
 
 import sys

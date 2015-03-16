@@ -11,22 +11,22 @@ import quaternion as quat
 
 # Odometry + Support polygon Pose
 odoPos = data.ThreeData()
-odoPos.readData('/home/jhidalgocarrio/esa-npi/development/post-process_data/20131125-1505_asguard_sandfield/20131206-2344/data/odometry_position.0.data', cov=True)
+odoPos.readData('/home/jhidalgocarrio/esa-npi/development/data/20131125-1505_asguard_sandfield/20131206-2344/data/odometry_position.0.data', cov=True)
 odoPos.eigenValues()
 
 # Odometry Pose
 pureodoPos = data.ThreeData()
-pureodoPos.readData('/home/jhidalgocarrio/esa-npi/development/post-process_data/20131125-1505_asguard_sandfield/20131207-0210/data/odometry_position.0.data', cov=True)
+pureodoPos.readData('/home/jhidalgocarrio/esa-npi/development/data/20131125-1505_asguard_sandfield/20131207-0210/data/odometry_position.0.data', cov=True)
 pureodoPos.eigenValues()
 
 # Skid Odometry Pose
 skidodoPos = data.ThreeData()
-skidodoPos.readData('/home/jhidalgocarrio/esa-npi/development/post-process_data/20131125-1505_asguard_sandfield/20131206-2344/data/skid_odometry_position.0.data', cov=True)
+skidodoPos.readData('/home/jhidalgocarrio/esa-npi/development/data/20131125-1505_asguard_sandfield/20131206-2344/data/skid_odometry_position.0.data', cov=True)
 skidodoPos.eigenValues()
 
 # GPS/Vicon reference from Ground Truth
 refPos = data.ThreeData()
-refPos.readData('../post-process_data/20131125-1505_asguard_sandfield/20131206-2344/data/reference_position.0.data', cov=False)
+refPos.readData('../data/20131125-1505_asguard_sandfield/20131206-2344/data/reference_position.0.data', cov=False)
 refPos.eigenValues()
 
 

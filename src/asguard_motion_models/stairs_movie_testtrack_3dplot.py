@@ -9,12 +9,12 @@ import quaternion as quat
 
 # Odometry + Support polygon Pose
 odoPos = data.ThreeData()
-odoPos.readData('../post-process_data/20130415_motion_model_test_track/20131206-2159/data/odometry_position.0.data', cov=True)
+odoPos.readData('../data/20130415_motion_model_test_track/20131206-2159/data/odometry_position.0.data', cov=True)
 odoPos.eigenValues()
 
 # Odometry Pose
 pureodoPos = data.ThreeData()
-pureodoPos.readData('../post-process_data/20130415_motion_model_test_track/20131206-2243/data/odometry_position.0.data', cov=True)
+pureodoPos.readData('../data/20130415_motion_model_test_track/20131206-2243/data/odometry_position.0.data', cov=True)
 pureodoPos.eigenValues()
 
 

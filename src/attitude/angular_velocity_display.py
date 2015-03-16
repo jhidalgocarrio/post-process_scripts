@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-path = '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141024-2138/'
+path = '/home/javi/exoter/development/data/20141024_planetary_lab/20141024-2138/'
 
 ##################################
 pose_odo_angular_velocity_file = path + 'pose_odo_angular_velocity.0.data' # Pose is wrt to navigation frame

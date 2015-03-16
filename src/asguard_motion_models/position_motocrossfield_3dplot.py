@@ -9,22 +9,22 @@ import quaternion as quat
 
 # Odometry + Support polygon Pose
 odoPos = data.ThreeData()
-odoPos.readData('../post-process_data/20131022_motocross_field/20131022-1812/20131207-1929/data/odometry_position.0.data', cov=True)
+odoPos.readData('../data/20131022_motocross_field/20131022-1812/20131207-1929/data/odometry_position.0.data', cov=True)
 odoPos.eigenValues()
 
 # Odometry Pose
 pureodoPos = data.ThreeData()
-pureodoPos.readData('../post-process_data/20131022_motocross_field/20131022-1812/20131207-2007/data/odometry_position.0.data', cov=True)
+pureodoPos.readData('../data/20131022_motocross_field/20131022-1812/20131207-2007/data/odometry_position.0.data', cov=True)
 pureodoPos.eigenValues()
 
 # Skid Odometry Pose
 skidodoPos = data.ThreeData()
-skidodoPos.readData('../post-process_data/20131022_motocross_field/20131022-1812/20131207-1929/data/skid_odometry_position.0.data', cov=True)
+skidodoPos.readData('../data/20131022_motocross_field/20131022-1812/20131207-1929/data/skid_odometry_position.0.data', cov=True)
 skidodoPos.eigenValues()
 
 # GPS/Vicon reference from Ground Truth
 refPos = data.ThreeData()
-refPos.readData('../post-process_data/20131022_motocross_field/20131022-1812/20131207-1929/data/reference_position.0.data', cov=False)
+refPos.readData('../data/20131022_motocross_field/20131022-1812/20131207-1929/data/reference_position.0.data', cov=False)
 refPos.eigenValues()
 
 #Odometry , Skid Odometry and GPS values(X-Y Axis Motocross Field)

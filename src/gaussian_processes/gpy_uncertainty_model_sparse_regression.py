@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 #######################################
-path = '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141024-2138/'
+path = '/home/javi/exoter/development/data/20141024_planetary_lab/20141024-2138/'
 #######################################
 joints_position_file = path + 'joints_position.0.data'
 
@@ -289,7 +289,7 @@ print(m)
 ## LOAD SECOND TEST ##
 ######################
 #######################################
-path = '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141024-2202/'
+path = '/home/javi/exoter/development/data/20141024_planetary_lab/20141024-2202/'
 #######################################
 joints_position_file = path + 'joints_position.0.data'
 
@@ -524,7 +524,7 @@ print(m)
 ## LOAD THIRD TEST ##
 ######################
 #######################################
-path = '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141025-0005/'
+path = '/home/javi/exoter/development/data/20141024_planetary_lab/20141025-0005/'
 #######################################
 joints_position_file = path + 'joints_position.0.data'
 
@@ -762,7 +762,7 @@ print(m)
 ####################################################################################################################################################################################
 ## LOAD EVALUATION TEST ONE
 ####################################################################################################################################################################################
-path = '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141025-2317/'
+path = '/home/javi/exoter/development/data/20141024_planetary_lab/20141025-2317/'
 #######################################
 joints_position_file = path + 'joints_position.0.data'
 
@@ -909,7 +909,7 @@ plt.show(block=False)
 ##############################
 ## LOAD EVALUATION TEST TWO ##
 ##############################
-path = '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141027-2034/'
+path = '/home/javi/exoter/development/data/20141024_planetary_lab/20141027-2034/'
 #######################################
 joints_position_file = path + 'joints_position.0.data'
 

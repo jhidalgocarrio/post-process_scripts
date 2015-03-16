@@ -292,7 +292,7 @@ skidfinale
 # Motocross Field Data #
 # #################### #
 odoPosDyn = data.ThreeData()
-odoPosDyn.readData('../post-process_data/20131022_motocross_field/20131022-1812/20131207-1929/data/odometry_position.0.data', cov=True)
+odoPosDyn.readData('../data/20131022_motocross_field/20131022-1812/20131207-1929/data/odometry_position.0.data', cov=True)
 odoPosDyn.eigenValues()
 rot = quat.quaternion([0.99, 0.0, -0.0087, 0.00])#Align reference trajectory
 M = rot.toMatrix()
@@ -314,7 +314,7 @@ ododynpos.append(np.array(yododynpos))
 ododynpos.append(np.array(zododynpos))
 
 skidodoPos = data.ThreeData()
-skidodoPos.readData('../post-process_data/20131022_motocross_field/20131022-1812/20131207-1929/data/skid_odometry_position.0.data', cov=True)
+skidodoPos.readData('../data/20131022_motocross_field/20131022-1812/20131207-1929/data/skid_odometry_position.0.data', cov=True)
 skidodoPos.eigenValues()
 skidpos=[]
 skidpos.append(np.array(skidodoPos.getAxis(0)))
@@ -322,7 +322,7 @@ skidpos.append(np.array(skidodoPos.getAxis(1)))
 skidpos.append(np.array(skidodoPos.getAxis(2)))
 
 refPos = data.ThreeData()
-refPos.readData('../post-process_data/20131022_motocross_field/20131022-1812/20131207-1929/data/reference_position.0.data', cov=False)
+refPos.readData('../data/20131022_motocross_field/20131022-1812/20131207-1929/data/reference_position.0.data', cov=False)
 refPos.eigenValues()
 rot = quat.quaternion([0.8987, 0.0, 0.0, 0.4383])#Align reference trajectory
 M = rot.toMatrix()
@@ -464,7 +464,7 @@ skidmediane.append(np.median(np.absolute(skidpos[1][0:datasize[1]] - refpos[1][0
 skidmediane.append(np.median(np.absolute(skidpos[2][0:datasize[2]] - refpos[2][0:datasize[2]])))
 
 odoPos = data.ThreeData()
-odoPos.readData('../post-process_data/20131022_motocross_field/20131022-1812/20131207-2007/data/odometry_position.0.data', cov=True)
+odoPos.readData('../data/20131022_motocross_field/20131022-1812/20131207-2007/data/odometry_position.0.data', cov=True)
 odoPos.eigenValues()
 odopos=[]
 odopos.append(np.array(odoPos.getAxis(0)))
@@ -472,7 +472,7 @@ odopos.append(np.array(odoPos.getAxis(1)))
 odopos.append(np.array(odoPos.getAxis(2)))
 
 refPos = data.ThreeData()
-refPos.readData('../post-process_data/20131022_motocross_field/20131022-1812/20131207-2007/data/reference_position.0.data', cov=False)
+refPos.readData('../data/20131022_motocross_field/20131022-1812/20131207-2007/data/reference_position.0.data', cov=False)
 refPos.eigenValues()
 rot = quat.quaternion([0.8987, 0.0, 0.0, 0.4383])#Align reference trajectory
 M = rot.toMatrix()
@@ -604,7 +604,7 @@ skidfinale
 # Test Track Data #
 # ############### #
 odoPosDyn = data.ThreeData()
-odoPosDyn.readData('../post-process_data/20130415_motion_model_test_track/20131206-2159/data/odometry_position.0.data', cov=True)
+odoPosDyn.readData('../data/20130415_motion_model_test_track/20131206-2159/data/odometry_position.0.data', cov=True)
 odoPosDyn.eigenValues()
 ododynpos=[]
 ododynpos.append(np.array(odoPosDyn.getAxis(0)))
@@ -612,7 +612,7 @@ ododynpos.append(np.array(odoPosDyn.getAxis(1)))
 ododynpos.append(np.array(odoPosDyn.getAxis(2)))
 
 skidodoPos = data.ThreeData()
-skidodoPos.readData('../post-process_data/20130415_motion_model_test_track/20131206-2159/data/skid_odometry_position.0.data', cov=True)
+skidodoPos.readData('../data/20130415_motion_model_test_track/20131206-2159/data/skid_odometry_position.0.data', cov=True)
 skidodoPos.eigenValues()
 skidpos=[]
 skidpos.append(np.array(skidodoPos.getAxis(0)))
@@ -620,7 +620,7 @@ skidpos.append(np.array(skidodoPos.getAxis(1)))
 skidpos.append(np.array(skidodoPos.getAxis(2)))
 
 odoPos = data.ThreeData()
-odoPos.readData('../post-process_data/20130415_motion_model_test_track/20131206-2243/data/odometry_position.0.data', cov=True)
+odoPos.readData('../data/20130415_motion_model_test_track/20131206-2243/data/odometry_position.0.data', cov=True)
 odoPos.eigenValues()
 odopos=[]
 odopos.append(np.array(odoPos.getAxis(0)))
@@ -669,8 +669,8 @@ odofinale.append(np.absolute(odopos[2][len(odopos[2])-1] - odopos[2][0]))
 # Sand Field Data #
 # ############### #
 deltarefPos = data.ThreeData()
-#deltarefPos.readData('../post-process_data/20131125-1505_asguard_sandfield/20131206-2344/data/reference_delta_position.0.data', cov=False)
-deltarefPos.readData('../post-process_data/20131125-1505_asguard_sandfield/20131206-2344/data/odometry_delta_position.0.data', cov=False)
+#deltarefPos.readData('../data/20131125-1505_asguard_sandfield/20131206-2344/data/reference_delta_position.0.data', cov=False)
+deltarefPos.readData('../data/20131125-1505_asguard_sandfield/20131206-2344/data/odometry_delta_position.0.data', cov=False)
 deltarefPos.eigenValues()
 rot = quat.quaternion([0.819, -0.014, 0.01001, -0.5735]) #Align reference trajectory
 M = rot.toMatrix()
@@ -699,8 +699,8 @@ distance = np.cumsum(deltarefPos.getAxis(0))
 # Motocross Field Data #
 # #################### #
 deltarefPos = data.ThreeData()
-#deltarefPos.readData('../post-process_data/20131022_motocross_field/20131022-1812/20131207-1929/data/reference_delta_position.0.data', cov=False)
-deltarefPos.readData('../post-process_data/20131022_motocross_field/20131022-1812/20131207-1929/data/odometry_delta_position.0.data', cov=False)
+#deltarefPos.readData('../data/20131022_motocross_field/20131022-1812/20131207-1929/data/reference_delta_position.0.data', cov=False)
+deltarefPos.readData('../data/20131022_motocross_field/20131022-1812/20131207-1929/data/odometry_delta_position.0.data', cov=False)
 deltarefPos.eigenValues()
 rot = quat.quaternion([0.8987, 0.0, 0.0, 0.4383])#Align reference trajectory
 M = rot.toMatrix()
@@ -727,7 +727,7 @@ distance = np.cumsum(deltarefpos[0])
 # Test Track Data #
 # ############### #
 deltaodoPosDyn = data.ThreeData()
-deltaodoPosDyn.readData('../post-process_data/20130415_motion_model_test_track/20131206-2159/data/odometry_delta_position.0.data', cov=True)
+deltaodoPosDyn.readData('../data/20130415_motion_model_test_track/20131206-2159/data/odometry_delta_position.0.data', cov=True)
 deltaodoPosDyn.eigenValues()
 
 distance = np.cumsum(deltaodoPosDyn.getAxis(0))

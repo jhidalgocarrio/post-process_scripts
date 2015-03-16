@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 
 #######################################
-path_odometry_file = '/home/javi/exoter/development/post-process_data/20141023_pink_test/20141023-2011/pose_odo_velocity.0.data'
+path_odometry_file = '/home/javi/exoter/development/data/20141023_pink_test/20141023-2011/pose_odo_velocity.0.data'
 
-#path_skid_file = '/home/javi/exoter/development/post-process_data/20141024_planetary_lab/20141024-2202/pose_skid_position.0.data'
+#path_skid_file = '/home/javi/exoter/development/data/20141024_planetary_lab/20141024-2202/pose_skid_position.0.data'
 
-path_reference_file = '/home/javi/exoter/development/post-process_data/20141023_pink_test/20141023-2011/pose_ref_velocity.0.data'
+path_reference_file = '/home/javi/exoter/development/data/20141023_pink_test/20141023-2011/pose_ref_velocity.0.data'
 #######################################
 
 
@@ -32,7 +32,7 @@ odometry.eigenValues()
 #skid.eigenValues()
 
 
-#Vicon Pose
+#Reference
 reference = data.ThreeData()
 reference.readData(path_reference_file, cov=True)
 reference.eigenValues()

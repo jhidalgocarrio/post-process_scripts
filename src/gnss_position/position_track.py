@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
 #######################################
-path_reference_file_one = '/home/jhidalgocarrio/exoter/development/post-process_data/20140827_gnss_estec_lap/gnss_position.1.data'
-path_reference_file_two = '/home/jhidalgocarrio/exoter/development/post-process_data/20140827_gnss_estec_lap/gnss_lat_long_quality.1.data'
+path_reference_file_one = '/home/jhidalgocarrio/exoter/development/data/20140827_gnss_estec_lap/gnss_position.1.data'
+path_reference_file_two = '/home/jhidalgocarrio/exoter/development/data/20140827_gnss_estec_lap/gnss_lat_long_quality.1.data'
 #######################################
 
 import sys

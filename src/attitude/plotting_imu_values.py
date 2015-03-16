@@ -4,7 +4,7 @@ from pylab import *
 import numpy as np
 import matplotlib.pyplot as plt
 
-spamReader = csv.reader(open('/home/jhidalgocarrio/exoter/development/post-process_data/20140325_stim300_test/stim300_acc_33bnw_125hz.data', 'rb'), delimiter=' ', quotechar='|')
+spamReader = csv.reader(open('/home/jhidalgocarrio/exoter/development/data/20140325_stim300_test/stim300_acc_33bnw_125hz.data', 'rb'), delimiter=' ', quotechar='|')
 
 timeimu=[]
 accimux=[]

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-path = '/home/javi/exoter/development/post-process_data/20140422_stim300_vs_vicon/20140429-1429/'
+path = '/home/javi/exoter/development/data/20140422_stim300_vs_vicon/20140429-1429/'
 
 ##################################
 pose_imu_acceleration_file =  path + 'pose_imu_acceleration.0.data' # IMU is wrt to body frame
@@ -87,10 +87,10 @@ Qbi[2,2] = pow(inc_biasinstability[2], 2)
 
 # Initial covariance
 P0 = np.matlib.eye(12, dtype=double)
-P0[0:3, 0:3] = np.matlib.eye(3, dtype=double).dot(0.001)
-P0[3:6, 3:6] = np.matlib.eye(3, dtype=double).dot(0.01)
-P0[6:9, 6:9] = np.matlib.eye(3, dtype=double).dot(0.01)
-P0[9:12, 9:12] = np.matlib.eye(3, dtype=double).dot(0.01)
+P0[0:3, 0:3] = np.matlib.eye(3, dtype=double) * 0.001
+P0[3:6, 3:6] = np.matlib.eye(3, dtype=double) * 0.01
+P0[6:9, 6:9] = np.matlib.eye(3, dtype=double) * 0.01
+P0[9:12, 9:12] = np.matlib.eye(3, dtype=double) * 0.01
 
 # Adaptive parameters
 acc_m1 = 5
@@ -109,8 +109,8 @@ dip_angle=None
 ym = None
 tt = np.asmatrix(gyro.t).transpose()
 
-imu_orient, imu_euler, bahat, bghat, Qa = quater_ikf.filter (P0 = P0, ya = ya, yg = yg, ym = ym, yi = yi,
-                                                tt=tt, Ra=Ra, Rg=Rg, Ri=Ri,
+imu_orient, imu_euler, bahat, bghat, Qa, Qi = quater_ikf.filter (P0 = P0, ya = None, yg = yg, ym = ym, yi = None, tt=tt,
+                                                Ra=Ra, Rg=Rg, Ri=Ri,
                                                 Qba=Qba, Qbg=Qbg, Qbi=Qbi, dip_angle = dip_angle,
                                                 acc_m1 = acc_m1, acc_m2 = acc_m2, acc_gamma = acc_gamma,
                                                 inc_m1 = inc_m1, inc_m2 = inc_m2, inc_gamma = inc_gamma)

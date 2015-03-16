@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 
 #######################################
-path_odometry_file = '/home/jhidalgocarrio/exoter/development/post-process_data/20140911_decos_field/20140911-1805/pose_odo_position.0.data'
+path_odometry_file = '/home/jhidalgocarrio/exoter/development/data/20140911_decos_field/20140911-1805/pose_odo_position.0.data'
 
-path_skid_file = '/home/jhidalgocarrio/exoter/development/post-process_data/20140911_decos_field/20140911-1805/pose_skid_position.0.data'
+path_skid_file = '/home/jhidalgocarrio/exoter/development/data/20140911_decos_field/20140911-1805/pose_skid_position.0.data'
 
-path_reference_file = '/home/jhidalgocarrio/exoter/development/post-process_data/20140911_decos_field/20140911-1805/pose_ref_position.0.data'
+path_reference_file = '/home/jhidalgocarrio/exoter/development/data/20140911_decos_field/20140911-1805/pose_ref_position.0.data'
 #######################################
 
 

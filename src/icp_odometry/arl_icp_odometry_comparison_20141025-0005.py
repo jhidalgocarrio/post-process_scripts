@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 
 #######################################
-wheel_odometry_file = '/home/jhidalgocarrio/exoter/development/post-process_data/20141024_planetary_lab/20141025-0005/pose_odo_position.0.data'
+wheel_odometry_file = '/home/jhidalgocarrio/exoter/development/data/20141024_planetary_lab/20141025-0005/pose_odo_position.0.data'
 
-icp_odometry_file = '/home/jhidalgocarrio/exoter/development/post-process_data/20141024_planetary_lab/20141025-0005/pose_icpodo_position.0.data'
+icp_odometry_file = '/home/jhidalgocarrio/exoter/development/data/20141024_planetary_lab/20141025-0005/pose_icpodo_position.0.data'
 
-path_reference_file = '/home/jhidalgocarrio/exoter/development/post-process_data/20141024_planetary_lab/20141025-0005/pose_ref_position.0.data'
+path_reference_file = '/home/jhidalgocarrio/exoter/development/data/20141024_planetary_lab/20141025-0005/pose_ref_position.0.data'
 #######################################
 
 

@@ -8,10 +8,10 @@ import matplotlib.pyplot as plt
 ##  ACC  ##
 ###########
 
-#spamReader = csv.reader(open('/home/jhidalgocarrio/exoter/development/post-process_data/20140325_stim300_test/stim300_acc_262bnw_500hz.data', 'rb'), delimiter=' ', quotechar='|')
-#spamReader = csv.reader(open('/home/jhidalgocarrio/exoter/development/post-process_data/20140325_stim300_test/stim300_acc_16bnw_500hz.data', 'rb'), delimiter=' ', quotechar='|')
-#spamReader = csv.reader(open('/home/jhidalgocarrio/exoter/development/post-process_data/20140325_stim300_test/stim300_acc_16bnw_250hz.data', 'rb'), delimiter=' ', quotechar='|')
-spamReader = csv.reader(open('/home/jhidalgocarrio/exoter/development/post-process_data/20140325_stim300_test/stim300_acc_33bnw_125hz.data', 'rb'), delimiter=' ', quotechar='|')
+#spamReader = csv.reader(open('/home/jhidalgocarrio/exoter/development/data/20140325_stim300_test/stim300_acc_262bnw_500hz.data', 'rb'), delimiter=' ', quotechar='|')
+#spamReader = csv.reader(open('/home/jhidalgocarrio/exoter/development/data/20140325_stim300_test/stim300_acc_16bnw_500hz.data', 'rb'), delimiter=' ', quotechar='|')
+#spamReader = csv.reader(open('/home/jhidalgocarrio/exoter/development/data/20140325_stim300_test/stim300_acc_16bnw_250hz.data', 'rb'), delimiter=' ', quotechar='|')
+spamReader = csv.reader(open('/home/jhidalgocarrio/exoter/development/data/20140325_stim300_test/stim300_acc_33bnw_125hz.data', 'rb'), delimiter=' ', quotechar='|')
 
 time=[]
 accx=[]
@@ -94,9 +94,9 @@ plt.show(block=False)
 ## GYROS ##
 ###########
 
-spamReader = csv.reader(open('/home/jhidalgocarrio/exoter/development/post-process_data/20140325_stim300_test/stim300_gyro_262bnw_500hz.data', 'rb'), delimiter=' ', quotechar='|')
-#spamReader = csv.reader(open('/home/jhidalgocarrio/exoter/development/post-process_data/20140325_stim300_test/stim300_gyro_16bnw_500hz.data', 'rb'), delimiter=' ', quotechar='|')
-#spamReader = csv.reader(open('/home/jhidalgocarrio/exoter/development/post-process_data/20140325_stim300_test/stim300_gyro_16bnw_250hz.data', 'rb'), delimiter=' ', quotechar='|')
+spamReader = csv.reader(open('/home/jhidalgocarrio/exoter/development/data/20140325_stim300_test/stim300_gyro_262bnw_500hz.data', 'rb'), delimiter=' ', quotechar='|')
+#spamReader = csv.reader(open('/home/jhidalgocarrio/exoter/development/data/20140325_stim300_test/stim300_gyro_16bnw_500hz.data', 'rb'), delimiter=' ', quotechar='|')
+#spamReader = csv.reader(open('/home/jhidalgocarrio/exoter/development/data/20140325_stim300_test/stim300_gyro_16bnw_250hz.data', 'rb'), delimiter=' ', quotechar='|')
 
 time=[]
 gyrox=[]
@@ -179,10 +179,10 @@ plt.show(block=False)
 ##  INC  ##
 ###########
 
-#spamReader = csv.reader(open('/home/jhidalgocarrio/exoter/development/post-process_data/20140325_stim300_test/stim300_inc_262bnw_500hz.data', 'rb'), delimiter=' ', quotechar='|')
-spamReader = csv.reader(open('/home/jhidalgocarrio/exoter/development/post-process_data/20140325_stim300_test/stim300_inc_16bnw_500hz.data', 'rb'), delimiter=' ', quotechar='|')
-#spamReader = csv.reader(open('/home/jhidalgocarrio/exoter/development/post-process_data/20140325_stim300_test/stim300_inc_16bnw_250hz.data', 'rb'), delimiter=' ', quotechar='|')
-#spamReader = csv.reader(open('/home/jhidalgocarrio/exoter/development/post-process_data/20140325_stim300_test/stim300_inc_33bnw_125hz.data', 'rb'), delimiter=' ', quotechar='|')
+#spamReader = csv.reader(open('/home/jhidalgocarrio/exoter/development/data/20140325_stim300_test/stim300_inc_262bnw_500hz.data', 'rb'), delimiter=' ', quotechar='|')
+spamReader = csv.reader(open('/home/jhidalgocarrio/exoter/development/data/20140325_stim300_test/stim300_inc_16bnw_500hz.data', 'rb'), delimiter=' ', quotechar='|')
+#spamReader = csv.reader(open('/home/jhidalgocarrio/exoter/development/data/20140325_stim300_test/stim300_inc_16bnw_250hz.data', 'rb'), delimiter=' ', quotechar='|')
+#spamReader = csv.reader(open('/home/jhidalgocarrio/exoter/development/data/20140325_stim300_test/stim300_inc_33bnw_125hz.data', 'rb'), delimiter=' ', quotechar='|')
 
 time=[]
 incx=[]
