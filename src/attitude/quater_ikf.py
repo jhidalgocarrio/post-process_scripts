@@ -113,7 +113,8 @@ def dcm2quaternion (C):
 
     return q
 
-def filter(P0 = None, ya=None, yg=None, ym=None, yi=None, tt=None, Ra=None, Rg=None, Rm=None, Ri=None,
+def filter(P0 = None, ya=None, yg=None, ym=None, yi=None, tt=None,
+                Ra=None, Rg=None, Rm=None, Ri=None,
                 Qba=None, Qbg=None, Qbi=None, dip_angle=None,
                 acc_m1 = None, acc_m2 = None, acc_gamma = None,
                 inc_m1 = None, inc_m2 = None, inc_gamma = None):
@@ -121,10 +122,10 @@ def filter(P0 = None, ya=None, yg=None, ym=None, yi=None, tt=None, Ra=None, Rg=N
     D2R = pi/180.0
 
     if P0 is None:
-        raise ValueError("Rg cannot be None")
+        raise ValueError("P0 cannot be None")
 
     # number of data: N
-    N = ya.shape[1]
+    N = yg.shape[1]
 
     # gravitation acceleration
     g = 9.81
@@ -167,6 +168,7 @@ def filter(P0 = None, ya=None, yg=None, ym=None, yi=None, tt=None, Ra=None, Rg=N
         ymbar = ym[:,0] / norm(ym[:,0])
         foo1 = np.cross(yabar,ymbar) / norm(np.cross(yabar,ymbar))
         C = np.array([-np.cross(yabar,foo1), foo1, yabar])
+        C = np.asmatrix(C)
         q4[:,0] = dcm2quaternion(C)
     else:
         q4[:,0] = np.matrix([1, 0, 0, 0]).transpose()
@@ -203,8 +205,8 @@ def filter(P0 = None, ya=None, yg=None, ym=None, yi=None, tt=None, Ra=None, Rg=N
 
     # A matrix
     A = np.zeros((12,12), dtype=double)
+    A[0:3, 3:6] = -0.5 * np.eye(3, dtype=double)
     A = np.asmatrix(A)
-    A[0:3, 3:6] = np.eye(3, dtype=double).dot(-0.5)
 
     # Intialization for quaternion integration
     wx = yg[0,0]
@@ -236,8 +238,8 @@ def filter(P0 = None, ya=None, yg=None, ym=None, yi=None, tt=None, Ra=None, Rg=N
 
     # Kalman filter loop
     for i in range (1,N):
-        print i
         T = double(tt[i] - tt[i-1])
+        print 'index[{0}]: delta_t {1}.'.format(i, T)
 
         Cq = quaternion2dcm(q4[:,i-1]);
         A[0:3,0:3] = -vec2product(yg[:,i-1] - bghat);
@@ -246,7 +248,7 @@ def filter(P0 = None, ya=None, yg=None, ym=None, yi=None, tt=None, Ra=None, Rg=N
         x = dA * x
         Qd = Q * T + 0.5*T*T*A*Q + 0.5*T*T*Q*A.transpose()
         Qd = 0.5*(Qd + Qd.transpose())
-        P = dA.dot(P).dot(dA.transpose()) + Qd;
+        P = dA * P * dA.transpose() + Qd;
 
         yyg = yg[:,i-1] - bghat;
         wx = yyg[0];
@@ -257,11 +259,11 @@ def filter(P0 = None, ya=None, yg=None, ym=None, yi=None, tt=None, Ra=None, Rg=N
                       [wy , -wz , 0 , wx],
                       [wz , wy , -wx , 0]])
 
-        q4[:,i] = (np.matlib.eye(4, dtype=double) + 0.75 * omega4.dot(T)
-                - 0.25 * oldomega4.dot(T)
+        q4[:,i] = (np.matlib.eye(4, dtype=double) + 0.75 * omega4 * T
+                - 0.25 * oldomega4 * T
                 - (1.0/6.0) * pow(norm(yyg), 2) * pow(T,2) * np.eye(4, dtype=double)
-                - (1.0/24.0) * omega4.dot(oldomega4) * pow(T,2)
-                - (1.0/48.0) * pow(norm(yyg), 2) * omega4 * pow(T,3)).dot(q4[:,i-1])
+                - (1.0/24.0) * omega4 * oldomega4 * pow(T,2)
+                - (1.0/48.0) * pow(norm(yyg), 2) * omega4 * pow(T,3)) * q4[:,i-1]
 
         q4[:,i] = q4[:,i] / norm(q4[:,i])
         oldomega4 = omega4
@@ -273,11 +275,11 @@ def filter(P0 = None, ya=None, yg=None, ym=None, yi=None, tt=None, Ra=None, Rg=N
         # ----------------------------------------------------
         if ya is not None:
 
-            H1[0:3, 0:3] = 2 * vec2product(Cq.dot(gtilde))
-            z1 = ya[:,i] - bahat #- Cq*gtilde
+            H1[0:3, 0:3] = 2 * vec2product(Cq * gtilde)
+            z1 = ya[:,i] - bahat - Cq*gtilde
 
             # adaptive algorithm
-            fooR1 = (z1 - H1.dot(x)).dot((z1 - H1.dot(x)).transpose())
+            fooR1 = (z1 - H1 * x) * (z1 - H1 * x).transpose()
             R1[3*(i-1):3*i,:] = fooR1
             uk = fooR1
             for j in range(i-1, min([i-(acc_m1-1),1])):
@@ -285,7 +287,7 @@ def filter(P0 = None, ya=None, yg=None, ym=None, yi=None, tt=None, Ra=None, Rg=N
 
             uk = uk / acc_m1
 
-            fooR2 = H1.dot(P).dot(H1.transpose()) + Ra
+            fooR2 = H1 * P * H1.transpose() + Ra
 
             u,s,v = np.linalg.svd(uk, full_matrices=True)
             u1 = u[:,0]
