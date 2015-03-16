@@ -109,10 +109,126 @@ dip_angle=None
 ym = None
 tt = np.asmatrix(gyro.t).transpose()
 
-imu_orient, imu_euler, bahat, bghat, Qa, Qi = quater_ikf.filter (P0 = P0, ya = None, yg = yg, ym = ym, yi = None, tt=tt,
+quater_ikf_orient, quater_ikf_euler, bahat, bghat, Qa, Qi = quater_ikf.filter (P0 = P0, ya = None, yg = yg, ym = ym, yi = None, tt=tt,
                                                 Ra=Ra, Rg=Rg, Ri=Ri,
                                                 Qba=Qba, Qbg=Qbg, Qbi=Qbi, dip_angle = dip_angle,
                                                 acc_m1 = acc_m1, acc_m2 = acc_m2, acc_gamma = acc_gamma,
                                                 inc_m1 = inc_m1, inc_m2 = inc_m2, inc_gamma = inc_gamma)
 
+##################################
+# PLOT AND COMPARE THE RESULTS
+##################################
+pose_ref_orient_file = path + 'pose_ref_orientation.0.data'
+
+pose_imu_orient_file = path + 'pose_imu_orientation.0.data'
+##################################
+
+# Read the reference orientation information
+reference_orient = data.QuaternionData()
+reference_orient.readData(pose_ref_orient_file, cov=True)
+
+# Read the imu orientation information
+imu_orient = data.QuaternionData()
+imu_orient.readData(pose_imu_orient_file, cov=True)
+
+################################
+### COMPUTE COV EIGENVALUES  ###
+################################
+imu_orient.covSymmetry()
+imu_orient.eigenValues()
+
+
+#Plotting Orientation values
+matplotlib.rcParams.update({'font.size': 30, 'font.weight': 'bold'})
+fig = plt.figure(1)
+ax = fig.add_subplot(111)
+plt.rc('text', usetex=False)# activate latex text rendering
+
+# IMU Orientation
+time = imu_orient.t
+euler = []
+euler.append(imu_orient.getEuler(2))# Roll
+euler.append(imu_orient.getEuler(1))# Pitch
+euler.append(imu_orient.getEuler(0))# Yaw
+
+#euler[2] = euler[2] - euler[2][0] # set yaw staring at zero
+
+euler[0][:] = [x * 180.00/math.pi for x in euler[0] ]#convert to degrees
+euler[1][:] = [x * 180.00/math.pi for x in euler[1] ]#convert to degrees
+euler[2][:] = [x * 180.00/math.pi for x in euler[2] ]#convert to degrees
+
+axis = 1
+if axis == 0:
+    label_text = "IMU Roll"
+    color_value = [1.0,0,0]
+elif axis  == 1:
+    label_text = "IMU Pitch"
+    color_value = [0.0,1.0,0]
+else:
+    label_text = "IMU Yaw"
+    color_value = [0.0,0.0,1.0]
+
+sigma = imu_orient.getStd(axis=axis, levelconf = 3)
+ax.plot(time, euler[axis], marker='.', label=label_text, color=color_value, alpha=0.5, lw=2)
+ax.fill(np.concatenate([time, time[::-1]]),
+        np.concatenate([euler[axis] - sigma,
+                       (euler[axis] + sigma)[::-1]]),
+        alpha=.5, fc='b', ec='None', label='95% confidence interval')
+
+ax.plot(time, (euler[axis] - sigma), color="black", alpha=1.0, lw=1.0)
+ax.plot(time, (euler[axis] + sigma), color="black", alpha=1.0, lw=1.0)
+
+# Python Filter Values
+time = tt
+euler=[]
+euler = np.array(quater_ikf_euler[:])
+
+#euler[2] = euler[2] - euler[2][0] # set yaw staring at zero
+
+euler[0][:] = [x * 180.00/math.pi for x in euler[0] ]#convert to degrees
+euler[1][:] = [x * 180.00/math.pi for x in euler[1] ]#convert to degrees
+euler[2][:] = [x * 180.00/math.pi for x in euler[2] ]#convert to degrees
+
+if axis == 0:
+    label_text = "INT IMU Roll"
+    color_value = [0.5,0,0.4]
+elif axis  == 1:
+    label_text = "INT IMU Pitch"
+    color_value = [0.0,0.5,0.4]
+else:
+    label_text = "INT IMU Yaw"
+    color_value = [0.4,0.0,0.5]
+
+ax.plot(time, euler[axis], marker='.', label=label_text, color=color_value, alpha=0.5, lw=2)
+
+# Reference Attitude
+time = reference_orient.t
+euler = []
+euler.append(reference_orient.getEuler(2))# Roll
+euler.append(reference_orient.getEuler(1))# Pitch
+euler.append(reference_orient.getEuler(0))# Yaw
+
+#euler[2] = euler[2] - euler[2][0] #set yaw starting at zero
+
+euler[0][:] = [x * 180.00/math.pi for x in euler[0] ]#convert to degrees
+euler[1][:] = [x * 180.00/math.pi for x in euler[1] ]#convert to degrees
+euler[2][:] = [x * 180.00/math.pi for x in euler[2] ]#convert to degrees
+
+if axis == 0:
+    label_text = "Vicon Roll"
+    color_value = [0.7,0.4,0]
+elif axis  == 1:
+    label_text = "Vicon Pitch"
+    color_value = [0.4,0.7,0]
+else:
+    label_text = "Vicon Yaw"
+    color_value = [0,0.4,0.7]
+
+ax.plot(time, euler[axis], marker='.', label=label_text, color=color_value, alpha=0.5, lw=2)
+
+plt.xlabel(r'Time [$s$]')
+plt.ylabel(r'Angle [${}^\circ$]')
+plt.grid(True)
+plt.legend(prop={'size':25})
+plt.show(block=False)
 

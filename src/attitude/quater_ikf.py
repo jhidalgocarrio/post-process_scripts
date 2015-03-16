@@ -239,7 +239,7 @@ def filter(P0 = None, ya=None, yg=None, ym=None, yi=None, tt=None,
     # Kalman filter loop
     for i in range (1,N):
         T = double(tt[i] - tt[i-1])
-        print 'index[{0}]: delta_t {1}.'.format(i, T)
+        #print 'index[{0}]: delta_t {1}.'.format(i, T)
 
         Cq = quaternion2dcm(q4[:,i-1]);
         A[0:3,0:3] = -vec2product(yg[:,i-1] - bghat);
