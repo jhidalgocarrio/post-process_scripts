@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 
 #path = '/home/javi/exoter/development/data/20141024_planetary_lab/20141024-2138/'
-path = '/home/javi/exoter/development/data/20140422_stim300_vs_vicon/20140429-1429/'
+#path = '/home/javi/exoter/development/data/20140422_stim300_vs_vicon/20140425-1923/'
+path = '/home/javi/exoter/development/data/20150323_ww_dlr/imu_stim300_attitude_test_20150325-1716/'
 
 ##################################
-pose_odo_orient_file = path + 'pose_odo_orientation.0.data'
+pose_odo_orient_file = path + 'pose_ikf_orientation.0.data'
 
 pose_ref_orient_file = path + 'pose_ref_orientation.0.data'
 
@@ -61,7 +62,7 @@ fig = plt.figure(1)
 ax = fig.add_subplot(111)
 plt.rc('text', usetex=False)# activate latex text rendering
 
-time = imu_orient.t
+time = imu_orient.time
 euler = []
 euler.append(imu_orient.getEuler(2))# Roll
 euler.append(imu_orient.getEuler(1))# Pitch
@@ -73,7 +74,7 @@ euler[0][:] = [x * 180.00/math.pi for x in euler[0] ]#convert to degrees
 euler[1][:] = [x * 180.00/math.pi for x in euler[1] ]#convert to degrees
 euler[2][:] = [x * 180.00/math.pi for x in euler[2] ]#convert to degrees
 
-axis = 1
+axis = 0
 if axis == 0:
     label_text = "IMU Roll"
     color_value = [1.0,0,0]
@@ -95,9 +96,43 @@ ax.fill(np.concatenate([time, time[::-1]]),
 ax.plot(time, (euler[axis] - sigma), color="black", alpha=1.0, lw=1.0)
 ax.plot(time, (euler[axis] + sigma), color="black", alpha=1.0, lw=1.0)
 
+# Odometry Orientation
+time = odometry_orient.time
+euler = []
+euler.append(odometry_orient.getEuler(2))# Roll
+euler.append(odometry_orient.getEuler(1))# Pitch
+euler.append(odometry_orient.getEuler(0))# Yaw
+
+#euler[2] = euler[2] - euler[2][0] #set yaw starting at zero
+
+euler[0][:] = [x * 180.00/math.pi for x in euler[0] ]#convert to degrees
+euler[1][:] = [x * 180.00/math.pi for x in euler[1] ]#convert to degrees
+euler[2][:] = [x * 180.00/math.pi for x in euler[2] ]#convert to degrees
+
+if axis == 0:
+    label_text = "IKF Roll"
+    color_value = [0.6,0.5,0]
+elif axis  == 1:
+    label_text = "IKF Pitch"
+    color_value = [0.5,0.6,0]
+else:
+    label_text = "IKF Yaw"
+    color_value = [0,0.5,0.6]
+
+# Odometry Orientation
+sigma = odometry_orient.getStd(axis=axis, levelconf = 3)
+ax.plot(time, euler[axis], marker='.', label=label_text, color=color_value, alpha=0.5, lw=2)
+ax.fill(np.concatenate([time, time[::-1]]),
+        np.concatenate([euler[axis] - sigma,
+                       (euler[axis] + sigma)[::-1]]),
+        alpha=.5, fc='b', ec='None', label='95% confidence interval')
+
+ax.plot(time, (euler[axis] - sigma), color="black", alpha=1.0, lw=1.0)
+ax.plot(time, (euler[axis] + sigma), color="black", alpha=1.0, lw=1.0)
 
 
-time = reference_orient.t
+# Reference Orientation
+time = reference_orient.time
 euler = []
 euler.append(reference_orient.getEuler(2))# Roll
 euler.append(reference_orient.getEuler(1))# Pitch
@@ -105,9 +140,9 @@ euler.append(reference_orient.getEuler(0))# Yaw
 
 #euler[2] = euler[2] - euler[2][0] #set yaw starting at zero
 
-euler[0][:] = [x * 180.00/math.pi for x in euler[0] ]#convert to degrees
-euler[1][:] = [x * 180.00/math.pi for x in euler[1] ]#convert to degrees
-euler[2][:] = [x * 180.00/math.pi for x in euler[2] ]#convert to degrees
+euler[0][:] = [x * -180.00/math.pi for x in euler[0] ]#convert to degrees
+euler[1][:] = [x * -180.00/math.pi for x in euler[1] ]#convert to degrees
+euler[2][:] = [x * -180.00/math.pi for x in euler[2] ]#convert to degrees
 
 if axis == 0:
     label_text = "Vicon Roll"
@@ -120,15 +155,15 @@ else:
     color_value = [0,0.4,0.7]
 
 # Reference Orientation
-sigma = reference_orient.getStd(axis=axis, levelconf = 3)
+#sigma = reference_orient.getStd(axis=axis, levelconf = 3)
 ax.plot(time, euler[axis], marker='.', label=label_text, color=color_value, alpha=0.5, lw=2)
-ax.fill(np.concatenate([time, time[::-1]]),
-        np.concatenate([euler[axis] - sigma,
-                       (euler[axis] + sigma)[::-1]]),
-        alpha=.5, fc='b', ec='None', label='95% confidence interval')
-
-ax.plot(time, (euler[axis] - sigma), color="black", alpha=1.0, lw=1.0)
-ax.plot(time, (euler[axis] + sigma), color="black", alpha=1.0, lw=1.0)
+#ax.fill(np.concatenate([time, time[::-1]]),
+#        np.concatenate([euler[axis] - sigma,
+#                       (euler[axis] + sigma)[::-1]]),
+#        alpha=.5, fc='b', ec='None', label='95% confidence interval')
+#
+#ax.plot(time, (euler[axis] - sigma), color="black", alpha=1.0, lw=1.0)
+#ax.plot(time, (euler[axis] + sigma), color="black", alpha=1.0, lw=1.0)
 
 
 
@@ -143,6 +178,7 @@ from matplotlib.collections import LineCollection
 fig = plt.figure(2)
 ax = fig.add_subplot(111)
 
+# IMU Orientation
 time = imu_orient.t
 euler = []
 euler.append(imu_orient.getEuler(2))# Roll
@@ -157,6 +193,7 @@ euler[2][:] = [x * 180.00/math.pi for x in euler[2] ]#convert to degrees
 
 ax.plot(time, euler[0], marker='.', label="IMU Roll", color=[1.0,0,0], alpha=0.5, lw=2)
 
+# Reference Orientation
 time = reference_orient.t
 euler = []
 euler.append(reference_orient.getEuler(2))# Roll
@@ -168,7 +205,6 @@ euler[2] = euler[2] - euler[2][0] #set yaw starting at zero
 euler[0][:] = [x * 180.00/math.pi for x in euler[0] ]#convert to degrees
 euler[1][:] = [x * 180.00/math.pi for x in euler[1] ]#convert to degrees
 euler[2][:] = [x * 180.00/math.pi for x in euler[2] ]#convert to degrees
-
 
 #Line width
 uncer = np.nan_to_num(np.array(reference_orient.getStd(axis=axis, levelconf=3))).real
