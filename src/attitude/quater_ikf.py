@@ -268,15 +268,15 @@ def filter(P0 = None, ya=None, yg=None, ym=None, yi=None, tt=None,
         q4[:,i] = q4[:,i] / norm(q4[:,i])
         oldomega4 = omega4
 
-        Cq = quaternion2dcm(q4[:,i])
 
         # ----------------------------------------------------
         # Three step measurement update
         # ----------------------------------------------------
         if ya is not None:
+            Cq = quaternion2dcm(q4[:,i])
 
             H1[0:3, 0:3] = 2 * vec2product(Cq * gtilde)
-            z1 = ya[:,i] - bahat - Cq*gtilde
+            z1 = ya[:,i] - bahat# - Cq*gtilde
 
             # adaptive algorithm
             fooR1 = (z1 - H1 * x) * (z1 - H1 * x).transpose()
@@ -324,9 +324,9 @@ def filter(P0 = None, ya=None, yg=None, ym=None, yi=None, tt=None,
             q4[:,i] = quaternionmul(q4[:,i],qe)
             q4[:,i]=  q4[:,i] / norm(q4[:,i])
             x[0:3] = np.asmatrix(np.zeros(3, dtype=double)).transpose()
-            Cq = quaternion2dcm(q4[:,i])
 
         if ym is not None:
+            Cq = quaternion2dcm(q4[:,i])
             H2[0:3,0:3] =  2 * vec2product(Cq *mtilde)
             z2 = ym[:,i] - Cq*mtilde
 

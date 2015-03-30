@@ -53,6 +53,11 @@ acc_biasinstability = np.array([0.0004368486, 0.0003441604, 0.0003097561])
 gyro_biasinstability = np.array([7.05e-06, 4.82e-06, 6.36e-06])
 inc_biasinstability = np.array([0.008292219, 0.008160451, 0.00846485])
 
+acc_raterandomwalk = np.array([1.434889e-05, 9.549511e-06, 1.436321e-05])
+gyro_raterandomwalk = np.array([2.924086e-07, 2.591558e-07, 5.058095e-08])
+inc_raterandomwalk = np.array([0.005019287, 0.005019287, 0.005019287])
+
+
 # From the Covariance matrices
 Ra = np.matlib.eye(3, dtype=double)
 Ra[0,0] = pow(acc_randomwalk[0]/sqrt(acc_delta_t), 2)
@@ -88,9 +93,9 @@ Qbi[2,2] = pow(inc_biasinstability[2], 2)
 # Initial covariance
 P0 = np.matlib.eye(12, dtype=double)
 P0[0:3, 0:3] = np.matlib.eye(3, dtype=double) * 0.001
-P0[3:6, 3:6] = np.matlib.eye(3, dtype=double) * 0.01
-P0[6:9, 6:9] = np.matlib.eye(3, dtype=double) * 0.01
-P0[9:12, 9:12] = np.matlib.eye(3, dtype=double) * 0.01
+P0[3:6, 3:6] = np.matlib.eye(3, dtype=double) * 0.0001
+P0[6:9, 6:9] = np.matlib.eye(3, dtype=double) * 0.0001
+P0[9:12, 9:12] = np.matlib.eye(3, dtype=double) * 0.0001
 
 # Adaptive parameters
 acc_m1 = 5
@@ -107,9 +112,9 @@ yg = np.asmatrix(gyro.data.transpose())
 yi = np.asmatrix(inc.data.transpose())
 dip_angle=None
 ym = None
-tt = np.asmatrix(gyro.t).transpose()
+tt = np.asmatrix(gyro.time).transpose()
 
-quater_ikf_orient, quater_ikf_euler, bahat, bghat, Qa, Qi = quater_ikf.filter (P0 = P0, ya = None, yg = yg, ym = ym, yi = None, tt=tt,
+quater_ikf_orient, quater_ikf_euler, bahat, bghat, Qa, Qi = quater_ikf.filter (P0 = P0, ya = ya, yg = yg, ym = ym, yi = yi, tt=tt,
                                                 Ra=Ra, Rg=Rg, Ri=Ri,
                                                 Qba=Qba, Qbg=Qbg, Qbi=Qbi, dip_angle = dip_angle,
                                                 acc_m1 = acc_m1, acc_m2 = acc_m2, acc_gamma = acc_gamma,
@@ -151,7 +156,7 @@ euler.append(imu_orient.getEuler(2))# Roll
 euler.append(imu_orient.getEuler(1))# Pitch
 euler.append(imu_orient.getEuler(0))# Yaw
 
-#euler[2] = euler[2] - euler[2][0] # set yaw staring at zero
+#euler[2] = euler[2] - euler[2][0] # set yaw starting at zero
 
 euler[0][:] = [x * 180.00/math.pi for x in euler[0] ]#convert to degrees
 euler[1][:] = [x * 180.00/math.pi for x in euler[1] ]#convert to degrees
