@@ -42,7 +42,7 @@ plt.colorbar()  # draw colorbar
 plt.xlim(min(px), max(xi))
 plt.ylim(min(py), max(yi))
 #plt.title('griddata test (%d points)' % npts)
-plt.show()
+plt.show(block=False)
 
 ############
 x, y = np.meshgrid(xi, yi)
@@ -70,7 +70,8 @@ ax.set_ylim(0, max(yi))
 ax.set_zlabel('Z')
 ax.set_zlim(0, 4)
 
-plt.show()
+plt.show(block=False)
+
 
 
 
