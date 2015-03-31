@@ -24,7 +24,6 @@ import cov_ellipse as cov
 #ExoTeR Odometry
 odometry = data.ThreeData()
 odometry.readData(path_odometry_file, cov=True)
-odometry.eigenValues()
 
 #Skid Odometry
 #skid = data.ThreeData()
@@ -35,7 +34,30 @@ odometry.eigenValues()
 #Vicon Pose
 reference = data.ThreeData()
 reference.readData(path_reference_file, cov=True)
+
+########################
+### REMOVE OUTLIERS  ###
+########################
+temindex = np.where(np.isnan(reference.data[:,0]))
+temindex = np.asarray(temindex)
+
+odometry.delete(temindex)
+#skid.delete(temindex)
+reference.delete(temindex)
+
+################################
+### COMPUTE COV EIGENVALUES  ###
+################################
+odometry.covSymmetry()
+odometry.eigenValues()
+
+#skid.covSymmetry()
+#skid.eigenValues()
+
+reference.covSymmetry()
 reference.eigenValues()
+
+
 
 #Position comparison versus time
 matplotlib.rcParams.update({'font.size': 30, 'font.weight': 'bold'})
