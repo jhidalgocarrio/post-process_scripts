@@ -53,8 +53,9 @@ class ThreeData:
             tbody = float(atime[i+1]) - float(atime[0])
             self.time.append(tbody)
 
-        self.delta.append(self.delta[len(self.delta)-1])
-        self.t = mean(self.delta) * np.r_[0:len(self.atime)]
+        if len(self.delta) > 1:
+            self.delta.append(self.delta[len(self.delta)-1])
+            self.t = mean(self.delta) * r_[0:len(self.atime)]
 
         # Convert to np array
         self.atime = np.asarray(self.atime)
@@ -236,8 +237,9 @@ class QuaternionData:
             tbody = float(atime[i+1]) - float(atime[0])
             self.time.append(tbody)
 
-        self.delta.append(self.delta[len(self.delta)-1])
-        self.t = mean(self.delta) * r_[0:len(self.atime)]
+        if len(self.delta) > 1:
+            self.delta.append(self.delta[len(self.delta)-1])
+            self.t = mean(self.delta) * r_[0:len(self.atime)]
 	
         # Convert to np array
         self.atime = np.asarray(self.atime)
