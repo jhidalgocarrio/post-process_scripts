@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 
-#path = '/home/javi/exoter/development/data/20141024_planetary_lab/20141024-2138/'
+path = '/home/javi/exoter/development/data/20141024_planetary_lab/20141025-0005/'
 #path = '/home/javi/exoter/development/data/20140422_stim300_vs_vicon/20140425-1923/'
-path = '/home/javi/exoter/development/data/20150323_ww_dlr/imu_stim300_attitude_test_20150325-1716/'
+#path = '/home/javi/exoter/development/data/20150323_ww_dlr/imu_stim300_attitude_test_20150325-1716/'
 
 ##################################
-pose_odo_orient_file = path + 'pose_ikf_orientation.0.data'
+pose_odo_orient_file = path + 'pose_odo_orientation.0.data'
 
 pose_ref_orient_file = path + 'pose_ref_orientation.0.data'
 
@@ -74,15 +74,15 @@ euler[0][:] = [x * 180.00/math.pi for x in euler[0] ]#convert to degrees
 euler[1][:] = [x * 180.00/math.pi for x in euler[1] ]#convert to degrees
 euler[2][:] = [x * 180.00/math.pi for x in euler[2] ]#convert to degrees
 
-axis = 0
+axis = 1
 if axis == 0:
-    label_text = "IMU Roll"
+    label_text = "Roll [filter w/ Allanvar]"
     color_value = [1.0,0,0]
 elif axis  == 1:
-    label_text = "IMU Pitch"
+    label_text = "Pitch [filter w/ Allanvar]"
     color_value = [0.0,1.0,0]
 else:
-    label_text = "IMU Yaw"
+    label_text = "Yaw [filter w/ Allanvar]"
     color_value = [0.0,0.0,1.0]
 
 # IMU Orientation
@@ -120,8 +120,8 @@ else:
     color_value = [0,0.5,0.6]
 
 # Odometry Orientation
-sigma = odometry_orient.getStd(axis=axis, levelconf = 3)
-ax.plot(time, euler[axis], marker='.', label=label_text, color=color_value, alpha=0.5, lw=2)
+sigma = odometry_orient.getStd(axis=axis, levelconf = 2)
+ax.plot(time, euler[axis], marker='o', linestyle='-', label=label_text, color=color_value, lw=2)
 ax.fill(np.concatenate([time, time[::-1]]),
         np.concatenate([euler[axis] - sigma,
                        (euler[axis] + sigma)[::-1]]),
@@ -140,23 +140,23 @@ euler.append(reference_orient.getEuler(0))# Yaw
 
 #euler[2] = euler[2] - euler[2][0] #set yaw starting at zero
 
-euler[0][:] = [x * -180.00/math.pi for x in euler[0] ]#convert to degrees
-euler[1][:] = [x * -180.00/math.pi for x in euler[1] ]#convert to degrees
-euler[2][:] = [x * -180.00/math.pi for x in euler[2] ]#convert to degrees
+euler[0][:] = [x * 180.00/math.pi for x in euler[0] ]#convert to degrees
+euler[1][:] = [x * 180.00/math.pi for x in euler[1] ]#convert to degrees
+euler[2][:] = [x * 180.00/math.pi for x in euler[2] ]#convert to degrees
 
 if axis == 0:
-    label_text = "Vicon Roll"
+    label_text = "Roll [ground truth]"
     color_value = [0.7,0.4,0]
 elif axis  == 1:
-    label_text = "Vicon Pitch"
+    label_text = "Pitch [ground truth]"
     color_value = [0.4,0.7,0]
 else:
-    label_text = "Vicon Yaw"
+    label_text = "Yaw [ground truth]"
     color_value = [0,0.4,0.7]
 
 # Reference Orientation
 #sigma = reference_orient.getStd(axis=axis, levelconf = 3)
-ax.plot(time, euler[axis], marker='.', label=label_text, color=color_value, alpha=0.5, lw=2)
+ax.plot(time, euler[axis], marker='D', linestyle='None', label=label_text, color=color_value, alpha=0.5, lw=2)
 #ax.fill(np.concatenate([time, time[::-1]]),
 #        np.concatenate([euler[axis] - sigma,
 #                       (euler[axis] + sigma)[::-1]]),
