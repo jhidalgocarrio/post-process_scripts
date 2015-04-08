@@ -86,7 +86,7 @@ else:
     color_value = [0.0,0.0,1.0]
 
 # IMU Orientation
-sigma = imu_orient.getStd(axis=axis, levelconf = 3)
+sigma = imu_orient.getStd(axis=axis, levelconf = 2)
 ax.plot(time, euler[axis], marker='.', label=label_text, color=color_value, alpha=0.5, lw=2)
 ax.fill(np.concatenate([time, time[::-1]]),
         np.concatenate([euler[axis] - sigma,
@@ -109,26 +109,34 @@ euler[0][:] = [x * 180.00/math.pi for x in euler[0] ]#convert to degrees
 euler[1][:] = [x * 180.00/math.pi for x in euler[1] ]#convert to degrees
 euler[2][:] = [x * 180.00/math.pi for x in euler[2] ]#convert to degrees
 
+# Reduce number of points
+time = time[0::20]
+euler[0] = euler[0][0::20]
+euler[1] = euler[1][0::20]
+euler[2] = euler[2][0::20]
+
 if axis == 0:
-    label_text = "IKF Roll"
-    color_value = [0.6,0.5,0]
+    label_text = "Roll [filter w/ Allanvar]"
+    color_value = [1.0,0.0,0]
 elif axis  == 1:
-    label_text = "IKF Pitch"
-    color_value = [0.5,0.6,0]
+    label_text = "Pitch [filter w/ Allanvar]"
+    color_value = [0.0,1.0,0]
 else:
-    label_text = "IKF Yaw"
-    color_value = [0,0.5,0.6]
+    label_text = "Yaw [filter w/ Allanvar]"
+    color_value = [0,0.0,1.0]
 
 # Odometry Orientation
-sigma = odometry_orient.getStd(axis=axis, levelconf = 2)
 ax.plot(time, euler[axis], marker='o', linestyle='-', label=label_text, color=color_value, lw=2)
+sigma = odometry_orient.getStd(axis=axis, levelconf = 2)
+sigma[:] = [x * 180.00/math.pi for x in sigma]#convert to degrees
+sigma = sigma[0::20]
 ax.fill(np.concatenate([time, time[::-1]]),
         np.concatenate([euler[axis] - sigma,
                        (euler[axis] + sigma)[::-1]]),
-        alpha=.5, fc='b', ec='None', label='95% confidence interval')
+        alpha=.5, fc='0.50', ec='None', label='95% confidence interval')
 
-ax.plot(time, (euler[axis] - sigma), color="black", alpha=1.0, lw=1.0)
-ax.plot(time, (euler[axis] + sigma), color="black", alpha=1.0, lw=1.0)
+#ax.plot(time, (euler[axis] - sigma), color="black", alpha=1.0, lw=1.0)
+#ax.plot(time, (euler[axis] + sigma), color="black", alpha=1.0, lw=1.0)
 
 
 # Reference Orientation
@@ -138,34 +146,48 @@ euler.append(reference_orient.getEuler(2))# Roll
 euler.append(reference_orient.getEuler(1))# Pitch
 euler.append(reference_orient.getEuler(0))# Yaw
 
-#euler[2] = euler[2] - euler[2][0] #set yaw starting at zero
+#Misalignment
+alignement_diff = []
+alignement_diff.append(odometry_orient.getEuler(2)[0::20][118] - reference_orient.getEuler(2)[0::20][118]) # Roll
+alignement_diff.append(odometry_orient.getEuler(1)[0::20][118] - reference_orient.getEuler(1)[0::20][118]) # Roll
+alignement_diff.append(odometry_orient.getEuler(0)[0::20][118] - reference_orient.getEuler(0)[0::20][118]) # Roll
 
+euler[0] = euler[0] + alignement_diff[0]
+euler[1] = euler[1] + alignement_diff[1]
+euler[2] = euler[2] + alignement_diff[2]
+
+# Convert to degrees
 euler[0][:] = [x * 180.00/math.pi for x in euler[0] ]#convert to degrees
 euler[1][:] = [x * 180.00/math.pi for x in euler[1] ]#convert to degrees
 euler[2][:] = [x * 180.00/math.pi for x in euler[2] ]#convert to degrees
 
+# Reduce number of points
+time = time[0::20]
+euler[0] = euler[0][0::20]
+euler[1] = euler[1][0::20]
+euler[2] = euler[2][0::20]
+
+
 if axis == 0:
     label_text = "Roll [ground truth]"
-    color_value = [0.7,0.4,0]
+    color_value = [0.2,0.6,0.7]
 elif axis  == 1:
     label_text = "Pitch [ground truth]"
-    color_value = [0.4,0.7,0]
+    color_value = [0.2,0.6,0.7]
 else:
     label_text = "Yaw [ground truth]"
-    color_value = [0,0.4,0.7]
+    color_value = [0.2,0.6,0.7]
 
 # Reference Orientation
 #sigma = reference_orient.getStd(axis=axis, levelconf = 3)
-ax.plot(time, euler[axis], marker='D', linestyle='None', label=label_text, color=color_value, alpha=0.5, lw=2)
+ax.plot(time[118:len(euler[axis])], euler[axis][118:len(euler[axis])], marker='D', linestyle='None', label=label_text, color=color_value, alpha=0.5, lw=2)
+sigma = reference_orient.getStd(axis=axis, levelconf = 2)
+sigma[:] = [x * 180.00/math.pi for x in sigma]#convert to degrees
+sigma = sigma[0::20]
 #ax.fill(np.concatenate([time, time[::-1]]),
 #        np.concatenate([euler[axis] - sigma,
 #                       (euler[axis] + sigma)[::-1]]),
-#        alpha=.5, fc='b', ec='None', label='95% confidence interval')
-#
-#ax.plot(time, (euler[axis] - sigma), color="black", alpha=1.0, lw=1.0)
-#ax.plot(time, (euler[axis] + sigma), color="black", alpha=1.0, lw=1.0)
-
-
+#        alpha=.5, fc='0.50', ec='None', label='95% confidence interval')
 
 plt.xlabel(r'Time [$s$]')
 plt.ylabel(r'Angle [${}^\circ$]')
