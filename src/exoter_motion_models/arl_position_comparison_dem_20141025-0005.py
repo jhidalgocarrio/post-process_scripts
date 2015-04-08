@@ -85,7 +85,8 @@ ax = fig.add_subplot(111)
 plt.rc('text', usetex=False)# activate latex text rendering
 CS = plt.contour(xi, yi, zi, 15, linewidths=0.5, colors='k')
 CS = plt.contourf(xi, yi, zi, 15, cmap=plt.cm.gray, vmax=abs(zi).max(), vmin=-abs(zi).max())
-plt.colorbar()  # draw colorbar
+cbar = plt.colorbar()  # draw colorbar
+cbar.ax.set_ylabel('terrain elevation')
 # plot data points.
 plt.xlim(min(px), max(xi))
 plt.ylim(min(py), max(yi))
@@ -98,22 +99,41 @@ position = np.column_stack((reference.getAxis(0)[0::50], reference.getAxis(1)[0:
 position[:] = [navigation_orient.data[0].rot(x) +  navigation_position.data[0] for x in position]
 
 # Display Ground Truth trajectory
-xposition, yposition = np.meshgrid(position[:,0], position[:, 1])
-xposition = position[:,0]
-yposition = position[:,1]
+x = position[:,0]
+y = position[:,1]
 
-ax.quiver (X=xposition, Y=yposition, U=5*xposition, V=5*yposition)
-ax.plot(xposition, yposition, marker='<', linestyle='None', label="Rover Trajectory", color=[0.5,0,0], alpha=0.5, lw=2)
+Q = ax.quiver(x[:-1], y[:-1], x[1:]-x[:-1], y[1:]-y[:-1], scale_units='xy',
+        angles='xy', scale=1, color='r', units='x', linewidths=(1,),
+        edgecolors=('k'), headaxislength=5)
+qk = ax.quiverkey(Q, 0.9, 0.02, 0.5,  'trajectory line', fontproperties={'weight': 'bold', 'size':16})
 
+import os
+from matplotlib._png import read_png
+import matplotlib.image as image
+from scipy import ndimage
+from matplotlib.offsetbox import OffsetImage, AnnotationBbox
+fn = get_sample_data(os.getcwd()+"/data/img/exoter.png", asfileobj=False)
+exoter = image.imread(fn)
+exoter = ndimage.rotate(exoter, 180)
+imexoter = OffsetImage(exoter, zoom=0.3)
+
+
+ab = AnnotationBbox(imexoter, xy=(x[0], y[0]),
+                        xybox=None,
+                        xycoords='data',
+                        boxcoords="offset points",
+                        frameon=False)
+
+ax.annotate("ExoTeR", xy=(x[0], y[0]), xycoords='data',
+                                xytext=(-40, 45), textcoords='offset points', fontsize=22,
+                                arrowprops=dict(arrowstyle="->", connectionstyle="arc3,rad=.2", lw=2.0))
+
+ax.add_artist(ab)
+
+plt.xlabel(r'X [$m$]', fontsize=35, fontweight='bold')
+plt.ylabel(r'Y [$m$]', fontsize=35, fontweight='bold')
+plt.grid(True)
+ax.legend(handles=[exoter], loc=1, prop={'size':30})
 plt.show(block=False)
 
 
-n = 8
-X,Y = meshgrid(position[0:n,0],position[0:n, 1])
-T = np.arctan2(Y-n/2.0, X-n/2.0)
-R = 10+np.sqrt((Y-n/2.0)**2+(X-n/2.0)**2)
-U,V = R*np.cos(T), R*np.sin(T)
-
-axes([0.025,0.025,0.95,0.95])
-quiver(X,Y,U,V,R, alpha=.5)
-quiver(X,Y,U,V, edgecolor='k', facecolor='None', linewidth=.5)
