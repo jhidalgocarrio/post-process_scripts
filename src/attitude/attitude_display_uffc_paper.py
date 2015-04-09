@@ -53,7 +53,6 @@ imu_orient.eigenValues()
 ### PLOTTING VALUES  ###
 ########################
 
-#Odometry Position comparison X-Time
 matplotlib.rcParams.update({'font.size': 30, 'font.weight': 'bold'})
 fig = plt.figure(1)
 ax = fig.add_subplot(111)
