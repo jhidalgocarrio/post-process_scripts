@@ -37,7 +37,7 @@ class ThreeData:
 	
         for row in csv.reader(open(filename, 'r'), delimiter=' ', quotechar='|'):
             #print row
-            self.atime.append(float(row[0])/1000000) #absolute time
+            self.atime.append(float(row[0])/1000000.00) #absolute time
             self.data.append(np.array([float(row[1]), float(row[2]), float(row[3])]))
             if False != cov:
                 matrix = np.array([[float(row[4]), float(row[5]), float(row[6])],
@@ -218,7 +218,7 @@ class QuaternionData:
 	
         for row in csv.reader(open(filename, 'r'), delimiter=' ', quotechar='|'):
             #print row
-            self.atime.append(float(row[0])/1000000) #absolute time
+            self.atime.append(float(row[0])/1000000.00) #absolute time
             self.data.append(quat.quaternion([float(row[4]), float(row[1]), float(row[2]), float(row[3])]))
 
             if False != cov:
