@@ -108,6 +108,7 @@ Q = ax.quiver(x[:-1], y[:-1], x[1:]-x[:-1], y[1:]-y[:-1], scale_units='xy',
 qk = ax.quiverkey(Q, 0.9, 0.02, 0.5,  'trajectory line', fontproperties={'weight': 'bold', 'size':16})
 
 import os
+from matplotlib.cbook import get_sample_data
 from matplotlib._png import read_png
 import matplotlib.image as image
 from scipy import ndimage
