@@ -64,15 +64,15 @@ import pylab as pb
 pb.ion()
 import GPy
 
-kernel = GPy.kern.exponential(D=1, variance=1., lengthscale=0.01)
+kernel = GPy.kern.Exponential(input_dim=1, variance=1., lengthscale=1)
 
 Y = np.atleast_2d(y).T
 
-m = GPy.models.GP_regression(X,Y,kernel)
+m = GPy.models.GPRegression(X,Y,kernel)
 m.unconstrain('')               # may be used to remove the previous constrains
 m.constrain_positive('.*rbf_variance')
-m.constrain_bounded('.*lengthscale',0.01,1. )
-m.constrain_fixed('.*noise',0.025)
+#m.constrain_bounded('.*lengthscale',0.4,1. )
+#m.constrain_fixed('.*noise',0.025)
 m.optimize()
 
 print m
