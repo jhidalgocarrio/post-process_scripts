@@ -1,21 +1,22 @@
 #!/usr/bin/env python
 
+path = '/home/javi/exoter/development/data/20141024_planetary_lab/20141024-2202/'
 #######################################
-joints_position_file = '/home/javi/exoter/development/data/20141024_planetary_lab/20141024-2202/joints_position.0.data'
+joints_position_file = path + 'joints_position.0.data'
 
-joints_speed_file = '/home/javi/exoter/development/data/20141024_planetary_lab/20141024-2202/joints_speed.0.data'
+joints_speed_file = path + 'joints_speed.0.data'
 
-joints_effort_file = '/home/javi/exoter/development/data/20141024_planetary_lab/20141024-2202/joints_effort.0.data'
+joints_effort_file = path + 'joints_effort.0.data'
 
-pose_ref_velocity_file =  '/home/javi/exoter/development/data/20141024_planetary_lab/20141024-2202/pose_ref_velocity.0.data'
+pose_ref_velocity_file =  path + 'pose_ref_velocity.0.data'
 
-pose_odo_velocity_file =  '/home/javi/exoter/development/data/20141024_planetary_lab/20141024-2202/pose_odo_velocity.0.data'
+pose_odo_velocity_file = path + 'pose_odo_velocity.0.data'
 
-pose_imu_orientation_file =  '/home/javi/exoter/development/data/20141024_planetary_lab/20141024-2202/pose_imu_orientation.0.data'
+pose_imu_orientation_file = path + 'pose_imu_orientation.0.data'
 
-pose_imu_angular_velocity_file =  '/home/javi/exoter/development/data/20141024_planetary_lab/20141024-2202/pose_imu_angular_velocity.0.data'
+pose_imu_angular_velocity_file = path + 'pose_imu_angular_velocity.0.data'
 
-pose_imu_acceleration_file =  '/home/javi/exoter/development/data/20141024_planetary_lab/20141024-2202/pose_imu_acceleration.0.data'
+pose_imu_acceleration_file =  path + 'pose_imu_acceleration.0.data'
 #######################################
 
 import sys
@@ -89,10 +90,6 @@ highcup = high_cut_hz/ nyq_rate
 filters = {'butter' : ()}
 filters['butter'] = sig.butter(filter_order, [lowcup, highcup], btype='lowpass')
 
-####################
-## ERROR VELOCITY ##
-####################
-
 reference  = sig.lfilter(filters['butter'][0], filters['butter'][1], np.row_stack((reference_velocity.getAxis(0), reference_velocity.getAxis(1), reference_velocity.getAxis(2))))
 #reference  = np.row_stack((reference_velocity.getAxis(0), reference_velocity.getAxis(1), reference_velocity.getAxis(2)))
 reference = np.column_stack(reference)
@@ -100,6 +97,9 @@ reference = np.column_stack(reference)
 odometry  = sig.lfilter(filters['butter'][0], filters['butter'][1], np.row_stack((odometry_velocity.getAxis(0), odometry_velocity.getAxis(1), odometry_velocity.getAxis(2))))
 odometry = np.column_stack(odometry)
 
+####################
+## ERROR VELOCITY ##
+####################
 length = min(reference.shape[0], odometry.shape[0])
 
 error = abs(reference[0:length, :]) - abs(odometry[0:length, :])
