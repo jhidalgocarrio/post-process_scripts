@@ -107,7 +107,7 @@ euler[1] = euler[1][0::50]
 euler[2] = euler[2][0::50]
 
 # IKF Filter
-axis = 0
+axis = 2
 if axis == 0:
     label_text = "Roll [filter w/ Allanvar]"
     color_value = [1.0,0,0]
@@ -118,7 +118,7 @@ else:
     label_text = "Yaw [filter w/ Allanvar]"
     color_value = [0.0,0.0,1.0]
 
-ax.plot(time, euler[axis], marker='o', linestyle='-', label=label_text, color=color_value, lw=2)
+ax.plot(time, euler[axis], marker='o', linestyle='-', label=label_text, color=color_value, lw=6)
 sigma = ikf_orient.getStd(axis=axis, levelconf = 2)
 sigma[:] = [x * 180.00/math.pi for x in sigma]#convert to degrees
 sigma = sigma[0::50]
@@ -186,7 +186,7 @@ else:
     label_text = "Yaw [filter w/o Allanvar]"
     color_value = [0,0,0]
 
-ax.plot(time, euler[axis], marker='x', linestyle='--', label=label_text, color=color_value, lw=2)
+ax.plot(time, euler[axis], marker='x', linestyle='--', label=label_text, color=color_value, lw=6)
 #sigma = ikf_inflated_orient.getStd(axis=axis, levelconf = 2)
 #sigma[:] = [x * 180.00/math.pi for x in sigma]#convert to degrees
 #sigma = sigma[0::50]
@@ -225,7 +225,7 @@ else:
     label_text = "Yaw [ground truth]"
     color_value = [0.2,0.6,0.7]
 
-ax.plot(time, euler[axis], marker='D', linestyle='None', label=label_text, color=color_value, alpha=0.5, lw=2)
+ax.plot(time, euler[axis], marker='D', linestyle='None', label=label_text, color=color_value, alpha=0.5, lw=6)
 
 plt.xlabel(r'Time [$s$]')
 plt.ylabel(r'Angle [${}^\circ$]')
