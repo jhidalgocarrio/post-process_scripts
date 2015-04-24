@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-path = '/home/javi/flatfish/development/data/20150312_dagon_estimator_evaluation_1h/20150312-1715/plots/'
+path = '/home/javi/flatfish/development/data/20150312_dagon_estimator_evaluation_1h/20150312-1715/plots/trajectory_pair_2/'
 
 #######################################
 path_odometry_file = path + 'trajectory_odo.csv'
@@ -42,7 +42,7 @@ reference.eigenValues()
 ############
 ### PLOT ###
 ############
-:matplotlib.rcParams.update({'font.size': 30, 'font.weight': 'bold'})
+matplotlib.rcParams.update({'font.size': 30, 'font.weight': 'bold'})
 fig = plt.figure(1)
 ax = fig.add_subplot(111)
 
