@@ -7,7 +7,7 @@ NUM_ARGUMENTS=3
 if [ $# -ge $NUM_ARGUMENTS ]; then
     echo Merging files starting with ${args[0]}/${args[1]}
     mkdir -p ${args[0]}/${args[2]}
-    cat  ${args[0]}/${args[1]}.*.data > ${args[0]}/merge/${args[1]}.0.data
+    cat  ${args[0]}/${args[1]}.*.data > ${args[0]}/${args[2]}/${args[1]}.0.data
 
 else
     echo Number of arguments passed: $#
