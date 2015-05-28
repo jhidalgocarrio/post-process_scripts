@@ -3,6 +3,7 @@
 path = '/home/javi/exoter/development/data/20141024_planetary_lab/20141025-0005/'
 #path = '/home/javi/exoter/development/data/20140422_stim300_vs_vicon/20140425-1923/'
 #path = '/home/javi/exoter/development/data/20150323_ww_dlr/imu_stim300_attitude_test_20150325-1716/'
+#path = '/home/javi/esa-npi/development/data/20150410_spaceclimber_simple_test/incontact_ground/'
 
 ##################################
 pose_odo_orient_file = path + 'pose_odo_orientation.0.data'
