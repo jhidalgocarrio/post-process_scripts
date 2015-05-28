@@ -7,6 +7,8 @@ pose_ikf_orient_file = path + 'pose_ikf_orientation.0.data'
 
 pose_ikf_inflated_orient_file = path + 'pose_ikf_inflated_orientation.0.data'
 
+pose_ikf_data_sheet_coef_orient_file = path + 'pose_ikf_data_sheet_coef_orientation.0.data'
+
 pose_imu_orient_file = path + 'pose_imu_orientation.0.data'
 
 pose_ref_orient_file = path + 'pose_ref_orientation.0.data'
@@ -29,6 +31,10 @@ ikf_orient.readData(pose_ikf_orient_file, cov=True)
 ikf_inflated_orient = data.QuaternionData()
 ikf_inflated_orient.readData(pose_ikf_inflated_orient_file, cov=True)
 
+# Read the inflated ikf filter orientation information
+ikf_data_sheet_coef_orient = data.QuaternionData()
+ikf_data_sheet_coef_orient.readData(pose_ikf_inflated_orient_file, cov=True)
+
 # Read the imu orientation information
 imu_orient = data.QuaternionData()
 imu_orient.readData(pose_imu_orient_file, cov=True)
@@ -45,6 +51,9 @@ ikf_orient.eigenValues()
 
 ikf_inflated_orient.covSymmetry()
 ikf_inflated_orient.eigenValues()
+
+ikf_data_sheet_coef_orient.covSymmetry()
+ikf_data_sheet_coef_orient.eigenValues()
 
 imu_orient.covSymmetry()
 imu_orient.eigenValues()
@@ -107,7 +116,7 @@ euler[1] = euler[1][0::50]
 euler[2] = euler[2][0::50]
 
 # IKF Filter
-axis = 2
+axis = 0
 if axis == 0:
     label_text = "Roll [filter w/ Allanvar]"
     color_value = [1.0,0,0]
@@ -126,6 +135,68 @@ ax.fill(np.concatenate([time, time[::-1]]),
         np.concatenate([euler[axis] - sigma,
                        (euler[axis] + sigma)[::-1]]),
         alpha=.5, fc='0.50', ec='None', label='95% confidence interval')
+
+# Data Sheet covariance filter
+time = ikf_data_sheet_coef_orient.atime
+time = time - ikf_data_sheet_coef_orient.atime[0] # Time alignment
+euler = []
+euler.append(ikf_data_sheet_coef_orient.getEuler(2))# Roll
+euler.append(ikf_data_sheet_coef_orient.getEuler(1))# Pitch
+euler.append(ikf_data_sheet_coef_orient.getEuler(0))# Yaw
+
+# Alignment with ground truth
+alignement_diff = []
+alignement_diff.append(-ikf_data_sheet_coef_orient.getEuler(2)[0] - reference_orient.getEuler(2)[0]) # Roll
+alignement_diff.append(-ikf_data_sheet_coef_orient.getEuler(1)[0] - reference_orient.getEuler(1)[0]) # Pitch
+alignement_diff.append(ikf_data_sheet_coef_orient.getEuler(0)[0] - reference_orient.getEuler(0)[0]) # Yaw
+
+euler[0] = euler[0] - alignement_diff[0]
+euler[1] = euler[1] + alignement_diff[1]
+euler[2] = euler[2] - alignement_diff[2]
+
+# Convert to degrees
+euler[0][:] = [x * 180.00/math.pi for x in euler[0] ]#convert to degrees
+euler[1][:] = [x * 180.00/math.pi for x in euler[1] ]#convert to degrees
+euler[2][:] = [x * 180.00/math.pi for x in euler[2] ]#convert to degrees
+
+# IMU frame is 180 rotates wrt body
+euler[0] = -euler[0]
+euler[1] = -euler[1]
+
+# Check the heading to be -180, 180
+for i in range(0, len(euler[2])-1):
+    if euler[2][i] > 360.00:
+        euler[2][i] = euler[2][i] - 360.00
+
+    if euler[2][i] > 180.00:
+        euler[2][i] = -180.00 + (euler[2][i] - 180.00)
+
+    if euler[2][i] < -360.00:
+        euler[2][i] = euler[2][i] + 360.00
+
+    if euler[2][i] < -180.00:
+        euler[2][i] = 180.00 + (180.00 + euler[2][i])
+
+
+# Reduce number of points
+time = time[0::50]
+euler[0] = euler[0][0::50]
+euler[1] = euler[1][0::50]
+euler[2] = euler[2][0::50]
+
+# IKF Filter
+if axis == 0:
+    label_text = "Roll [filter w/ Allan data]"
+    color_value = [0.3,0.3,0.3]
+elif axis  == 1:
+    label_text = "Pitch [filter w/ Allan data]"
+    color_value = [0.3,0.3,0.3]
+else:
+    label_text = "Yaw [filter w/ Allan data]"
+    color_value = [0.3,0.3,0.3]
+
+ax.plot(time, euler[axis], marker='x', linestyle='--', label=label_text, color=color_value, lw=6)
+
 
 # Inflated covariance filter
 time = ikf_inflated_orient.atime
@@ -177,13 +248,13 @@ euler[2] = euler[2][0::50]
 
 # IKF Filter
 if axis == 0:
-    label_text = "Roll [filter w/o Allanvar]"
+    label_text = "Roll [filter w/o Allan data]"
     color_value = [0,0,0]
 elif axis  == 1:
-    label_text = "Pitch [filter w/o Allanvar]"
+    label_text = "Pitch [filter w/o Allan data]"
     color_value = [0,0,0]
 else:
-    label_text = "Yaw [filter w/o Allanvar]"
+    label_text = "Yaw [filter w/o Allan data]"
     color_value = [0,0,0]
 
 ax.plot(time, euler[axis], marker='x', linestyle='--', label=label_text, color=color_value, lw=6)
@@ -194,7 +265,6 @@ ax.plot(time, euler[axis], marker='x', linestyle='--', label=label_text, color=c
 #        np.concatenate([euler[axis] - sigma,
 #                       (euler[axis] + sigma)[::-1]]),
 #        alpha=.5, fc='0.20', ec='None')
-
 
 # Ground Truth
 time = reference_orient.atime
