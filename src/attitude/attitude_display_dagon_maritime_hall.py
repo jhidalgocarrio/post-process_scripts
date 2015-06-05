@@ -45,7 +45,7 @@ plt.rc('text', usetex=False)# activate latex text rendering
 
 time = ikf_orient.atime
 time = time - ikf_orient.atime[0] # Time alignment
-time[:] = [x/60.0 for x in time] # Convert time to minutes
+time[:] = [(x*1000.00)/60.0 for x in time] # Convert time to minutes
 euler = []
 euler.append(ikf_orient.getEuler(2))# Roll
 euler.append(ikf_orient.getEuler(1))# Pitch
@@ -65,13 +65,13 @@ euler[2] = euler[2][0::50]
 # IKF Filter
 axis = 2
 if axis == 0:
-    label_text = "Roll [filter w/ Allanvar]"
+    label_text = "Roll [Dagon AHRS w/ Allan data]"
     color_value = [1.0,0,0]
 elif axis  == 1:
-    label_text = "Pitch [filter w/ Allanvar]"
+    label_text = "Pitch [Dagon AHRS w/ Allan data]"
     color_value = [0.0,1.0,0]
 else:
-    label_text = "Yaw [filter w/ Allanvar]"
+    label_text = "Yaw [Dagon AHRS w/ Allan data]"
     color_value = [0.0,0.0,1.0]
 
 ax.plot(time, euler[axis], marker='o', linestyle='-', label=label_text, color=color_value, lw=2)
@@ -86,7 +86,7 @@ ax.fill(np.concatenate([time, time[::-1]]),
 # Ground Truth
 time = reference_orient.atime
 time = time - ikf_orient.atime[0]# Time alignment
-time[:] = [x/60.0 for x in time] # Convert time to minutes
+time[:] = [(x*1000.00)/60.0 for x in time] # Convert time to minutes
 euler = []
 euler.append(reference_orient.getEuler(2))# Roll
 euler.append(reference_orient.getEuler(1))# Pitch
@@ -117,7 +117,7 @@ ax.plot(time, euler[axis], marker='D', linestyle='None', label=label_text, color
 
 
 
-plt.xlabel(r'Time [$minutes$]')
+plt.xlabel(r'Time [$min$]')
 plt.ylabel(r'Angle [${}^\circ$]')
 plt.grid(True)
 plt.legend(prop={'size':25}, loc=1)
