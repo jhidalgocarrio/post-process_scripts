@@ -214,12 +214,15 @@ class QuaternionData:
     def f(self):
         return 'hello world'
 
-    def readData(self,filename, cov=False):
+    def readData(self,filename, angle_axis=False, cov=False):
 	
         for row in csv.reader(open(filename, 'r'), delimiter=' ', quotechar='|'):
             #print row
             self.atime.append(float(row[0])/1000000.00) #absolute time
-            self.data.append(quat.quaternion([float(row[4]), float(row[1]), float(row[2]), float(row[3])]))
+            if False != angle_axis:
+                self.data.append(quat.quaternion.fromAngleAxis(float(row[4]), [float(row[1]), float(row[2]), float(row[3])]))
+            else:
+                self.data.append(quat.quaternion([float(row[4]), float(row[1]), float(row[2]), float(row[3])]))
 
             if False != cov:
                 matrix = np.array([[float(row[5]), float(row[6]), float(row[7])],
