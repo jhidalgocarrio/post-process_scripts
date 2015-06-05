@@ -1,7 +1,7 @@
 # coding: latin-1
 #
 #  quaternion.py
-#  
+#
 #
 #  Created by Felix Rehrmann on 24.07.09.
 #  Copyright (c) 2009 __MyCompanyName__. All rights reserved.
@@ -16,7 +16,7 @@ class quaternion(object):
         q = [w, x·i, y·j, z·k]
     """
 
-    def fromPhiU(phi,U):
+    def fromAngleAxis(phi,U):
         """ Constructs a quaternion by an angle and an axis.
             @param phi a scalar giving the angle in radians
             @param U vector with 3 components giving the rotation axis.
@@ -26,7 +26,7 @@ class quaternion(object):
         q[0] = np.cos(phi/2.0)
         q[1:4] = U/np.sqrt(np.dot(U,U)) * np.sin(phi/2.0)
         return quaternion(q)
-        
+
     def shortRot(v1,v2):
         """ Finds the shortest rotation between two vectors.
             Better said the rotation from v1 to v2.
@@ -41,14 +41,14 @@ class quaternion(object):
         q = quaternion(c/s)
         q[0] = s / 2.0;
         return q
-               
-        
-    fromPhiU = staticmethod(fromPhiU)
+
+
+    fromAngleAxis = staticmethod(fromAngleAxis)
     shortRot = staticmethod(shortRot)
 
 
     def __init__(self,q=None):
-        """ Constructs a Quanternion.
+        """ Constructs a Quaternion.
             Representation is [w, x i, y j, z k].
             @param q quaternion specification (Default:None).
             None: quaternion is [1 0 0 0]
@@ -88,7 +88,7 @@ class quaternion(object):
             return self.__q * other * self.conj()
         else:
             return NotImplemented
-    
+
     def phiU(self):
         """ Retruns the angle and rotation axis.
             @return phi, U
@@ -98,12 +98,12 @@ class quaternion(object):
         sphi = np.sin(phi/2.)
         U = self.__q[1:4] / sphi
         return phi, U
-    
+
     def asArray(self):
         """ Returns the qunaternion as numpy array.
         """
         return self.__q
-        
+
     def toMatrix(self):
         """ The rotation matrix belonging to the quaternion.
             Copied from a Game Programming Gems 1 article by J. Shankel.
@@ -113,11 +113,11 @@ class quaternion(object):
         M[0,0] = 1.0 - 2.0 * ( y**2 + z**2 )
         M[1,0] = 2.0 * ( x*y + w*z )
         M[2,0] = 2.0 * ( x*z - w*y )
-        
+
         M[0,1] = 2.0 * ( x*y - w*z )
         M[1,1] = 1.0 - 2.0 * ( x**2 + z**2 )
         M[2,1] = 2.0 * ( y*z + w*x )
-        
+
         M[0,2] = 2.0 * ( w*y + x*z )
         M[1,2] = 2.0 * ( y*z - w*x )
         M[2,2] = 1.0 - 2.0 * ( x**2 + y**2 )
@@ -214,28 +214,28 @@ class quaternion(object):
 
     def __rmul__(self,other):
         return self.__mul__(other)
-        
+
     def __str__(self):
         return "%f + %f i + %f j + %f k"%tuple(self.__q)
-    
+
     def __repr__(self):
         return "quaternion : "+self.__str__()
-    
+
     def __len__(self):
         return 4
-        
+
     def __abs__(self):
         return np.sqrt(np.dot(self.__q,self.__q))
 
     def __invert__(self):
         return quaternion(self.__q * 1./np.dot(self.__q,self.__q))
-    
+
     def __pos__(self):
         return quaternion(self.__q)
-        
+
     def __neg__(self):
         return quaternion(self.__q * -1.0)
-       
+
     def __setitem__(self,name,value):
         if name < 0 and name > 3:
             raise IndexError("Index out of bound.")
@@ -243,13 +243,13 @@ class quaternion(object):
             self.__q[name] = float(value)
         except:
             raise ValueError("value is not valid.")
-    
+
     def __getitem__(self,name):
         if name < 0 and name > 3:
             raise IndexError("Index out of bound.")
         return self.__q[name]
-        
-   
+
+
 
 if __name__ == "__main__":
     a = quaternion()
