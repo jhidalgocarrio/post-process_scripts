@@ -8,8 +8,8 @@ import quaternion as quat
 import pickle
 
 
-def save_object(obj, filename):
-    with open(filename, 'wb') as output:
+def save_object(obj, filename, mode='wb'):
+    with open(filename, mode) as output:
         pickle.dump(obj, output, pickle.HIGHEST_PROTOCOL)
 
 def open_object(filename):
@@ -40,6 +40,7 @@ class ThreeData:
             self.atime.append(float(row[0])/1000000.00) #absolute time
             self.data.append(np.array([float(row[1]), float(row[2]), float(row[3])]))
             if False != cov:
+                # pocolog matrix (ruby) are organized by rows
                 matrix = np.array([[float(row[4]), float(row[5]), float(row[6])],
                     [float(row[7]), float(row[8]), float(row[9])],
                     [float(row[10]), float(row[11]), float(row[12])]])
