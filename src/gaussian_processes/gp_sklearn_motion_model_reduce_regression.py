@@ -214,6 +214,10 @@ gp = GaussianProcessRegressor(kernel=kernel, sigma_squared_n=0.0).fit(X, Y)
 #plt.tight_layout()
 #plt.show(block=False)
 
+#data.save_object(gp, './data/gaussian_processes/gp_sklearn.data', 'wb')
+#otro = data.open_object('./data/gpy_model.out')
+
+
 ###################
 ## PREDICTION    ##
 ###################
@@ -415,5 +419,58 @@ plt.grid(True)
 ax.legend(loc=1, prop={'size':30})
 plt.show(block=False)
 
+#######################################
+pose_gp_odo_velocity_file =  path + 'delta_pose_gp_odo_velocity.0.data'
+#######################################
 
+#############################
+## LOAD EVALUATION TEST    ##
+#############################
+
+# Odometry Robot Velocity
+gp_odometry_velocity = data.ThreeData()
+gp_odometry_velocity.readData(pose_gp_odo_velocity_file, cov=True)
+
+########################
+### REMOVE OUTLIERS  ###
+########################
+gp_odometry_velocity.delete(temindex)
+
+################################
+### COMPUTE COV EIGENVALUES  ###
+################################
+gp_odometry_velocity.eigenValues()
+
+gp_odometry = np.column_stack((gp_odometry_velocity.getAxis(0), gp_odometry_velocity.getAxis(1), gp_odometry_velocity.getAxis(2)))
+
+# Split odometry (one axis info per column)
+gp_odometry, gp_odometrystd = input_reduction(gp_odometry, number_blocks)
+
+
+###################
+matplotlib.rcParams.update({'font.size': 30, 'font.weight': 'bold'})
+fig = plt.figure(3)
+ax = fig.add_subplot(111)
+
+plt.rc('text', usetex=False)# activate latex text rendering
+time = odometry_velocity.time
+time, timestd = input_reduction(time, number_blocks)
+xvelocity = odometry[:,0]
+ax.plot(time, xvelocity, marker='o', linestyle='-.', label="3D Odometry Velocity", color=[0.0,0.0,1.0], lw=2)
+
+time = reference_velocity.time
+time, timestd = input_reduction(time, number_blocks)
+xvelocity = reference[:,0]
+ax.scatter(time, xvelocity, marker='D', label="Reduced Reference", color=[1.0,0.0,0.0], s=80)
+
+time = odometry_velocity.time
+time, timestd = input_reduction(time, number_blocks)
+xvelocity = gp_odometry[:,0]
+ax.plot(time, xvelocity, marker='x', linestyle='-', label="GP Odometry Velocity", color=[0.0,0.0,1.0], lw=2)
+
+plt.xlabel(r'Time [$s$]', fontsize=35, fontweight='bold')
+plt.ylabel(r'X [$m/s$]', fontsize=35, fontweight='bold')
+plt.grid(True)
+ax.legend(loc=1, prop={'size':30})
+plt.show(block=False)
 
