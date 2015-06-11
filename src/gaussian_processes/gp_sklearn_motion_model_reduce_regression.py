@@ -7,6 +7,10 @@ joints_position_file = path + 'joints_position.0.data'
 
 joints_speed_file = path + 'joints_speed.0.data'
 
+pose_ref_position_file =  path + 'delta_pose_ref_position.0.data'
+
+pose_odo_position_file =  path + 'delta_pose_odo_position.0.data'
+
 pose_ref_velocity_file =  path + 'delta_pose_ref_velocity.0.data'
 
 pose_odo_velocity_file =  path + 'delta_pose_odo_velocity.0.data'
@@ -29,8 +33,17 @@ import datadisplay as data
 import cov_ellipse as cov
 import joints as js
 
+from sklearn.gaussian_process import GaussianProcess
 from sklearn.gaussian_process import GaussianProcessRegressor
 from sklearn.gaussian_process.kernels import RBF, WhiteKernel
+
+# Reference Robot Velocity
+reference_position = data.ThreeData()
+reference_position.readData(pose_ref_position_file, cov=True)
+
+# Odometry Robot Velocity
+odometry_position = data.ThreeData()
+odometry_position.readData(pose_odo_position_file, cov=True)
 
 # Reference Robot Velocity
 reference_velocity = data.ThreeData()
@@ -64,6 +77,8 @@ robot_joints.readData(joints_position_file, joints_speed_file)
 temindex = np.where(np.isnan(reference_velocity.data[:,0]))
 temindex = np.asarray(temindex)
 
+reference_position.delete(temindex)
+odometry_position.delete(temindex)
 reference_velocity.delete(temindex)
 odometry_velocity.delete(temindex)
 imu_orient.delete(temindex)
@@ -113,7 +128,10 @@ orient = np.column_stack((imu_orient.getEuler(2), imu_orient.getEuler(1)))
 
 ###########################
 # Create Reference Output #
+#reference = np.column_stack((reference_position.getAxis(0), reference_position.getAxis(1), reference_position.getAxis(2)))
 reference = np.column_stack((reference_velocity.getAxis(0), reference_velocity.getAxis(1), reference_velocity.getAxis(2)))
+
+#odometry = np.column_stack((odometry_position.getAxis(0), odometry_position.getAxis(1), odometry_position.getAxis(2)))
 odometry = np.column_stack((odometry_velocity.getAxis(0), odometry_velocity.getAxis(1), odometry_velocity.getAxis(2)))
 
 #odometry_mod = odometry + (mean(imu_acc.delta[0:100])*inertia[0:odometry.shape[0],0:3])
@@ -187,9 +205,18 @@ X = np.column_stack((joints, inertia[:,3:6], orient))
 
 # GP onedimensional Output
 Y =  reference[:,0]
+dY = np.absolute(reference[:,0] - odometry[:,0])
+#dY =  np.absolute(referencestd[:,0])
 
-kernel = 1.0 * RBF(l=1.0) + WhiteKernel(c=1e-6, c_bounds=(1e-10, 1e-1))
-gp = GaussianProcessRegressor(kernel=kernel, sigma_squared_n=0.0).fit(X, Y)
+#kernel = 1.0 * RBF(l=1.0) + WhiteKernel(c=1e-6, c_bounds=(1e-10, 1e-1))
+#gp = GaussianProcessRegressor(kernel=kernel, sigma_squared_n=0.0)
+
+gp = GaussianProcess(corr='squared_exponential', theta0=1e-1,
+                     thetaL=1e-3, thetaU=1,
+                     nugget=(dY / Y) ** 2,
+                     random_start=100)
+gp.fit(X, Y)
+
 
 # Plot LML landscape
 #plt.figure(2)
@@ -216,7 +243,26 @@ gp = GaussianProcessRegressor(kernel=kernel, sigma_squared_n=0.0).fit(X, Y)
 
 #data.save_object(gp, './data/gaussian_processes/gp_sklearn.data', 'wb')
 #otro = data.open_object('./data/gpy_model.out')
+matplotlib.rcParams.update({'font.size': 30, 'font.weight': 'bold'})
+fig = plt.figure(3)
+ax = fig.add_subplot(111)
+t = np.linspace(0, Y.shape[0], Y.shape[0])
+plt.rc('text', usetex=False)# activate latex text rendering
+ax.plot(t, odometry[:,0], 'r:', label=u'Odometry')
+ax.errorbar(t, Y, dY, fmt='r.', markersize=10, label=u'Observations')
+prediction, mse = gp.predict(X, eval_MSE=True)
+sigma = np.sqrt(mse)
+ax.plot(t, prediction, 'b-', label=u'Prediction')
+ax.fill(np.concatenate([t, t[::-1]]),
+        np.concatenate([prediction - 1.9600 * sigma,
+                       (prediction + 1.9600 * sigma)[::-1]]),
+        alpha=.5, fc='b', ec='None', label='95% confidence interval')
 
+plt.xlabel(r'Samples', fontsize=35, fontweight='bold')
+plt.ylabel(r'f(x) [$m/s$]', fontsize=35, fontweight='bold')
+plt.grid(True)
+ax.legend(loc=1, prop={'size':30})
+plt.show(block=False)
 
 ###################
 ## PREDICTION    ##
@@ -226,6 +272,10 @@ path = '/home/javi/exoter/development/data/20141024_planetary_lab/20141027-2034/
 joints_position_file = path + 'joints_position.0.data'
 
 joints_speed_file = path + 'joints_speed.0.data'
+
+pose_ref_position_file =  path + 'delta_pose_ref_position.0.data'
+
+pose_odo_position_file =  path + 'delta_pose_odo_position.0.data'
 
 pose_ref_velocity_file =  path + 'delta_pose_ref_velocity.0.data'
 
@@ -241,6 +291,14 @@ pose_imu_acceleration_file =  path + 'pose_imu_acceleration.0.data'
 #############################
 ## LOAD EVALUATION TEST    ##
 #############################
+
+# Reference Robot Position
+reference_position = data.ThreeData()
+reference_position.readData(pose_ref_position_file, cov=True)
+
+# Odometry Robot Position
+odometry_position = data.ThreeData()
+odometry_position.readData(pose_odo_position_file, cov=True)
 
 # Reference Robot Velocity
 reference_velocity = data.ThreeData()
@@ -274,6 +332,8 @@ robot_joints.readData(joints_position_file, joints_speed_file)
 temindex = np.where(np.isnan(reference_velocity.data[:,0]))
 temindex = np.asarray(temindex)
 
+reference_position.delete(temindex)
+odometry_position.delete(temindex)
 reference_velocity.delete(temindex)
 odometry_velocity.delete(temindex)
 imu_orient.delete(temindex)
@@ -323,8 +383,10 @@ inertia = np.column_stack((imu_acc.getAxis(0), imu_acc.getAxis(1), imu_acc.getAx
 # Roll and Pitch angles in that order #
 orient = np.column_stack((imu_orient.getEuler(2), imu_orient.getEuler(1)))
 
+#reference = np.column_stack((reference_position.getAxis(0), reference_position.getAxis(1), reference_position.getAxis(2)))
 reference = np.column_stack((reference_velocity.getAxis(0), reference_velocity.getAxis(1), reference_velocity.getAxis(2)))
 
+#odometry = np.column_stack((odometry_position.getAxis(0), odometry_position.getAxis(1), odometry_position.getAxis(2)))
 odometry = np.column_stack((odometry_velocity.getAxis(0), odometry_velocity.getAxis(1), odometry_velocity.getAxis(2)))
 
 ######################
@@ -350,7 +412,6 @@ reference, referencestd = input_reduction(reference, number_blocks)
 # Split odometry (one axis info per column)
 odometry, odometrystd = input_reduction(odometry, number_blocks)
 
-
 ###########################
 # GP Multidimensional vector
 Xp = np.column_stack((joints, inertia[:,3:6], orient))
@@ -361,7 +422,7 @@ fig = plt.figure(1)
 ax = fig.add_subplot(111)
 
 plt.rc('text', usetex=False)# activate latex text rendering
-time = odometry_velocity.time
+time = odometry_position.time
 time, timestd = input_reduction(time, number_blocks)
 xvelocity = odometry[:,0]
 ax.plot(time, xvelocity, marker='o', linestyle='-.', label="Odometry Velocity", color=[0.0,0.0,1.0], lw=2)
@@ -369,16 +430,19 @@ ax.plot(time, xvelocity, marker='o', linestyle='-.', label="Odometry Velocity", 
 time = reference_velocity.time
 time, timestd = input_reduction(time, number_blocks)
 xvelocity = reference[:,0]
-ax.scatter(time, xvelocity, marker='D', label="Reduced Reference", color=[1.0,0.0,0.0], s=80)
+ax.scatter(time, xvelocity, marker='D', color=[1.0,0.0,0.0], s=80)
+ax.plot(time, xvelocity, marker='D', linestyle='--', label="Reduced Reference", color=[1.0,0.0,0.0], lw=2)
 
-meanxp, covxp = gp.predict(Xp, return_cov=True)
+meanxp, covxp = gp.predict(Xp, eval_MSE=True)
 time = odometry_velocity.time
 time, timestd = input_reduction(time, number_blocks)
 xvelocity = meanxp
-sigma = np.sqrt(np.diag(covxp))
-#sigma = 2.0 * sigma
+sigma = np.sqrt(covxp)
+sigma = 2 * sigma
 ax.plot(time, xvelocity, marker='None', linestyle='-', label="GP Velocity", color=[0.0,1.0,0.0], lw=4)
-plt.fill_between(time, xvelocity - sigma, xvelocity + sigma, alpha=0.5, color='k')
+ax.fill(np.concatenate([time, time[::-1]]),
+        np.concatenate([xvelocity - sigma,
+                       (xvelocity + sigma)[::-1]]), alpha=.5, fc='b', ec='None', label=r'2$\sigma$ confidence interval')
 
 plt.xlabel(r'Time [$s$]', fontsize=35, fontweight='bold')
 plt.ylabel(r'X [$m/s$]', fontsize=35, fontweight='bold')
@@ -386,10 +450,9 @@ plt.grid(True)
 ax.legend(loc=1, prop={'size':30})
 plt.show(block=False)
 
-
 ###################
 matplotlib.rcParams.update({'font.size': 30, 'font.weight': 'bold'})
-fig = plt.figure(2)
+fig = plt.figure(4)
 ax = fig.add_subplot(111)
 
 plt.rc('text', usetex=False)# activate latex text rendering
@@ -407,7 +470,7 @@ meanxp, covxp = gp.predict(Xp, return_cov=True)
 time = odometry_velocity.time
 time, timestd = input_reduction(time, number_blocks)
 xvelocity = odometry[:,0]
-sigma =  odometry[:,0] - meanxp
+sigma =  np.absolute(odometry[:,0] - meanxp)
 sigma = 2.0 * sigma
 #ax.plot(time, xvelocity, marker='None', linestyle='-', label="GP Velocity", color=[0.0,1.0,0.0], lw=4)
 ax.fill_between(time, xvelocity - sigma, xvelocity + sigma, alpha=0.4, where=sigma <= 0.02, color='k', label='95% confidence interval')
@@ -420,12 +483,18 @@ ax.legend(loc=1, prop={'size':30})
 plt.show(block=False)
 
 #######################################
+pose_gp_odo_position_file =  path + 'delta_pose_gp_odo_position.0.data'
+
 pose_gp_odo_velocity_file =  path + 'delta_pose_gp_odo_velocity.0.data'
 #######################################
 
 #############################
 ## LOAD EVALUATION TEST    ##
 #############################
+
+# Odometry Robot Position
+gp_odometry_position = data.ThreeData()
+gp_odometry_position.readData(pose_gp_odo_position_file, cov=True)
 
 # Odometry Robot Velocity
 gp_odometry_velocity = data.ThreeData()
@@ -434,13 +503,16 @@ gp_odometry_velocity.readData(pose_gp_odo_velocity_file, cov=True)
 ########################
 ### REMOVE OUTLIERS  ###
 ########################
+gp_odometry_position.delete(temindex)
 gp_odometry_velocity.delete(temindex)
 
 ################################
 ### COMPUTE COV EIGENVALUES  ###
 ################################
+gp_odometry_position.eigenValues()
 gp_odometry_velocity.eigenValues()
 
+#gp_odometry = np.column_stack((gp_odometry_position.getAxis(0), gp_odometry_position.getAxis(1), gp_odometry_position.getAxis(2)))
 gp_odometry = np.column_stack((gp_odometry_velocity.getAxis(0), gp_odometry_velocity.getAxis(1), gp_odometry_velocity.getAxis(2)))
 
 # Split odometry (one axis info per column)
@@ -463,10 +535,17 @@ time, timestd = input_reduction(time, number_blocks)
 xvelocity = reference[:,0]
 ax.scatter(time, xvelocity, marker='D', label="Reduced Reference", color=[1.0,0.0,0.0], s=80)
 
-time = odometry_velocity.time
+time = gp_odometry_velocity.time
 time, timestd = input_reduction(time, number_blocks)
 xvelocity = gp_odometry[:,0]
+sigma = gp_odometry_velocity.getStd(axis=0, levelconf = 2)
+sigma, sigmastd = input_reduction(sigma, number_blocks)
 ax.plot(time, xvelocity, marker='x', linestyle='-', label="GP Odometry Velocity", color=[0.0,0.0,1.0], lw=2)
+ax.fill(np.concatenate([time, time[::-1]]),
+        np.concatenate([xvelocity - sigma,
+                       (xvelocity + sigma)[::-1]]),
+        alpha=.5, fc='0.50', ec='None', label=r'2$\sigma$ confidence interval')
+
 
 plt.xlabel(r'Time [$s$]', fontsize=35, fontweight='bold')
 plt.ylabel(r'X [$m/s$]', fontsize=35, fontweight='bold')
