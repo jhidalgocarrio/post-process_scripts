@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 
 #path = '/home/javi/exoter/development/data/20141023_pink_test/20141023-2011/'
-path = '/home/javi/exoter/development/data/20140000_gaussian_processes/merged/'
+path = '/home/javi/exoter/development/data/20150515_planetary_lab/20150515-1447/'
+#path = '/home/javi/exoter/development/data/20140000_gaussian_processes/merged/'
 #######################################
 joints_position_file = path + 'joints_position.0.data'
 
@@ -520,4 +521,35 @@ plt.grid(True)
 ax.legend(loc=1, prop={'size':30})
 plt.show(block=False)
 
+###################
+matplotlib.rcParams.update({'font.size': 30, 'font.weight': 'bold'})
+fig = plt.figure(2)
+ax = fig.add_subplot(111)
+
+plt.rc('text', usetex=False)# activate latex text rendering
+time = odometry_velocity.time
+time, timestd = input_reduction(time, number_blocks)
+xvelocity = odometry[:,0]
+ax.plot(time, xvelocity, marker='o', linestyle='-.', label="Odometry Velocity", color=[0.0,0.0,1.0], lw=2)
+
+time = reference_velocity.time
+time, timestd = input_reduction(time, number_blocks)
+xvelocity = reference[:,0]
+ax.scatter(time, xvelocity, marker='D', label="Reduced Reference", color=[1.0,0.0,0.0], s=80)
+
+meanxp, covxp = m.predict(Xp, full_cov=False)
+time = odometry_velocity.time
+time, timestd = input_reduction(time, number_blocks)
+xvelocity = odometry[:,0]
+sigma =  odometry[:,0] - meanxp[:,0]
+sigma = 2.0 * sigma
+#ax.plot(time, xvelocity, marker='None', linestyle='-', label="GP Velocity", color=[0.0,1.0,0.0], lw=4)
+ax.fill_between(time, xvelocity - sigma, xvelocity + sigma, alpha=0.4, where=sigma <= 0.02, color='k', label='95% confidence interval')
+ax.fill_between(time, xvelocity - sigma, xvelocity + sigma, alpha=0.4, where=sigma > 0.02, color='r', label='95% confidence interval')
+
+plt.xlabel(r'Time [$s$]', fontsize=35, fontweight='bold')
+plt.ylabel(r'X [$m/s$]', fontsize=35, fontweight='bold')
+plt.grid(True)
+ax.legend(loc=1, prop={'size':30})
+plt.show(block=False)
 
