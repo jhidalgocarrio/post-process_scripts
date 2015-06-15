@@ -73,7 +73,7 @@ class ThreeData:
     def eigenValues(self):
         #Eigen values are the axis of the ellipsoid
         for i in range(0,len(self.cov)):
-            self.var.append(np.real(linalg.eigvals(self.cov[i]))[::-1]) #real number and in reverse order
+            self.var.append(np.real(linalg.eigvals(self.cov[i]))) #real number
 
         self.var = np.asarray(self.var)
 
@@ -259,7 +259,7 @@ class QuaternionData:
     def eigenValues(self):
         #Eigen values are the axis of the ellipsoid
         for i in range(0,len(self.cov)):
-            self.var.append(np.real(linalg.eigvals(self.cov[i]))[::-1]) #real number and in reverse order
+            self.var.append(np.real(linalg.eigvals(self.cov[i]))) #real number
         self.var = np.asarray(self.var)
 
     def plot_euler(self, fign=1, axis=0, cov=False, levelconf=1, grid=False, linecolor=[1,0,0]):

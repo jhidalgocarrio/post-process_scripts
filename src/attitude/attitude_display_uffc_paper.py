@@ -71,15 +71,15 @@ plt.rc('text', usetex=False)# activate latex text rendering
 time = ikf_orient.atime
 time = time - ikf_orient.atime[0] # Time alignment
 euler = []
-euler.append(ikf_orient.getEuler(2))# Roll
-euler.append(ikf_orient.getEuler(1))# Pitch
 euler.append(ikf_orient.getEuler(0))# Yaw
+euler.append(ikf_orient.getEuler(1))# Pitch
+euler.append(ikf_orient.getEuler(2))# Roll
 
 # Alignment with ground truth
 alignment_diff = []
-alignment_diff.append(-ikf_orient.getEuler(2)[0] - reference_orient.getEuler(2)[0]) # Roll
-alignment_diff.append(-ikf_orient.getEuler(1)[0] - reference_orient.getEuler(1)[0]) # Pitch
 alignment_diff.append(ikf_orient.getEuler(0)[0] - reference_orient.getEuler(0)[0]) # Yaw
+alignment_diff.append(-ikf_orient.getEuler(1)[0] - reference_orient.getEuler(1)[0]) # Pitch
+alignment_diff.append(-ikf_orient.getEuler(2)[0] - reference_orient.getEuler(2)[0]) # Roll
 
 euler[0] = euler[0] - alignment_diff[0]
 euler[1] = euler[1] + alignment_diff[1]
@@ -91,22 +91,22 @@ euler[1][:] = [x * 180.00/math.pi for x in euler[1] ]#convert to degrees
 euler[2][:] = [x * 180.00/math.pi for x in euler[2] ]#convert to degrees
 
 # IMU frame is 180 rotates wrt body
-euler[0] = -euler[0]
 euler[1] = -euler[1]
+euler[2] = -euler[2]
 
 # Check the heading to be -180, 180
-for i in range(0, len(euler[2])-1):
-    if euler[2][i] > 360.00:
-        euler[2][i] = euler[2][i] - 360.00
+for i in range(0, len(euler[0])-1):
+    if euler[0][i] > 360.00:
+        euler[0][i] = euler[0][i] - 360.00
 
-    if euler[2][i] > 180.00:
-        euler[2][i] = -180.00 + (euler[2][i] - 180.00)
+    if euler[0][i] > 180.00:
+        euler[0][i] = -180.00 + (euler[0][i] - 180.00)
 
-    if euler[2][i] < -360.00:
-        euler[2][i] = euler[2][i] + 360.00
+    if euler[0][i] < -360.00:
+        euler[0][i] = euler[0][i] + 360.00
 
-    if euler[2][i] < -180.00:
-        euler[2][i] = 180.00 + (180.00 + euler[2][i])
+    if euler[0][i] < -180.00:
+        euler[0][i] = 180.00 + (180.00 + euler[0][i])
 
 
 # Reduce number of points
@@ -116,8 +116,8 @@ euler[1] = euler[1][0::50]
 euler[2] = euler[2][0::50]
 
 # IKF Filter
-axis = 2
-if axis == 0:
+axis = 0
+if axis == 2:
     label_text = "Roll [filter w/ Allan data]"
     color_value = [1.0,0,0]
 elif axis  == 1:
@@ -140,15 +140,15 @@ ax.fill(np.concatenate([time, time[::-1]]),
 time = ikf_data_sheet_coef_orient.atime
 time = time - ikf_data_sheet_coef_orient.atime[0] # Time alignment
 euler = []
-euler.append(ikf_data_sheet_coef_orient.getEuler(2))# Roll
-euler.append(ikf_data_sheet_coef_orient.getEuler(1))# Pitch
 euler.append(ikf_data_sheet_coef_orient.getEuler(0))# Yaw
+euler.append(ikf_data_sheet_coef_orient.getEuler(1))# Pitch
+euler.append(ikf_data_sheet_coef_orient.getEuler(2))# Roll
 
 # Alignment with ground truth
 alignment_diff = []
-alignment_diff.append(-ikf_data_sheet_coef_orient.getEuler(2)[0] - reference_orient.getEuler(2)[0]) # Roll
-alignment_diff.append(-ikf_data_sheet_coef_orient.getEuler(1)[0] - reference_orient.getEuler(1)[0]) # Pitch
 alignment_diff.append(ikf_data_sheet_coef_orient.getEuler(0)[0] - reference_orient.getEuler(0)[0]) # Yaw
+alignment_diff.append(-ikf_data_sheet_coef_orient.getEuler(1)[0] - reference_orient.getEuler(1)[0]) # Pitch
+alignment_diff.append(-ikf_data_sheet_coef_orient.getEuler(2)[0] - reference_orient.getEuler(2)[0]) # Roll
 
 euler[0] = euler[0] - alignment_diff[0]
 euler[1] = euler[1] + alignment_diff[1]
@@ -160,22 +160,22 @@ euler[1][:] = [x * 180.00/math.pi for x in euler[1] ]#convert to degrees
 euler[2][:] = [x * 180.00/math.pi for x in euler[2] ]#convert to degrees
 
 # IMU frame is 180 rotates wrt body
-euler[0] = -euler[0]
 euler[1] = -euler[1]
+euler[2] = -euler[2]
 
 # Check the heading to be -180, 180
-for i in range(0, len(euler[2])-1):
-    if euler[2][i] > 360.00:
-        euler[2][i] = euler[2][i] - 360.00
+for i in range(0, len(euler[0])-1):
+    if euler[0][i] > 360.00:
+        euler[0][i] = euler[0][i] - 360.00
 
-    if euler[2][i] > 180.00:
-        euler[2][i] = -180.00 + (euler[2][i] - 180.00)
+    if euler[0][i] > 180.00:
+        euler[0][i] = -180.00 + (euler[0][i] - 180.00)
 
-    if euler[2][i] < -360.00:
-        euler[2][i] = euler[2][i] + 360.00
+    if euler[0][i] < -360.00:
+        euler[0][i] = euler[0][i] + 360.00
 
-    if euler[2][i] < -180.00:
-        euler[2][i] = 180.00 + (180.00 + euler[2][i])
+    if euler[0][i] < -180.00:
+        euler[0][i] = 180.00 + (180.00 + euler[0][i])
 
 
 # Reduce number of points
@@ -185,7 +185,7 @@ euler[1] = euler[1][0::50]
 euler[2] = euler[2][0::50]
 
 # IKF Filter
-if axis == 0:
+if axis == 2:
     label_text = "Roll [filter w/i Allan data]"
     color_value = [0.3,0.3,0.3]
 elif axis  == 1:
@@ -202,15 +202,15 @@ ax.plot(time, euler[axis], marker='x', linestyle='--', label=label_text, color=c
 time = ikf_inflated_coef_orient.atime
 time = time - ikf_inflated_coef_orient.atime[0] # Time alignment
 euler = []
-euler.append(ikf_inflated_coef_orient.getEuler(2))# Roll
-euler.append(ikf_inflated_coef_orient.getEuler(1))# Pitch
 euler.append(ikf_inflated_coef_orient.getEuler(0))# Yaw
+euler.append(ikf_inflated_coef_orient.getEuler(1))# Pitch
+euler.append(ikf_inflated_coef_orient.getEuler(2))# Roll
 
 # Alignment with ground truth
 alignment_diff = []
-alignment_diff.append(-ikf_inflated_coef_orient.getEuler(2)[0] - reference_orient.getEuler(2)[0]) # Roll
-alignment_diff.append(-ikf_inflated_coef_orient.getEuler(1)[0] - reference_orient.getEuler(1)[0]) # Pitch
 alignment_diff.append(ikf_inflated_coef_orient.getEuler(0)[0] - reference_orient.getEuler(0)[0]) # Yaw
+alignment_diff.append(-ikf_inflated_coef_orient.getEuler(1)[0] - reference_orient.getEuler(1)[0]) # Pitch
+alignment_diff.append(-ikf_inflated_coef_orient.getEuler(2)[0] - reference_orient.getEuler(2)[0]) # Roll
 
 euler[0] = euler[0] - alignment_diff[0]
 euler[1] = euler[1] + alignment_diff[1]
@@ -222,22 +222,22 @@ euler[1][:] = [x * 180.00/math.pi for x in euler[1] ]#convert to degrees
 euler[2][:] = [x * 180.00/math.pi for x in euler[2] ]#convert to degrees
 
 # IMU frame is 180 rotates wrt body
-euler[0] = -euler[0]
 euler[1] = -euler[1]
+euler[2] = -euler[2]
 
 # Check the heading to be -180, 180
-for i in range(0, len(euler[2])-1):
-    if euler[2][i] > 360.00:
-        euler[2][i] = euler[2][i] - 360.00
+for i in range(0, len(euler[0])-1):
+    if euler[0][i] > 360.00:
+        euler[0][i] = euler[0][i] - 360.00
 
-    if euler[2][i] > 180.00:
-        euler[2][i] = -180.00 + (euler[2][i] - 180.00)
+    if euler[0][i] > 180.00:
+        euler[0][i] = -180.00 + (euler[0][i] - 180.00)
 
-    if euler[2][i] < -360.00:
-        euler[2][i] = euler[2][i] + 360.00
+    if euler[0][i] < -360.00:
+        euler[0][i] = euler[0][i] + 360.00
 
-    if euler[2][i] < -180.00:
-        euler[2][i] = 180.00 + (180.00 + euler[2][i])
+    if euler[0][i] < -180.00:
+        euler[0][i] = 180.00 + (180.00 + euler[0][i])
 
 
 # Reduce number of points
@@ -247,7 +247,7 @@ euler[1] = euler[1][0::50]
 euler[2] = euler[2][0::50]
 
 # IKF Filter
-if axis == 0:
+if axis == 2:
     label_text = "Roll [filter w/o Allan data]"
     color_value = [0,0,0]
 elif axis  == 1:
@@ -270,9 +270,9 @@ ax.plot(time, euler[axis], marker='x', linestyle='--', label=label_text, color=c
 time = reference_orient.atime
 time = time - ikf_orient.atime[0]# Time alignment
 euler = []
-euler.append(reference_orient.getEuler(2))# Roll
-euler.append(reference_orient.getEuler(1))# Pitch
 euler.append(reference_orient.getEuler(0))# Yaw
+euler.append(reference_orient.getEuler(1))# Pitch
+euler.append(reference_orient.getEuler(2))# Roll
 
 # Convert to degrees
 euler[0][:] = [x * 180.00/math.pi for x in euler[0] ]#convert to degrees
@@ -285,7 +285,7 @@ euler[2][:] = [x * 180.00/math.pi for x in euler[2] ]#convert to degrees
 #euler[1] = euler[1][0::5]
 #euler[2] = euler[2][0::5]
 
-if axis == 0:
+if axis == 2:
     label_text = "Roll [ground truth]"
     color_value = [0.2,0.6,0.7]
 elif axis  == 1:

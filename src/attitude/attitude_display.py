@@ -65,18 +65,16 @@ plt.rc('text', usetex=False)# activate latex text rendering
 
 time = imu_orient.time
 euler = []
-euler.append(imu_orient.getEuler(2))# Roll
-euler.append(imu_orient.getEuler(1))# Pitch
 euler.append(imu_orient.getEuler(0))# Yaw
-
-#euler[2] = euler[2] - euler[2][0] # set yaw staring at zero
+euler.append(imu_orient.getEuler(1))# Pitch
+euler.append(imu_orient.getEuler(2))# Roll
 
 euler[0][:] = [x * 180.00/math.pi for x in euler[0] ]#convert to degrees
 euler[1][:] = [x * 180.00/math.pi for x in euler[1] ]#convert to degrees
 euler[2][:] = [x * 180.00/math.pi for x in euler[2] ]#convert to degrees
 
-axis = 1
-if axis == 0:
+axis = 0
+if axis == 2:
     label_text = "Roll [filter w/ Allanvar]"
     color_value = [1.0,0,0]
 elif axis  == 1:
@@ -100,11 +98,11 @@ ax.plot(time, (euler[axis] + sigma), color="black", alpha=1.0, lw=1.0)
 # Odometry Orientation
 time = odometry_orient.time
 euler = []
-euler.append(odometry_orient.getEuler(2))# Roll
-euler.append(odometry_orient.getEuler(1))# Pitch
 euler.append(odometry_orient.getEuler(0))# Yaw
+euler.append(odometry_orient.getEuler(1))# Pitch
+euler.append(odometry_orient.getEuler(2))# Roll
 
-#euler[2] = euler[2] - euler[2][0] #set yaw starting at zero
+#euler[0] = euler[0] - euler[0][0] #set yaw starting at zero
 
 euler[0][:] = [x * 180.00/math.pi for x in euler[0] ]#convert to degrees
 euler[1][:] = [x * 180.00/math.pi for x in euler[1] ]#convert to degrees
@@ -116,7 +114,7 @@ euler[0] = euler[0][0::20]
 euler[1] = euler[1][0::20]
 euler[2] = euler[2][0::20]
 
-if axis == 0:
+if axis == 2:
     label_text = "Roll [filter w/ Allanvar]"
     color_value = [1.0,0.0,0]
 elif axis  == 1:
@@ -143,9 +141,9 @@ ax.fill(np.concatenate([time, time[::-1]]),
 # Reference Orientation
 time = reference_orient.time
 euler = []
-euler.append(reference_orient.getEuler(2))# Roll
-euler.append(reference_orient.getEuler(1))# Pitch
 euler.append(reference_orient.getEuler(0))# Yaw
+euler.append(reference_orient.getEuler(1))# Pitch
+euler.append(reference_orient.getEuler(2))# Roll
 
 #Misalignment
 alignement_diff = []
@@ -169,7 +167,7 @@ euler[1] = euler[1][0::20]
 euler[2] = euler[2][0::20]
 
 
-if axis == 0:
+if axis == 2:
     label_text = "Roll [ground truth]"
     color_value = [0.2,0.6,0.7]
 elif axis  == 1:
@@ -204,26 +202,26 @@ ax = fig.add_subplot(111)
 # IMU Orientation
 time = imu_orient.t
 euler = []
-euler.append(imu_orient.getEuler(2))# Roll
-euler.append(imu_orient.getEuler(1))# Pitch
 euler.append(imu_orient.getEuler(0))# Yaw
+euler.append(imu_orient.getEuler(1))# Pitch
+euler.append(imu_orient.getEuler(2))# Roll
 
-euler[2] = euler[2] - euler[2][0] # set yaw staring at zero
+euler[0] = euler[0] - euler[0][0] # set yaw staring at zero
 
 euler[0][:] = [x * 180.00/math.pi for x in euler[0] ]#convert to degrees
 euler[1][:] = [x * 180.00/math.pi for x in euler[1] ]#convert to degrees
 euler[2][:] = [x * 180.00/math.pi for x in euler[2] ]#convert to degrees
 
-ax.plot(time, euler[0], marker='.', label="IMU Roll", color=[1.0,0,0], alpha=0.5, lw=2)
+ax.plot(time, euler[2], marker='.', label="IMU Roll", color=[1.0,0,0], alpha=0.5, lw=2)
 
 # Reference Orientation
 time = reference_orient.t
 euler = []
-euler.append(reference_orient.getEuler(2))# Roll
-euler.append(reference_orient.getEuler(1))# Pitch
 euler.append(reference_orient.getEuler(0))# Yaw
+euler.append(reference_orient.getEuler(1))# Pitch
+euler.append(reference_orient.getEuler(2))# Roll
 
-euler[2] = euler[2] - euler[2][0] #set yaw starting at zero
+euler[0] = euler[0] - euler[0][0] #set yaw starting at zero
 
 euler[0][:] = [x * 180.00/math.pi for x in euler[0] ]#convert to degrees
 euler[1][:] = [x * 180.00/math.pi for x in euler[1] ]#convert to degrees

@@ -47,9 +47,9 @@ time = ikf_orient.atime
 time = time - ikf_orient.atime[0] # Time alignment
 time[:] = [(x*1000.00)/60.0 for x in time] # Convert time to minutes
 euler = []
-euler.append(ikf_orient.getEuler(2))# Roll
-euler.append(ikf_orient.getEuler(1))# Pitch
 euler.append(ikf_orient.getEuler(0))# Yaw
+euler.append(ikf_orient.getEuler(1))# Pitch
+euler.append(ikf_orient.getEuler(2))# Roll
 
 # Convert to degrees
 euler[0][:] = [x * 180.00/math.pi for x in euler[0] ]#convert to degrees
@@ -64,7 +64,7 @@ euler[2] = euler[2][0::50]
 
 # IKF Filter
 axis = 2
-if axis == 0:
+if axis == 2:
     label_text = "Roll [Dagon AHRS w/ Allan data]"
     color_value = [1.0,0,0]
 elif axis  == 1:
@@ -88,9 +88,9 @@ time = reference_orient.atime
 time = time - ikf_orient.atime[0]# Time alignment
 time[:] = [(x*1000.00)/60.0 for x in time] # Convert time to minutes
 euler = []
-euler.append(reference_orient.getEuler(2))# Roll
-euler.append(reference_orient.getEuler(1))# Pitch
 euler.append(reference_orient.getEuler(0))# Yaw
+euler.append(reference_orient.getEuler(1))# Pitch
+euler.append(reference_orient.getEuler(2))# Roll
 
 # Convert to degrees
 euler[0][:] = [x * 180.00/math.pi for x in euler[0] ]#convert to degrees
@@ -103,7 +103,7 @@ euler[0] = euler[0][0::5]
 euler[1] = euler[1][0::5]
 euler[2] = euler[2][0::5]
 
-if axis == 0:
+if axis == 2:
     label_text = "Roll [ground truth]"
     color_value = [0.2,0.6,0.7]
 elif axis  == 1:
