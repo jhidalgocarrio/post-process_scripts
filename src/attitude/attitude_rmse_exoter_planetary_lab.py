@@ -42,13 +42,13 @@ reference_orient.delete(temindex)
 imu_orient.delete(temindex)
 
 reference_euler = []
-reference_euler.append(reference_orient.getEuler(2))# Roll
-reference_euler.append(reference_orient.getEuler(1))# Pitch
 reference_euler.append(reference_orient.getEuler(0))# Yaw
+reference_euler.append(reference_orient.getEuler(1))# Pitch
+reference_euler.append(reference_orient.getEuler(2))# Roll
 reference_euler = np.asarray(reference_euler)
 
 
-temindex = np.where(np.fabs(reference_euler[0]) > (30.0 * math.pi / 180.00))
+temindex = np.where(np.fabs(reference_euler[2]) > (30.0 * math.pi / 180.00))
 temindex = np.asarray(temindex)
 
 odometry_orient.delete(temindex)
@@ -72,16 +72,16 @@ imu_orient.eigenValues()
 # REFERENCE IN EULER ANGLES #
 #############################
 reference_euler = []
-reference_euler.append(reference_orient.getEuler(2))# Roll
-reference_euler.append(reference_orient.getEuler(1))# Pitch
 reference_euler.append(reference_orient.getEuler(0))# Yaw
+reference_euler.append(reference_orient.getEuler(1))# Pitch
+reference_euler.append(reference_orient.getEuler(2))# Roll
 reference_euler = np.asarray(reference_euler)
 
 #Alignment the ground truth
 alignment_diff = []
-alignment_diff.append(odometry_orient.getEuler(2)[0::20][118] - reference_orient.getEuler(2)[0::20][118]) # Roll
-alignment_diff.append(odometry_orient.getEuler(1)[0::20][118] - reference_orient.getEuler(1)[0::20][118]) # Pitch
 alignment_diff.append(odometry_orient.getEuler(0)[0::20][118] - reference_orient.getEuler(0)[0::20][118]) # Yaw
+alignment_diff.append(odometry_orient.getEuler(1)[0::20][118] - reference_orient.getEuler(1)[0::20][118]) # Pitch
+alignment_diff.append(odometry_orient.getEuler(2)[0::20][118] - reference_orient.getEuler(2)[0::20][118]) # Roll
 alignment_diff = np.asarray(alignment_diff)
 
 reference_euler[0] = reference_euler[0] + alignment_diff[0]
@@ -96,9 +96,9 @@ reference_time = reference_orient.atime
 #############################
 time = imu_orient.atime
 orient_euler = []
-orient_euler.append(imu_orient.getEuler(2))# Roll
-orient_euler.append(imu_orient.getEuler(1))# Pitch
 orient_euler.append(imu_orient.getEuler(0))# Yaw
+orient_euler.append(imu_orient.getEuler(1))# Pitch
+orient_euler.append(imu_orient.getEuler(2))# Roll
 orient_euler = np.asarray(orient_euler)
 
 # Compute the RMSE

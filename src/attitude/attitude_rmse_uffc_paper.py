@@ -59,9 +59,9 @@ reference_orient.delete(temindex)
 # REFERENCE IN EULER ANGLES #
 #############################
 reference_euler = []
-reference_euler.append(reference_orient.getEuler(2))# Roll
-reference_euler.append(reference_orient.getEuler(1))# Pitch
 reference_euler.append(reference_orient.getEuler(0))# Yaw
+reference_euler.append(reference_orient.getEuler(1))# Pitch
+reference_euler.append(reference_orient.getEuler(2))# Roll
 reference_euler = np.asarray(reference_euler)
 
 # REFERENCE TIME
@@ -72,9 +72,9 @@ reference_time = reference_orient.atime
 #############################
 time = ikf_orient.atime
 orient_euler = []
-orient_euler.append(ikf_orient.getEuler(2))# Roll
-orient_euler.append(ikf_orient.getEuler(1))# Pitch
 orient_euler.append(ikf_orient.getEuler(0))# Yaw
+orient_euler.append(ikf_orient.getEuler(1))# Pitch
+orient_euler.append(ikf_orient.getEuler(2))# Roll
 orient_euler = np.asarray(orient_euler)
 
 # INTERPOLATION
@@ -87,9 +87,9 @@ euler = np.asarray(euler)
 
 # Alignment with ground truth
 alignment_diff = []
-alignment_diff.append(-ikf_orient.getEuler(2)[0] - reference_orient.getEuler(2)[0]) # Roll
-alignment_diff.append(-ikf_orient.getEuler(1)[0] - reference_orient.getEuler(1)[0]) # Pitch
 alignment_diff.append(ikf_orient.getEuler(0)[0] - reference_orient.getEuler(0)[0]) # Yaw
+alignment_diff.append(-ikf_orient.getEuler(1)[0] - reference_orient.getEuler(1)[0]) # Pitch
+alignment_diff.append(-ikf_orient.getEuler(2)[0] - reference_orient.getEuler(2)[0]) # Roll
 alignment_diff = np.asarray(alignment_diff)
 
 # Align the starting point
@@ -98,22 +98,22 @@ euler[1] = euler[1] + alignment_diff[1]
 euler[2] = euler[2] - alignment_diff[2]
 
 # IMU frame is 180 rotates wrt body
-euler[0] = -euler[0]
 euler[1] = -euler[1]
+euler[2] = -euler[2]
 
 # Check the heading to be -180, 180
-for i in range(0, len(euler[2])-1):
-    if euler[2][i] > (2.0*math.pi):
-        euler[2][i] = euler[2][i] - (2*math.pi)
+for i in range(0, len(euler[0])-1):
+    if euler[0][i] > (2.0*math.pi):
+        euler[0][i] = euler[0][i] - (2*math.pi)
 
-    if euler[2][i] > math.pi:
-        euler[2][i] = -math.pi + (euler[2][i] - math.pi)
+    if euler[0][i] > math.pi:
+        euler[0][i] = -math.pi + (euler[0][i] - math.pi)
 
-    if euler[2][i] < -(2.0 * math.pi):
-        euler[2][i] = euler[2][i] + (2.0*math.pi)
+    if euler[0][i] < -(2.0 * math.pi):
+        euler[0][i] = euler[0][i] + (2.0*math.pi)
 
-    if euler[2][i] < -math.pi:
-        euler[2][i] = math.pi + (math.pi + euler[2][i])
+    if euler[0][i] < -math.pi:
+        euler[0][i] = math.pi + (math.pi + euler[0][i])
 
 
 # Compute the RMSE
@@ -131,9 +131,9 @@ ikf_orient_rmse = ikf_orient_rmse * 180.00/math.pi# Convert to degrees
 #############################
 time = ikf_data_sheet_coef_orient.atime
 orient_euler = []
-orient_euler.append(ikf_data_sheet_coef_orient.getEuler(2))# Roll
-orient_euler.append(ikf_data_sheet_coef_orient.getEuler(1))# Pitch
 orient_euler.append(ikf_data_sheet_coef_orient.getEuler(0))# Yaw
+orient_euler.append(ikf_data_sheet_coef_orient.getEuler(1))# Pitch
+orient_euler.append(ikf_data_sheet_coef_orient.getEuler(2))# Roll
 orient_euler = np.asarray(orient_euler)
 
 # INTERPOLATION
@@ -145,9 +145,9 @@ euler = np.asarray(euler)
 
 # Alignment with ground truth
 alignment_diff = []
-alignment_diff.append(-ikf_data_sheet_coef_orient.getEuler(2)[0] - reference_orient.getEuler(2)[0]) # Roll
-alignment_diff.append(-ikf_data_sheet_coef_orient.getEuler(1)[0] - reference_orient.getEuler(1)[0]) # Pitch
 alignment_diff.append(ikf_data_sheet_coef_orient.getEuler(0)[0] - reference_orient.getEuler(0)[0]) # Yaw
+alignment_diff.append(-ikf_data_sheet_coef_orient.getEuler(1)[0] - reference_orient.getEuler(1)[0]) # Pitch
+alignment_diff.append(-ikf_data_sheet_coef_orient.getEuler(2)[0] - reference_orient.getEuler(2)[0]) # Roll
 alignment_diff = np.asarray(alignment_diff)
 
 # Align the starting point
@@ -156,22 +156,22 @@ euler[1] = euler[1] + alignment_diff[1]
 euler[2] = euler[2] - alignment_diff[2]
 
 # IMU frame is 180 rotates wrt body
-euler[0] = -euler[0]
 euler[1] = -euler[1]
+euler[2] = -euler[2]
 
 # Check the heading to be -180, 180
-for i in range(0, len(euler[2])-1):
-    if euler[2][i] > (2.0*math.pi):
-        euler[2][i] = euler[2][i] - (2*math.pi)
+for i in range(0, len(euler[0])-1):
+    if euler[0][i] > (2.0*math.pi):
+        euler[0][i] = euler[0][i] - (2*math.pi)
 
-    if euler[2][i] > math.pi:
-        euler[2][i] = -math.pi + (euler[2][i] - math.pi)
+    if euler[0][i] > math.pi:
+        euler[0][i] = -math.pi + (euler[0][i] - math.pi)
 
-    if euler[2][i] < -(2.0 * math.pi):
-        euler[2][i] = euler[2][i] + (2.0*math.pi)
+    if euler[0][i] < -(2.0 * math.pi):
+        euler[0][i] = euler[0][i] + (2.0*math.pi)
 
-    if euler[2][i] < -math.pi:
-        euler[2][i] = math.pi + (math.pi + euler[2][i])
+    if euler[0][i] < -math.pi:
+        euler[0][i] = math.pi + (math.pi + euler[0][i])
 
 # Compute the RMSE
 ikf_data_sheet_coef_orient_rmse = []
@@ -188,9 +188,9 @@ ikf_data_sheet_coef_orient_rmse = ikf_data_sheet_coef_orient_rmse * 180.00/math.
 #############################
 time = ikf_inflated_coef_orient.atime
 orient_euler = []
-orient_euler.append(ikf_inflated_coef_orient.getEuler(2))# Roll
-orient_euler.append(ikf_inflated_coef_orient.getEuler(1))# Pitch
 orient_euler.append(ikf_inflated_coef_orient.getEuler(0))# Yaw
+orient_euler.append(ikf_inflated_coef_orient.getEuler(1))# Pitch
+orient_euler.append(ikf_inflated_coef_orient.getEuler(2))# Roll
 orient_euler = np.asarray(orient_euler)
 
 # INTERPOLATION
@@ -202,9 +202,9 @@ euler = np.asarray(euler)
 
 # Alignment with ground truth
 alignment_diff = []
-alignment_diff.append(-ikf_inflated_coef_orient.getEuler(2)[0] - reference_orient.getEuler(2)[0]) # Roll
-alignment_diff.append(-ikf_inflated_coef_orient.getEuler(1)[0] - reference_orient.getEuler(1)[0]) # Pitch
 alignment_diff.append(ikf_inflated_coef_orient.getEuler(0)[0] - reference_orient.getEuler(0)[0]) # Yaw
+alignment_diff.append(-ikf_inflated_coef_orient.getEuler(1)[0] - reference_orient.getEuler(1)[0]) # Pitch
+alignment_diff.append(-ikf_inflated_coef_orient.getEuler(2)[0] - reference_orient.getEuler(2)[0]) # Roll
 alignment_diff = np.asarray(alignment_diff)
 
 # Align the starting point
@@ -213,22 +213,22 @@ euler[1] = euler[1] + alignment_diff[1]
 euler[2] = euler[2] - alignment_diff[2]
 
 # IMU frame is 180 rotates wrt body
-euler[0] = -euler[0]
 euler[1] = -euler[1]
+euler[2] = -euler[2]
 
 # Check the heading to be -180, 180
-for i in range(0, len(euler[2])-1):
-    if euler[2][i] > (2.0*math.pi):
-        euler[2][i] = euler[2][i] - (2*math.pi)
+for i in range(0, len(euler[0])-1):
+    if euler[0][i] > (2.0*math.pi):
+        euler[0][i] = euler[0][i] - (2*math.pi)
 
-    if euler[2][i] > math.pi:
-        euler[2][i] = -math.pi + (euler[2][i] - math.pi)
+    if euler[0][i] > math.pi:
+        euler[0][i] = -math.pi + (euler[0][i] - math.pi)
 
-    if euler[2][i] < -(2.0 * math.pi):
-        euler[2][i] = euler[2][i] + (2.0*math.pi)
+    if euler[0][i] < -(2.0 * math.pi):
+        euler[0][i] = euler[0][i] + (2.0*math.pi)
 
-    if euler[2][i] < -math.pi:
-        euler[2][i] = math.pi + (math.pi + euler[2][i])
+    if euler[0][i] < -math.pi:
+        euler[0][i] = math.pi + (math.pi + euler[0][i])
 
 # Compute the RMSE
 ikf_inflated_coef_orient_rmse = []

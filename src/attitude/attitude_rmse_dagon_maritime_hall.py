@@ -29,12 +29,12 @@ reference_orient.readData(pose_ref_orient_file, cov=True)
 ### REMOVE OUTLIERS  ###
 ########################
 reference_euler = []
-reference_euler.append(reference_orient.getEuler(2))# Roll
-reference_euler.append(reference_orient.getEuler(1))# Pitch
 reference_euler.append(reference_orient.getEuler(0))# Yaw
+reference_euler.append(reference_orient.getEuler(1))# Pitch
+reference_euler.append(reference_orient.getEuler(2))# Roll
 reference_euler = np.asarray(reference_euler)
 
-temindex = np.where(np.fabs(reference_euler[2]) > (5.0 * math.pi / 180.00))
+temindex = np.where(np.fabs(reference_euler[0]) > (5.0 * math.pi / 180.00))
 temindex = np.asarray(temindex)
 
 reference_orient.delete(temindex)
@@ -53,9 +53,9 @@ reference_orient.eigenValues()
 # REFERENCE IN EULER ANGLES #
 #############################
 reference_euler = []
-reference_euler.append(reference_orient.getEuler(2))# Roll
-reference_euler.append(reference_orient.getEuler(1))# Pitch
 reference_euler.append(reference_orient.getEuler(0))# Yaw
+reference_euler.append(reference_orient.getEuler(1))# Pitch
+reference_euler.append(reference_orient.getEuler(2))# Roll
 reference_euler = np.asarray(reference_euler)
 
 # REFERENCE TIME
@@ -66,9 +66,9 @@ reference_time = reference_orient.atime
 #############################
 time = ikf_orient.atime
 orient_euler = []
-orient_euler.append(ikf_orient.getEuler(2))# Roll
-orient_euler.append(ikf_orient.getEuler(1))# Pitch
 orient_euler.append(ikf_orient.getEuler(0))# Yaw
+orient_euler.append(ikf_orient.getEuler(1))# Pitch
+orient_euler.append(ikf_orient.getEuler(2))# Roll
 orient_euler = np.asarray(orient_euler)
 
 # Compute the RMSE
