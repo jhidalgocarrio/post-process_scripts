@@ -7,6 +7,9 @@ import matplotlib.pyplot as plt
 import quaternion as quat
 import pickle
 
+############################################
+## HELPER METHOD FOR SAVING AND OPENING   ##
+############################################
 
 def save_object(obj, filename, mode='wb'):
     with open(filename, mode) as output:
@@ -18,6 +21,47 @@ def open_object(filename):
 
 def func(x):
     return (x-3)*(x-5)*(x-7)+85
+
+#############################################
+## AVERAGE FILTER BY SPLITTING INPUT TEST  ##
+#############################################
+def input_reduction (input_array = None, number_blocks = 0.0):
+    if input_array is None:
+        raise ValueError("Input cannot be None")
+    if number_blocks is 0.0:
+        raise ValueError("Cannot split array with zero number of blocks")
+
+    input_array_shape = 0
+    if len(input_array.shape) == 2:
+        input_array_shape = input_array.shape[1]
+    else:
+        input_array_shape = 1
+
+    new_input = np.ndarray(shape = (number_blocks, input_array_shape))
+    std_input = np.ndarray(shape = (number_blocks, input_array_shape))
+
+    for i in range(input_array_shape):
+        if input_array_shape > 1:
+            split_array = np.array_split(input_array[:,i], number_blocks)
+        else:
+            split_array = np.array_split(input_array, number_blocks)
+
+        mean_array = np.ndarray(len(split_array), dtype=double)
+        std_array = np.ndarray(len(split_array), dtype=double)
+
+        for j in range(len(split_array)):
+            mean_array[j] = mean(split_array[j])
+            std_array[j] = std(split_array[j])
+
+        if input_array_shape > 1:
+            new_input[:,i] = mean_array
+            std_input[:,i] = std_array
+        else:
+            new_input = mean_array
+            std_input = std_array
+
+    return new_input, std_input
+#####################################################
 
 class ThreeData:
 

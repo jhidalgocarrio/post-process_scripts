@@ -119,62 +119,24 @@ odometry = np.column_stack((odometry_velocity.getAxis(0), odometry_velocity.getA
 #########################
 ## SPLIT INPUT TEST    ##
 #########################
-def input_reduction (input_array = None, number_blocks = 0.0):
-    if input_array is None:
-        raise ValueError("Input cannot be None")
-    if number_blocks is 0.0:
-        raise ValueError("Cannot split array with zero number of blocks")
-
-    input_array_shape = 0
-    if len(input_array.shape) == 2:
-        input_array_shape = input_array.shape[1]
-    else:
-        input_array_shape = 1
-
-    new_input = np.ndarray(shape = (number_blocks, input_array_shape))
-    std_input = np.ndarray(shape = (number_blocks, input_array_shape))
-
-    for i in range(input_array_shape):
-        if input_array_shape > 1:
-            split_array = np.array_split(input_array[:,i], number_blocks)
-        else:
-            split_array = np.array_split(input_array, number_blocks)
-
-        mean_array = np.ndarray(len(split_array), dtype=double)
-        std_array = np.ndarray(len(split_array), dtype=double)
-
-        for j in range(len(split_array)):
-            mean_array[j] = mean(split_array[j])
-            std_array[j] = std(split_array[j])
-
-        if input_array_shape > 1:
-            new_input[:,i] = mean_array
-            std_input[:,i] = std_array
-        else:
-            new_input = mean_array
-            std_input = std_array
-
-    return new_input, std_input
-#########################
-
 sampling_frequency = 1.0/mean(reference_velocity.delta[0:100])
 size_block = 5 * sampling_frequency
 number_blocks = int(len(reference_velocity.delta)/size_block)
 
 # Split joints (one joint info per column)
-joints, jointstd = input_reduction(joints, number_blocks)
+joints, jointstd = data.input_reduction(joints, number_blocks)
 
 # Split inertia (one axis info per column)
-inertia, inertiastd = input_reduction(inertia, number_blocks)
+inertia, inertiastd = data.input_reduction(inertia, number_blocks)
 
 # Split orientation (one axis info per column)
-orient, orientstd = input_reduction(orient, number_blocks)
+orient, orientstd = data.input_reduction(orient, number_blocks)
 
 # Split reference (one axis info per column)
-reference, referencestd = input_reduction(reference, number_blocks)
+reference, referencestd = data.input_reduction(reference, number_blocks)
 
 # Split odometry (one axis info per column)
-odometry, odometrystd = input_reduction(odometry, number_blocks)
+odometry, odometrystd = data.input_reduction(odometry, number_blocks)
 
 error = abs(reference) - abs(odometry)
 errorstd = abs(reference) + abs(odometry)
@@ -190,7 +152,7 @@ ax = fig.add_subplot(111)
 plt.rc('text', usetex=False)# activate latex text rendering
 
 time = mean(reference_velocity.delta[0:100]) * r_[0:len(reference_velocity.time)]
-time, timestd = input_reduction(time, number_blocks)
+time, timestd = data.input_reduction(time, number_blocks)
 label_text = "Error Velocity"
 color_value = [0.2,0.2,0.2]
 ax.plot(time, error[:,0], marker='o', linestyle='-', label=label_text, color=color_value, lw=6)
@@ -214,7 +176,7 @@ ax = fig.add_subplot(111)
 plt.rc('text', usetex=False)# activate latex text rendering
 
 time = mean(reference_velocity.delta[0:100]) * r_[0:len(reference_velocity.time)]
-time, timestd = input_reduction(time, number_blocks)
+time, timestd = data.input_reduction(time, number_blocks)
 sigma = abs(error[:,0]) * np.ones(len(error[:,0]))
 label_text = "Error Velocity"
 color_value = [0.2,0.2,0.2]
@@ -241,13 +203,13 @@ ax = fig.add_subplot(111)
 plt.rc('text', usetex=False)# activate latex text rendering
 
 time = mean(reference_velocity.delta[0:100]) * r_[0:len(reference_velocity.time)]
-time, timestd = input_reduction(time, number_blocks)
+time, timestd = data.input_reduction(time, number_blocks)
 label_text = "Reference Velocity"
 color_value = [1.0,0,0]
 ax.plot(time, reference[:,0], marker='o', linestyle='-', label=label_text, color=color_value, lw=6)
 
 time = mean(odometry_velocity.delta[0:100]) * r_[0:len(odometry_velocity.time)]
-time, timestd = input_reduction(time, number_blocks)
+time, timestd = data.input_reduction(time, number_blocks)
 sigma = np.absolute(error) * np.ones(error.shape)
 label_text = "Odometry Velocity"
 color_value = [0.5,0.0,0]
@@ -405,19 +367,19 @@ odometry = np.column_stack((odometry_velocity.getAxis(0), odometry_velocity.getA
 
 ######################
 # Split joints (one joint info per column)
-joints, jointstd = input_reduction(joints, number_blocks)
+joints, jointstd = data.input_reduction(joints, number_blocks)
 
 # Split inertia (one axis info per column)
-inertia, inertiastd = input_reduction(inertia, number_blocks)
+inertia, inertiastd = data.input_reduction(inertia, number_blocks)
 
 # Split orientation (one axis info per column)
-orient, orientstd = input_reduction(orient, number_blocks)
+orient, orientstd = data.input_reduction(orient, number_blocks)
 
 # Split reference (one axis info per column)
-reference, referencestd = input_reduction(reference, number_blocks)
+reference, referencestd = data.input_reduction(reference, number_blocks)
 
 # Split odometry (one axis info per column)
-odometry, odometrystd = input_reduction(odometry, number_blocks)
+odometry, odometrystd = data.input_reduction(odometry, number_blocks)
 
 ######################
 # GP Multidimensional vector
@@ -436,7 +398,7 @@ ax = fig.add_subplot(111)
 
 plt.rc('text', usetex=False)# activate latex text rendering
 time = mean(odometry_velocity.delta[0:100]) * r_[0:len(odometry_velocity.time)]
-time, timestd = input_reduction(time, number_blocks)
+time, timestd = data.input_reduction(time, number_blocks)
 xvelocity = odometry[:,0]
 ax.plot(time, xvelocity, marker='o', linestyle='-.', label="Odometry Velocity", color=[0.0,0.0,1.0], lw=2)
 
