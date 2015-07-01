@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 
+path = '/home/javi/exoter/development/data/20140911_decos_field/20140911-1805/'
 #######################################
-path_odometry_file = '/home/jhidalgocarrio/exoter/development/data/20140911_decos_field/20140911-1805/pose_odo_position.0.data'
+path_odometry_file = path + 'pose_odo_position.0.data'
 
-path_skid_file = '/home/jhidalgocarrio/exoter/development/data/20140911_decos_field/20140911-1805/pose_skid_position.0.data'
+path_skid_file = path + 'pose_skid_position.0.data'
 
-path_reference_file = '/home/jhidalgocarrio/exoter/development/data/20140911_decos_field/20140911-1805/pose_ref_position.0.data'
+path_reference_file = path + 'pose_ref_position.0.data'
 #######################################
 
 
@@ -45,14 +46,14 @@ ax = fig.add_subplot(111)
 plt.rc('text', usetex=False)# activate latex text rendering
 xposition = odometry.getAxis(0)[0::50]
 yposition = odometry.getAxis(1)[0::50]
-ax.plot(xposition, yposition, marker='o', linestyle='-.', label="Jacobian Odometry", color=[0.3,0.2,0.4], lw=2)
+ax.plot(xposition, yposition, marker='o', linestyle='-.', label="3D Odometry", color=[0.3,0.2,0.4], lw=2)
 
 xposition = odometry.getAxis(0)[0::50]# reduce number of points
 yposition = odometry.getAxis(1)[0::50]
-xycov = odometry.getCov(1)[0::10]
-for i in range(0, len(xycov)):
-    cov.plot_cov_ellipse(xycov[i], pos=[xposition[i], yposition[i]], nstd=3,
-                    linewidth=2, alpha=0.5, facecolor='green', edgecolor='black')
+#xycov = odometry.getCov(1)[0::10]
+#for i in range(0, len(xycov)):
+#    cov.plot_cov_ellipse(xycov[i], pos=[xposition[i], yposition[i]], nstd=3,
+#                    linewidth=2, alpha=0.5, facecolor='green', edgecolor='black')
 
 xposition = skid.getAxis(0)[0::50]
 yposition = skid.getAxis(1)[0::50]
@@ -73,10 +74,10 @@ ax.annotate(r'End', xy=(xposition[len(xposition)-1], yposition[len(yposition)-1]
 
 xposition = reference.getAxis(0)[0::100]
 yposition = reference.getAxis(1)[0::100]
-xycov = reference.getCov(1)[0::100]
-for i in range(0, len(xycov)):
-    cov.plot_cov_ellipse(xycov[i], pos=[xposition[i], yposition[i]], nstd=3,
-                    linewidth=2, alpha=0.2, facecolor=[0.4,0,0.4], edgecolor='black')
+#xycov = reference.getCov(1)[0::100]
+#for i in range(0, len(xycov)):
+#    cov.plot_cov_ellipse(xycov[i], pos=[xposition[i], yposition[i]], nstd=3,
+#                    linewidth=2, alpha=0.2, facecolor=[0.4,0,0.4], edgecolor='black')
 
 
 plt.xlabel(r'X [$m$]', fontsize=35, fontweight='bold')
