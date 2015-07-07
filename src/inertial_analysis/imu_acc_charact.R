@@ -9,7 +9,7 @@
 library(allanvar)
 
 # You may change this path
-setwd ("/home/javi/flatfish/development/post-process_data/20150227-0019_static_8h_imu_run")
+setwd ("/home/javi/flatfish/development/data/20150227-0019_static_8h_imu_run")
 
 #load("stim300_acc_16bnw_500hz_analysis.Rdata")
 #load("stim300_acc_16bnw_250hz_analysis.Rdata")
