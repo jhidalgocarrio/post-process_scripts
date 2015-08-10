@@ -1,12 +1,14 @@
 #!/usr/bin/env python
 
-path = '/home/javi/exoter/development/data/20141024_planetary_lab/20141025-0005/'
+#path = '/home/javi/exoter/development/data/20141024_planetary_lab/20141027-2034_frontend_attitude/'
+path = '/home/javi/exoter/development/data/20141023_pink_test/20141023-2011_frontend_attitude/'
+#path = '/home/javi/exoter/development/data/20141024_planetary_lab/20141027-2034/'
 #path = '/home/javi/exoter/development/data/20140422_stim300_vs_vicon/20140425-1923/'
 #path = '/home/javi/exoter/development/data/20150323_ww_dlr/imu_stim300_attitude_test_20150325-1716/'
 #path = '/home/javi/esa-npi/development/data/20150410_spaceclimber_simple_test/incontact_ground/'
 
 ##################################
-pose_odo_orient_file = path + 'pose_odo_orientation.0.data'
+pose_odo_orient_file = path + 'pose_imu_orientation.0.data'
 
 pose_ref_orient_file = path + 'pose_ref_orientation.0.data'
 
@@ -75,18 +77,19 @@ euler[2][:] = [x * 180.00/math.pi for x in euler[2] ]#convert to degrees
 
 axis = 0
 if axis == 2:
-    label_text = "Roll [filter w/ Allanvar]"
+    label_text = "Roll [filter IMU]"
     color_value = [1.0,0,0]
 elif axis  == 1:
-    label_text = "Pitch [filter w/ Allanvar]"
+    label_text = "Pitch [filter IMU]"
     color_value = [0.0,1.0,0]
 else:
-    label_text = "Yaw [filter w/ Allanvar]"
+    label_text = "Yaw [filter IMU]"
     color_value = [0.0,0.0,1.0]
 
 # IMU Orientation
-sigma = imu_orient.getStd(axis=axis, levelconf = 2)
 ax.plot(time, euler[axis], marker='.', label=label_text, color=color_value, alpha=0.5, lw=2)
+sigma = imu_orient.getStd(axis=axis, levelconf = 3)
+sigma[:] = [x * 180.00/math.pi for x in sigma]#convert to degrees
 ax.fill(np.concatenate([time, time[::-1]]),
         np.concatenate([euler[axis] - sigma,
                        (euler[axis] + sigma)[::-1]]),
@@ -95,45 +98,45 @@ ax.fill(np.concatenate([time, time[::-1]]),
 ax.plot(time, (euler[axis] - sigma), color="black", alpha=1.0, lw=1.0)
 ax.plot(time, (euler[axis] + sigma), color="black", alpha=1.0, lw=1.0)
 
-# Odometry Orientation
-time = odometry_orient.time
-euler = []
-euler.append(odometry_orient.getEuler(0))# Yaw
-euler.append(odometry_orient.getEuler(1))# Pitch
-euler.append(odometry_orient.getEuler(2))# Roll
-
-#euler[0] = euler[0] - euler[0][0] #set yaw starting at zero
-
-euler[0][:] = [x * 180.00/math.pi for x in euler[0] ]#convert to degrees
-euler[1][:] = [x * 180.00/math.pi for x in euler[1] ]#convert to degrees
-euler[2][:] = [x * 180.00/math.pi for x in euler[2] ]#convert to degrees
-
-# Reduce number of points
-time = time[0::20]
-euler[0] = euler[0][0::20]
-euler[1] = euler[1][0::20]
-euler[2] = euler[2][0::20]
-
-if axis == 2:
-    label_text = "Roll [filter w/ Allanvar]"
-    color_value = [1.0,0.0,0]
-elif axis  == 1:
-    label_text = "Pitch [filter w/ Allanvar]"
-    color_value = [0.0,1.0,0]
-else:
-    label_text = "Yaw [filter w/ Allanvar]"
-    color_value = [0,0.0,1.0]
-
-# Odometry Orientation
-ax.plot(time, euler[axis], marker='o', linestyle='-', label=label_text, color=color_value, lw=2)
-sigma = odometry_orient.getStd(axis=axis, levelconf = 2)
-sigma[:] = [x * 180.00/math.pi for x in sigma]#convert to degrees
-sigma = sigma[0::20]
-ax.fill(np.concatenate([time, time[::-1]]),
-        np.concatenate([euler[axis] - sigma,
-                       (euler[axis] + sigma)[::-1]]),
-        alpha=.5, fc='0.50', ec='None', label='95% confidence interval')
-
+## Odometry Orientation
+#time = odometry_orient.time
+#euler = []
+#euler.append(odometry_orient.getEuler(0))# Yaw
+#euler.append(odometry_orient.getEuler(1))# Pitch
+#euler.append(odometry_orient.getEuler(2))# Roll
+#
+##euler[0] = euler[0] - euler[0][0] #set yaw starting at zero
+#
+#euler[0][:] = [x * 180.00/math.pi for x in euler[0] ]#convert to degrees
+#euler[1][:] = [x * 180.00/math.pi for x in euler[1] ]#convert to degrees
+#euler[2][:] = [x * 180.00/math.pi for x in euler[2] ]#convert to degrees
+#
+## Reduce number of points
+#time = time#[0::20]
+#euler[0] = euler[0]#[0::20]
+#euler[1] = euler[1]#[0::20]
+#euler[2] = euler[2]#[0::20]
+#
+#if axis == 2:
+#    label_text = "Roll [filter Odometry]"
+#    color_value = [1.0,0.0,0]
+#elif axis  == 1:
+#    label_text = "Pitch [filter Odometry]"
+#    color_value = [0.0,1.0,0]
+#else:
+#    label_text = "Yaw [filter Odometry]"
+#    color_value = [0,0.0,1.0]
+#
+## Odometry Orientation
+#ax.plot(time, euler[axis], marker='o', linestyle='-', label=label_text, color=color_value, lw=2)
+#sigma = odometry_orient.getStd(axis=axis, levelconf = 2)
+#sigma[:] = [x * 180.00/math.pi for x in sigma]#convert to degrees
+#sigma = sigma#[0::20]
+#ax.fill(np.concatenate([time, time[::-1]]),
+#        np.concatenate([euler[axis] - sigma,
+#                       (euler[axis] + sigma)[::-1]]),
+#        alpha=.5, fc='0.50', ec='None', label='95% confidence interval')
+#
 #ax.plot(time, (euler[axis] - sigma), color="black", alpha=1.0, lw=1.0)
 #ax.plot(time, (euler[axis] + sigma), color="black", alpha=1.0, lw=1.0)
 
@@ -146,14 +149,14 @@ euler.append(reference_orient.getEuler(1))# Pitch
 euler.append(reference_orient.getEuler(2))# Roll
 
 #Misalignment
-alignement_diff = []
-alignement_diff.append(odometry_orient.getEuler(2)[0::20][118] - reference_orient.getEuler(2)[0::20][118]) # Roll
-alignement_diff.append(odometry_orient.getEuler(1)[0::20][118] - reference_orient.getEuler(1)[0::20][118]) # Roll
-alignement_diff.append(odometry_orient.getEuler(0)[0::20][118] - reference_orient.getEuler(0)[0::20][118]) # Roll
+#alignement_diff = []
+#alignement_diff.append(odometry_orient.getEuler(2)[0::20][0] - reference_orient.getEuler(2)[0::20][0]) # Roll
+#alignement_diff.append(odometry_orient.getEuler(1)[0::20][0] - reference_orient.getEuler(1)[0::20][0]) # Pitch
+#alignement_diff.append(odometry_orient.getEuler(0)[0::20][0] - reference_orient.getEuler(0)[0::20][0]) # Yaw
 
-euler[0] = euler[0] + alignement_diff[0]
-euler[1] = euler[1] + alignement_diff[1]
-euler[2] = euler[2] + alignement_diff[2]
+#euler[0] = euler[0] - alignement_diff[0]
+#euler[1] = euler[1] + alignement_diff[1]
+#euler[2] = euler[2] + alignement_diff[2]
 
 # Convert to degrees
 euler[0][:] = [x * 180.00/math.pi for x in euler[0] ]#convert to degrees
@@ -161,10 +164,10 @@ euler[1][:] = [x * 180.00/math.pi for x in euler[1] ]#convert to degrees
 euler[2][:] = [x * 180.00/math.pi for x in euler[2] ]#convert to degrees
 
 # Reduce number of points
-time = time[0::20]
-euler[0] = euler[0][0::20]
-euler[1] = euler[1][0::20]
-euler[2] = euler[2][0::20]
+time = time#[0::20]
+euler[0] = euler[0]#[0::20]
+euler[1] = euler[1]#[0::20]
+euler[2] = euler[2]#[0::20]
 
 
 if axis == 2:
@@ -179,20 +182,23 @@ else:
 
 # Reference Orientation
 #sigma = reference_orient.getStd(axis=axis, levelconf = 3)
-ax.plot(time[118:len(euler[axis])], euler[axis][118:len(euler[axis])], marker='D', linestyle='None', label=label_text, color=color_value, alpha=0.5, lw=2)
+ax.plot(time[0:len(euler[axis])], euler[axis][0:len(euler[axis])], marker='D', linestyle='None', label=label_text, color=color_value, alpha=0.5, lw=2)
 sigma = reference_orient.getStd(axis=axis, levelconf = 2)
 sigma[:] = [x * 180.00/math.pi for x in sigma]#convert to degrees
-sigma = sigma[0::20]
-#ax.fill(np.concatenate([time, time[::-1]]),
-#        np.concatenate([euler[axis] - sigma,
-#                       (euler[axis] + sigma)[::-1]]),
-#        alpha=.5, fc='0.50', ec='None', label='95% confidence interval')
+sigma = sigma#[0::20]
+ax.fill(np.concatenate([time, time[::-1]]),
+        np.concatenate([euler[axis] - sigma,
+                       (euler[axis] + sigma)[::-1]]),
+        alpha=.5, fc='0.50', ec='None', label='95% confidence interval')
 
 plt.xlabel(r'Time [$s$]')
 plt.ylabel(r'Angle [${}^\circ$]')
 plt.grid(True)
 plt.legend(prop={'size':25})
 plt.show(block=False)
+
+
+
 
 #Plotting Orientation values with variable line width
 from matplotlib.collections import LineCollection
