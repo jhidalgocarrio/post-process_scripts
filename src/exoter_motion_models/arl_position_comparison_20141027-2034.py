@@ -1,11 +1,13 @@
 #!/usr/bin/env python
 
+path = '/home/javi/exoter/development/data/20141024_planetary_lab/20141027-2034_odometry_comparison/'
+
 #######################################
-path_odometry_file = '/home/javi/exoter/development/data/20141024_planetary_lab/20141027-2034/pose_odo_position.0.data'
+path_odometry_file = path + '/pose_odo_position.reaction_forces.1.data'
 
 #path_skid_file = '/home/javi/exoter/development/data/20141024_planetary_lab/20141027-2034/pose_skid_position.0.data'
 
-path_reference_file = '/home/javi/exoter/development/data/20141024_planetary_lab/20141027-2034/pose_ref_position.0.data'
+path_reference_file = path + '/pose_ref_position.0.data'
 #######################################
 
 
@@ -24,18 +26,30 @@ import cov_ellipse as cov
 #ExoTeR Odometry
 odometry = data.ThreeData()
 odometry.readData(path_odometry_file, cov=True)
-odometry.eigenValues()
 
 #Skid Odometry
 #skid = data.ThreeData()
 #skid.readData(path_skid_file, cov=True)
-#skid.eigenValues()
 
 
 #Vicon Pose
 reference = data.ThreeData()
 reference.readData(path_reference_file, cov=True)
+
+########################
+### REMOVE OUTLIERS  ###
+########################
+temindex = np.where(np.isnan(reference.cov[:,0,0]))
+temindex = np.asarray(temindex)
+
+reference.delete(temindex)
+odometry.delete(temindex)
+
+################################
+### COMPUTE COV EIGENVALUES  ###
+################################
 reference.eigenValues()
+odometry.eigenValues()
 
 #Position comparison versus time
 matplotlib.rcParams.update({'font.size': 30, 'font.weight': 'bold'})
@@ -92,10 +106,10 @@ ax.scatter(xposition[len(xposition)-1], yposition[len(yposition)-1], marker='D',
 
 xposition = reference.getAxis(0)[0::100]
 yposition = reference.getAxis(1)[0::100]
-xycov = reference.getCov(1)[0::100]
-for i in range(0, len(xycov)):
-    cov.plot_cov_ellipse(xycov[i], pos=[xposition[i], yposition[i]], nstd=3,
-                    linewidth=2, alpha=0.2, facecolor=[0.4,0,0.4], edgecolor='black')
+#xycov = reference.getCov(1)[0::100]
+#for i in range(0, len(xycov)):
+#    cov.plot_cov_ellipse(xycov[i], pos=[xposition[i], yposition[i]], nstd=3,
+#                    linewidth=2, alpha=0.2, facecolor=[0.4,0,0.4], edgecolor='black')
 
 
 plt.xlabel(r'X [$m$]', fontsize=35, fontweight='bold')

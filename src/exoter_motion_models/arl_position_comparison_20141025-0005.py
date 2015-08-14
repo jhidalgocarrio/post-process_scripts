@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 
-path = '/home/javi/exoter/development/data/20141024_planetary_lab/20141025-0005/'
+path = '/home/javi/exoter/development/data/20141024_planetary_lab/20141025-0005_odometry_comparison/'
 
 #######################################
-path_odometry_file = path + 'pose_odo_position.0.data'
+path_odometry_file = path + 'pose_odo_position.reaction_forces.0.data'
 
 path_skid_file = path + 'pose_skid_position.0.data'
 
@@ -26,18 +26,36 @@ import cov_ellipse as cov
 #ExoTeR Odometry
 odometry = data.ThreeData()
 odometry.readData(path_odometry_file, cov=True)
-odometry.eigenValues()
 
 #Skid Odometry
 skid = data.ThreeData()
 skid.readData(path_skid_file, cov=True)
-skid.eigenValues()
 
 
 #Vicon Pose
 reference = data.ThreeData()
 reference.readData(path_reference_file, cov=True)
+
+########################
+### REMOVE OUTLIERS  ###
+########################
+temindex = np.where(np.isnan(reference.cov[:,0,0]))
+temindex = np.asarray(temindex)
+
+reference.delete(temindex)
+odometry.delete(temindex)
+skid.delete(temindex)
+
+################################
+### COMPUTE COV EIGENVALUES  ###
+################################
 reference.eigenValues()
+odometry.eigenValues()
+skid.eigenValues()
+
+############
+### PLOT ###
+############
 
 #Position comparison versus time
 matplotlib.rcParams.update({'font.size': 30, 'font.weight': 'bold'})
@@ -66,7 +84,7 @@ ax = fig.add_subplot(111)
 plt.rc('text', usetex=False)# activate latex text rendering
 xposition = odometry.getAxis(0)[0::50]
 yposition = odometry.getAxis(1)[0::50]
-ax.plot(xposition, yposition, marker='o', linestyle='-.', label="3D Odometry", color=[0.3,0.2,0.4], lw=2)
+ax.plot(xposition, yposition, marker='o', linestyle='-.', label="Enhanced 3D Odometry", color=[0.3,1.0,0.4], lw=2)
 
 #xposition = odometry.getAxis(0)[0::50]# reduce number of points
 #yposition = odometry.getAxis(1)[0::50]
@@ -119,12 +137,12 @@ ax = fig.add_subplot(111, projection='3d')
 xposition = odometry.getAxis(0)[0::50]
 yposition = odometry.getAxis(1)[0::50]
 zposition = odometry.getAxis(2)[0::50]
-ax.plot(xposition, yposition, zposition, marker='o', linestyle='-.', label="Jacobian Odometry", color=[0.3,0.2,0.4], lw=2)
+ax.plot(xposition, yposition, zposition, marker='o', linestyle='-.', label="Jacobian Odometry", color=[0.3,1.0,0.4], lw=2)
 
-xposition = skid.getAxis(0)[0::50]
-yposition = skid.getAxis(1)[0::50]
-zposition = skid.getAxis(2)[0::50]
-ax.plot(xposition, yposition, zposition, marker='^', linestyle='-', label="Planar Odometry", color=[0,0.5,1], lw=2)
+#xposition = skid.getAxis(0)[0::50]
+#yposition = skid.getAxis(1)[0::50]
+#zposition = skid.getAxis(2)[0::50]
+#ax.plot(xposition, yposition, zposition, marker='^', linestyle='-', label="Planar Odometry", color=[0,0.5,1], lw=2)
 
 xposition = reference.getAxis(0)[0::50]
 yposition = reference.getAxis(1)[0::50]
