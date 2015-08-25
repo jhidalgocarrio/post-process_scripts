@@ -6,15 +6,15 @@ NUM_ARGUMENTS=2
 
 if [ $# -ge $NUM_ARGUMENTS ]; then
     echo Running the pocolog commands for the directory: ${args[0]} for *.${args[1]}.log files
-    pocolog ${args[0]}/exoter_perception.${args[1]}.log -s /localization_frontend.pose_reference_samples_out --field time,position,cov_position > pose_ref_position.${args[1]}.data
-    pocolog ${args[0]}/exoter_perception.${args[1]}.log -s /localization_frontend.pose_reference_samples_out --field time,orientation,cov_orientation > pose_ref_orientation.${args[1]}.data
+    pocolog ${args[0]}/exoter_localization.${args[1]}.log -s /localization_frontend.pose_reference_samples_out --field time,position,cov_position > pose_ref_position.${args[1]}.data
+    pocolog ${args[0]}/exoter_localization.${args[1]}.log -s /localization_frontend.pose_reference_samples_out --field time,orientation,cov_orientation > pose_ref_orientation.${args[1]}.data
     echo 'Pose Reference Samples... [DONE]'
 
-    pocolog ${args[0]}/exoter_perception.${args[1]}.log -s /localization_frontend.delta_pose_reference_samples_out --field time,position,cov_position > delta_pose_ref_position.${args[1]}.data
-    pocolog ${args[0]}/exoter_perception.${args[1]}.log -s /localization_frontend.delta_pose_reference_samples_out --field time,orientation,cov_orientation > delta_pose_ref_orientation.${args[1]}.data
+    pocolog ${args[0]}/exoter_localization.${args[1]}.log -s /localization_frontend.delta_pose_reference_samples_out --field time,position,cov_position > delta_pose_ref_position.${args[1]}.data
+    pocolog ${args[0]}/exoter_localization.${args[1]}.log -s /localization_frontend.delta_pose_reference_samples_out --field time,orientation,cov_orientation > delta_pose_ref_orientation.${args[1]}.data
     echo 'Delta Pose Reference Samples... [DONE]'
 
-    pocolog ${args[0]}/exoter_perception.${args[1]}.log -s /localization_frontend.reaction_forces_samples_out > scaled_odo_reaction_forces.${args[1]}.data
+    pocolog ${args[0]}/exoter_localization.${args[1]}.log -s /localization_frontend.reaction_forces_samples_out > scaled_odo_reaction_forces.${args[1]}.data
     echo 'Estimated Reaction Forces... [DONE]'
 
     pocolog ${args[0]}/exoter_odometry.${args[1]}.log -s /exoter_odometry.pose_samples_out --field time,position,cov_position > pose_odo_position.${args[1]}.data
