@@ -27,7 +27,7 @@ xi = np.linspace(min(px), max(px), npts)
 yi = np.linspace(min(py), max(py), npts)
 
 # grid the data.
-zi = griddata(px, py, pz, xi, yi)
+zi = griddata(px, py, pz, xi, yi, interp='linear')
 
 ############
 ### PLOT ###
@@ -45,6 +45,7 @@ plt.ylim(min(py), max(yi))
 plt.show(block=False)
 
 ############
+# 3D plotinh
 x, y = np.meshgrid(xi, yi)
 
 ############
