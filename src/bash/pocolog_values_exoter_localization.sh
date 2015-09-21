@@ -40,6 +40,6 @@ if [ $# -ge $NUM_ARGUMENTS ]; then
 else
     echo Number of arguments passed: $#
     echo "You need to specify the path to the log-folder and the number of the log file"
-    echo "For example pocolog_values_gaussian_processes . 0 to process *.0.log files"
+    echo "For example pocolog_values_exoter_localization . 0 to process *.0.log files"
 fi
 
