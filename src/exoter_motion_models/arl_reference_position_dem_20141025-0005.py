@@ -1,11 +1,8 @@
 #!/usr/bin/env python
 
-path = '/home/javi/exoter/development/data/20141024_planetary_lab/20141025-0005_odometry_comparison/'
-
+path = '/home/javi/exoter/development/data/20141024_planetary_lab/20141025-0005/'
 #######################################
-path_odometry_file = path + 'pose_odo_position.reaction_forces.0.data'
-
-path_skid_file = path + 'pose_skid_position.0.data'
+path_odometry_file = path + 'pose_odo_position.0.data'
 
 path_reference_file = path + 'pose_ref_position.0.data'
 
@@ -15,6 +12,7 @@ path_navigation_position_file = path + 'pose_world_to_navigation_position.0.data
 #######################################
 esa_arl_dem_file = '/home/javi/exoter/development/esa_terrain_lab/DEMclean.ply'
 #######################################
+
 
 import sys
 sys.path.insert(0, './src/core')
@@ -34,10 +32,6 @@ import scipy
 odometry = data.ThreeData()
 odometry.readData(path_odometry_file, cov=True)
 
-#Skid Odometry
-skid = data.ThreeData()
-skid.readData(path_skid_file, cov=True)
-
 #Vicon Pose
 reference = data.ThreeData()
 reference.readData(path_reference_file, cov=True)
@@ -51,23 +45,19 @@ navigation_position.readData(path_navigation_position_file, cov=False)
 ########################
 ### REMOVE OUTLIERS  ###
 ########################
-temindex = np.where(np.isnan(reference.cov[:,0,0]))
+temindex = np.where(np.isnan(reference.data[:,0]))
 temindex = np.asarray(temindex)
 
-reference.delete(temindex)
 odometry.delete(temindex)
-skid.delete(temindex)
+reference.delete(temindex)
 
 ################################
 ### COMPUTE COV EIGENVALUES  ###
 ################################
-reference.eigenValues()
+odometry.covSymmetry()
 odometry.eigenValues()
-skid.eigenValues()
-
-############
-### PLOT ###
-############
+reference.covSymmetry()
+reference.eigenValues()
 
 # Terrain DEM
 plydata = PlyData.read(open(esa_arl_dem_file))
@@ -82,7 +72,7 @@ xi = np.linspace(min(px), max(px), npts)
 yi = np.linspace(min(py), max(py), npts)
 
 # grid the data.
-zi = griddata(px, py, pz, xi, yi, interp='linear')
+zi = griddata(px, py, pz, xi, yi)
 
 ############
 ### PLOT ###
@@ -101,69 +91,50 @@ cbar.ax.set_ylabel('terrain elevation')
 plt.xlim(min(px), max(xi))
 plt.ylim(min(py), max(yi))
 
-# Odometry trajectory
-plt.rc('text', usetex=False)# activate latex text rendering
-xposition = odometry.getAxis(0)[0::50]
-yposition = odometry.getAxis(1)[0::50]
-zposition = odometry.getAxis(2)[0::50]
-
-# rotate and translate the trajectory wrt the world frame
-position = np.column_stack((xposition, yposition, zposition))
-position[:] = [navigation_orient.data[0].rot(x) +  navigation_position.data[0] for x in position]
-
 # Display Odometry trajectory
-x = position[:,0]
-y = position[:,1]
-ax.plot(x, y, marker='o', linestyle='-.', label="Enhanced 3D Odometry", color=[0.3,1.0,0.4], lw=2)
 
-
-# Planar Odometry trajectory
-plt.rc('text', usetex=False)# activate latex text rendering
-xposition = skid.getAxis(0)[0::50]
-yposition = skid.getAxis(1)[0::50]
-zposition = skid.getAxis(2)[0::50]
 
 # rotate and translate the trajectory wrt the world frame
-position = np.column_stack((xposition, yposition, zposition))
+position = np.column_stack((reference.getAxis(0)[0::50], reference.getAxis(1)[0::50],  reference.getAxis(2)[0::50]))
 position[:] = [navigation_orient.data[0].rot(x) +  navigation_position.data[0] for x in position]
 
-# Display Planar Odometry trajectory
+# Display Ground Truth trajectory
 x = position[:,0]
 y = position[:,1]
-ax.plot(x, y, marker='x', linestyle='--', label="Planar Odometry", color=[0,0.5,1], lw=2)
+
+Q = ax.quiver(x[:-1], y[:-1], x[1:]-x[:-1], y[1:]-y[:-1], scale_units='xy',
+        angles='xy', scale=1, color='r', units='x', linewidths=(1,),
+        edgecolors=('k'), headaxislength=5)
+qk = ax.quiverkey(Q, 0.9, 0.02, 0.5,  'trajectory line', fontproperties={'weight': 'bold', 'size':16})
+
+import os
+from matplotlib.cbook import get_sample_data
+from matplotlib._png import read_png
+import matplotlib.image as image
+from scipy import ndimage
+from matplotlib.offsetbox import OffsetImage, AnnotationBbox
+fn = get_sample_data(os.getcwd()+"/data/img/exoter.png", asfileobj=False)
+exoter = image.imread(fn)
+exoter = ndimage.rotate(exoter, 180)
+imexoter = OffsetImage(exoter, zoom=0.3)
 
 
-# Reference trajectory
-plt.rc('text', usetex=False)# activate latex text rendering
-xposition = reference.getAxis(0)[0::50]
-yposition = reference.getAxis(1)[0::50]
-zposition = reference.getAxis(2)[0::50]
+ab = AnnotationBbox(imexoter, xy=(x[0], y[0]),
+                        xybox=None,
+                        xycoords='data',
+                        boxcoords="offset points",
+                        frameon=False)
 
-# rotate and translate the trajectory wrt the world frame
-position = np.column_stack((xposition, yposition, zposition))
-position[:] = [navigation_orient.data[0].rot(x) +  navigation_position.data[0] for x in position]
-
-# Display Reference trajectory
-x = position[:,0]
-y = position[:,1]
-ax.plot(x, y, marker='D', linestyle='--', label="Reference Trajectory", color=[0.5,0,0], alpha=0.5, lw=2)
-
-# Start and End Labels
-ax.scatter(x[0], y[0], marker='D', color=[0,0.5,0.5], alpha=0.5, lw=20)
-ax.scatter(x[len(x)-1], y[len(y)-1], marker='D', color=[0.5,0,0.5], alpha=0.5, lw=20)
-ax.annotate(r'Start', xy=(x[0], y[0]), xycoords='data',
-                                xytext=(-40, -40), textcoords='offset points', fontsize=22,
+ax.annotate("ExoTeR", xy=(x[0], y[0]), xycoords='data',
+                                xytext=(-40, 45), textcoords='offset points', fontsize=22,
                                 arrowprops=dict(arrowstyle="->", connectionstyle="arc3,rad=.2", lw=2.0))
-ax.annotate(r'End', xy=(x[len(xposition)-1], y[len(yposition)-1]), xycoords='data',
-                                xytext=(-40, +40), textcoords='offset points', fontsize=22,
-                                arrowprops=dict(arrowstyle="->", connectionstyle="arc3,rad=.2", lw=2.0))
 
+ax.add_artist(ab)
 
 plt.xlabel(r'X [$m$]', fontsize=35, fontweight='bold')
 plt.ylabel(r'Y [$m$]', fontsize=35, fontweight='bold')
-ax.legend(loc=2, prop={'size':30})
-plt.axis('equal')
 plt.grid(True)
+ax.legend(handles=[exoter], loc=1, prop={'size':30})
 plt.show(block=False)
 
 

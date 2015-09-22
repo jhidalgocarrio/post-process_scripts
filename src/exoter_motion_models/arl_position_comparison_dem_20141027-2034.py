@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-path = '/home/javi/exoter/development/data/20141024_planetary_lab/20141025-0005_odometry_comparison/'
+path = '/home/javi/exoter/development/data/20141024_planetary_lab/20141027-2034_odometry_comparison/'
 
 #######################################
 path_odometry_file = path + 'pose_odo_position.reaction_forces.0.data'
@@ -165,5 +165,6 @@ ax.legend(loc=2, prop={'size':30})
 plt.axis('equal')
 plt.grid(True)
 plt.show(block=False)
+#plt.show(block=True)
 
 
