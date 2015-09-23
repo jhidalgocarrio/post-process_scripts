@@ -51,6 +51,11 @@ odometry.delete(temindex)
 reference.eigenValues()
 odometry.eigenValues()
 
+
+##########
+## PLOT ##
+##########
+
 #Position comparison versus time
 matplotlib.rcParams.update({'font.size': 30, 'font.weight': 'bold'})
 fig = plt.figure(1)
@@ -133,10 +138,10 @@ yposition = odometry.getAxis(1)[0::50]
 zposition = odometry.getAxis(2)[0::50]
 ax.plot(xposition, yposition, zposition, marker='o', linestyle='-.', label="Jacobian Odometry", color=[0.3,0.2,0.4], lw=2)
 
-xposition = skid.getAxis(0)[0::50]
-yposition = skid.getAxis(1)[0::50]
-zposition = skid.getAxis(2)[0::50]
-ax.plot(xposition, yposition, zposition, marker='^', linestyle='-', label="Planar Odometry", color=[0,0.5,1], lw=2)
+#xposition = skid.getAxis(0)[0::50]
+#yposition = skid.getAxis(1)[0::50]
+#zposition = skid.getAxis(2)[0::50]
+#ax.plot(xposition, yposition, zposition, marker='^', linestyle='-', label="Planar Odometry", color=[0,0.5,1], lw=2)
 
 xposition = reference.getAxis(0)[0::50]
 yposition = reference.getAxis(1)[0::50]
