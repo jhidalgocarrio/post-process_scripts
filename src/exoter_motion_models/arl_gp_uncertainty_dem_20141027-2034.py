@@ -129,7 +129,7 @@ plt.gca().add_collection(lc)
 #color bar of the covariamve
 #cbaxes = fig.add_axes([0.8, 0.1, 0.03, 0.8]) 
 h_cbar = plt.colorbar(lc)#, orientation='horizontal')
-h_cbar.ax.set_ylabel(r'uncertainty estimation[$m/s$]')
+h_cbar.ax.set_ylabel(r'standard deviation[$m/s$]')
 
 # Color bar of the dem
 cbar = plt.colorbar()  # draw colorbar
