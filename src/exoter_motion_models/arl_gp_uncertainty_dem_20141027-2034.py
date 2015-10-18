@@ -1,4 +1,4 @@
-path = '/home/javi/exoter/development/data/20141024_planetary_lab/20141027-2034_dem_coloring_with_gp/'
+path ='/home/javi/exoter/development/data/20141024_planetary_lab/20141027-2034_dem_coloring_with_gp_with_sam/'
 #######################################
 path_odometry_file = path + 'pose_odo_position.0.data'
 
