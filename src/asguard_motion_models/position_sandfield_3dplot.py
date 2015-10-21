@@ -40,17 +40,17 @@ plt.rc('text', usetex=False)# activate latex text rendering
 
 xposition = odoPos.getAxis(0)[0::50]
 yposition = odoPos.getAxis(1)[0::50]
-ax.plot(xposition, yposition, marker='o', linestyle='-.', label= "Weighted Jacobian Odometry", color=[0.0,0.8,0], alpha=0.5, lw=2)
+ax.plot(xposition, yposition, marker='o', linestyle='-.', label= "Enhanced 3D Odometry", color=[0.0,0.8,0], alpha=0.5, lw=2)
 
 
 xposition = pureodoPos.getAxis(0)[0::50]
 yposition = pureodoPos.getAxis(1)[0::50]
-ax.plot(xposition, yposition, marker='x', linestyle='--', label="Jacobian Odometry", color=[0.3,0.2,0.4], alpha=0.5, lw=2)
+ax.plot(xposition, yposition, marker='x', linestyle='--', label="Contact Point Odometry", color=[0.3,0.2,0.4], alpha=0.5, lw=2)
 
 
 xposition = skidodoPos.getAxis(0)[0::50]
 yposition = skidodoPos.getAxis(1)[0::50]
-ax.plot(xposition, yposition, marker='^', linestyle='-', label="Planar Odometry", color=[0,0.5,1], lw=2)
+ax.plot(xposition, yposition, marker='^', linestyle='-', label="Skid Steer Odometry", color=[0,0.5,1], lw=2)
 
 rot = quat.quaternion([0.819, -0.014, 0.01001, -0.5735])
 M = rot.toMatrix()
@@ -80,7 +80,7 @@ ax.annotate('End', xy=(xposition[len(xposition)-1], yposition[len(yposition)-1])
 
 plt.xlabel(r'X [$m$]', fontsize=35, fontweight='bold')
 plt.ylabel(r'Y [$m$]', fontsize=35, fontweight='bold')
-#plt.grid(True)
+plt.grid(True)
 ax.legend(prop={'size':30})
 plt.show(block=False)
 
@@ -96,17 +96,17 @@ plt.rc('text', usetex=False)# activate latex text rendering
 
 xposition = odoPos.getAxis(0)[0::50]
 zposition = odoPos.getAxis(2)[0::50]
-ax.plot(xposition, zposition, marker='o', linestyle='-.', label= "Weighted Jacobian Odometry", color=[0.0,0.8,0], alpha=0.5, lw=2)
+ax.plot(xposition, zposition, marker='o', linestyle='-.', label= "Enhanced 3D Odometry", color=[0.0,0.8,0], alpha=0.5, lw=2)
 
 
 xposition = pureodoPos.getAxis(0)[0::50]
 zposition = pureodoPos.getAxis(2)[0::50]
-ax.plot(xposition, zposition, marker='x', linestyle='--', label="Jacobian Odometry", color=[0.3,0.2,0.4], alpha=0.5, lw=2)
+ax.plot(xposition, zposition, marker='x', linestyle='--', label="Contact Point Odometry", color=[0.3,0.2,0.4], alpha=0.5, lw=2)
 
 
 xposition = skidodoPos.getAxis(0)[0::50]
 zposition = skidodoPos.getAxis(2)[0::50]
-ax.plot(xposition, zposition, marker='^', linestyle='-', label="Planar Odometry", color=[0,0.5,1], lw=2)
+ax.plot(xposition, zposition, marker='^', linestyle='-', label="Planar Steer Odometry", color=[0,0.5,1], lw=2)
 
 rot = quat.quaternion([0.819, -0.014, 0.01001, -0.5735])
 M = rot.toMatrix()
