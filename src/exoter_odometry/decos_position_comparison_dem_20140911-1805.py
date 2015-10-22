@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-path = '/home/javi/exoter/development/data/20140911_decos_field/20140911-1805_odometry_comparison_bis/'
+path ='/home/javi/exoter/development/data/20140911_decos_field/20140911-1805_odometry_comparison_bis/'
 #######################################
 path_odometry_file = path + 'pose_odo_position.reaction_forces.0.data'
 
@@ -41,7 +41,6 @@ odometry_orient.readData(pose_odo_orient_file, cov=True)
 #Skid Odometry
 skid = data.ThreeData()
 skid.readData(path_skid_file, cov=True)
-
 
 #GNSS Pose
 reference = data.ThreeData()
@@ -101,7 +100,8 @@ map_orient_align = quat.quaternion.fromAngleAxis(-20.0 * np.pi/180.0, [0.0, 0.0,
 #################################################
 # Take the misalignment between both orientations
 #################################################
-misalignment = ~odometry_orient.data[1000] * reference_orient.data[1000] #~ is invert operator
+#misalignment = ~odometry_orient.data[1000] * reference_orient.data[1000] #~ is invert operator
+misalignment = quat.quaternion(np.array([1.0,0.0,0.0,0.0]))
 
 ##########
 ## PLOT ##
