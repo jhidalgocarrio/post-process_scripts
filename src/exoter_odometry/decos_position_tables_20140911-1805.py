@@ -1,3 +1,25 @@
+#!/usr/bin/env python
+
+# ################## #
+# Decos Terrain Data #
+# ################## #
+
+path = '/home/javi/exoter/development/data/20140911_decos_field/20140911-1805_odometry_comparison_bis/'
+#######################################
+odometry_file = path + 'pose_odo_position.reaction_forces.0.data'
+
+skid_file = path + 'pose_skid_position.0.data'
+
+reference_file = path + 'pose_ref_position.0.data'
+#######################################
+delta_reference_file =  path + 'delta_pose_odo_position.0.data'
+#######################################
+pose_odo_orient_file = path + "pose_odo_orientation.reaction_forces.0.data"
+
+pose_ref_orient_file = path + "pose_ref_orientation.0.data"
+#######################################
+
+
 import sys
 sys.path.insert(0, './src/core')
 import datadisplay as data
@@ -10,32 +32,89 @@ import matplotlib.pyplot as plt
 import quaternion as quat
 from math import sqrt
 
-# ################## #
-# Decos Terrain Data #
-# ################## #
-path_odometry_file = '/home/jhidalgocarrio/exoter/development/data/20140911_decos_field/20140911-1805/pose_odo_position.0.data'
+#ExoTeR Odometry
+threed_odometry = data.ThreeData()
+threed_odometry.readData(odometry_file, cov=True)
 
-path_skid_file = '/home/jhidalgocarrio/exoter/development/data/20140911_decos_field/20140911-1805/pose_skid_position.0.data'
+# Read the odometry orientation information
+odometry_orient = data.QuaternionData()
+odometry_orient.readData(pose_odo_orient_file, cov=True)
 
-path_reference_file = '/home/jhidalgocarrio/exoter/development/data/20140911_decos_field/20140911-1805/pose_ref_position.0.data'
+#Skid Odometry
+skid_odometry = data.ThreeData()
+skid_odometry.readData(skid_file, cov=True)
+
+#GNSS Pose
+reference = data.ThreeData()
+reference.readData(reference_file, cov=True)
+
+#GNSS Delta Pose
+delta_reference = data.ThreeData()
+delta_reference.readData(delta_reference_file, cov=True)
+
+# Read the reference orientation information
+reference_orient = data.QuaternionData()
+reference_orient.readData(pose_ref_orient_file, cov=True)
+
+
+########################
+### REMOVE OUTLIERS  ###
+########################
+temindex = np.where(np.isnan(reference.cov[:,0,0]))
+temindex = np.asarray(temindex)
+
+reference.delete(temindex)
+threed_odometry.delete(temindex)
+skid_odometry.delete(temindex)
+
 #######################################
+### COMPUTE COVARIANCE EIGENVALUES  ###
+#######################################
+reference.eigenValues()
+threed_odometry.eigenValues()
+skid_odometry.eigenValues()
 
+###########################
+##   Distance traveled   ##
+###########################
+# No use the z axis when using
+# reference because GPS is really bad in Z
+# direction
+position = np.column_stack((delta_reference.getAxis(0),
+    delta_reference.getAxis(1), delta_reference.getAxis(1)))
+
+norm_delta_position = []
+norm_delta_position = [np.linalg.norm(x) for x in position ]
+distance_traveled = np.nansum(norm_delta_position)
+
+#################################################
+# Take the misalignment between both orientations
+#################################################
+#misalignment = ~odometry_orient.data[1000] * reference_orient.data[1000] #~ is invert operator
+misalignment = quat.quaternion(np.array([1.0,0.0,0.0,0.0]))
+
+#################################################
+# Align odometry with the staring orientation of 
+# the GNSS information 
+#################################################
+odopos = np.column_stack((threed_odometry.getAxis(0), threed_odometry.getAxis(1),
+        threed_odometry.getAxis(2)))
+odopos[:] = [(misalignment * x * misalignment.conj())[1:4] for x in odopos ]
+
+###################
+###    MEAN     ###
+###################
 numbersamples=200
-
-odoPos = data.ThreeData()
-odoPos.readData(path_odometry_file, cov=True)
-odoPos.eigenValues()
-
 #Create a mean value to synchronize the trajectories
 odotime = []
 odoposx = []
 odoposy = []
 odoposz = []
-for i in range(0, len(odoPos.getAxis(0)), numbersamples):
-    odotime.append(mean(odoPos.t[0+i:numbersamples+i]))
-    odoposx.append(mean(odoPos.getAxis(0)[0+i:numbersamples+i]))
-    odoposy.append(mean(odoPos.getAxis(1)[0+i:numbersamples+i]))
-    odoposz.append(mean(odoPos.getAxis(2)[0+i:numbersamples+i]))
+for i in range(0, len(threed_odometry.getAxis(0)), numbersamples):
+    odotime.append(mean(threed_odometry.t[0+i:numbersamples+i]))
+    odoposx.append(mean(odopos[0+i:numbersamples+i,0]))
+    odoposy.append(mean(odopos[0+i:numbersamples+i,1]))
+    odoposz.append(mean(odopos[0+i:numbersamples+i,2]))
 
 odopos=[]
 odopos.append(np.array(odoposx))
@@ -44,20 +123,16 @@ odopos.append(np.array(odoposz))
 
 del(odoposx, odoposy, odoposz)
 
-skidodoPos = data.ThreeData()
-skidodoPos.readData(path_skid_file, cov=True)
-skidodoPos.eigenValues()
-
 #Create a mean value to synchronize the trajectories
 skidtime = []
 skidposx = []
 skidposy = []
 skidposz = []
-for i in range(0, len(skidodoPos.getAxis(0)), numbersamples):
-    skidtime.append(mean(skidodoPos.t[0+i:numbersamples+i]))
-    skidposx.append(mean(skidodoPos.getAxis(0)[0+i:numbersamples+i]))
-    skidposy.append(mean(skidodoPos.getAxis(1)[0+i:numbersamples+i]))
-    skidposz.append(mean(skidodoPos.getAxis(2)[0+i:numbersamples+i]))
+for i in range(0, len(skid_odometry.getAxis(0)), numbersamples):
+    skidtime.append(mean(skid_odometry.t[0+i:numbersamples+i]))
+    skidposx.append(mean(skid_odometry.getAxis(0)[0+i:numbersamples+i]))
+    skidposy.append(mean(skid_odometry.getAxis(1)[0+i:numbersamples+i]))
+    skidposz.append(mean(skid_odometry.getAxis(2)[0+i:numbersamples+i]))
 
 
 skidpos=[]
@@ -67,20 +142,16 @@ skidpos.append(np.array(skidposz))
 
 del(skidposx, skidposy, skidposz)
 
-refPos = data.ThreeData()
-refPos.readData(path_reference_file, cov=False)
-refPos.eigenValues()
-
 #Create a mean value to synchronize the trajectories
 reftime = []
 refposx = []
 refposy = []
 refposz = []
-for i in range(0, len(refPos.getAxis(0)), numbersamples):
-    reftime.append(mean(refPos.t[0+i:numbersamples+i]))
-    refposx.append(mean(refPos.getAxis(0)[0+i:numbersamples+i]))
-    refposy.append(mean(refPos.getAxis(1)[0+i:numbersamples+i]))
-    refposz.append(mean(refPos.getAxis(2)[0+i:numbersamples+i]))
+for i in range(0, len(reference.getAxis(0)), numbersamples):
+    reftime.append(mean(reference.t[0+i:numbersamples+i]))
+    refposx.append(mean(reference.getAxis(0)[0+i:numbersamples+i]))
+    refposy.append(mean(reference.getAxis(1)[0+i:numbersamples+i]))
+    refposz.append(mean(reference.getAxis(2)[0+i:numbersamples+i]))
 
 
 refpos=[]
@@ -124,6 +195,15 @@ plot(skidtime, skidpos[1], color='red')
 plot(reftime, refpos[1], color='black')
 plt.xlabel(r'Time  [$s$]', fontsize=24)
 plt.ylabel(r'Position in Y [$m$]', fontsize=24)
+plt.grid(True)
+plt.legend(prop={'size':25})
+plt.show(block=False)
+
+plot(odotime, odopos[2])
+plot(skidtime, skidpos[2], color='red')
+plot(reftime, refpos[2], color='black')
+plt.xlabel(r'Time  [$s$]', fontsize=24)
+plt.ylabel(r'Position in Z [$m$]', fontsize=24)
 plt.grid(True)
 plt.legend(prop={'size':25})
 plt.show(block=False)

@@ -1,43 +1,89 @@
-import sys
-sys.path.insert(0, './src/core')
-import datadisplay as data
-from random import gauss
-import csv, scipy
-import math
-from pylab import *
-import numpy as np
-import matplotlib.pyplot as plt
-import quaternion as quat
-from math import sqrt
-
+#!/usr/bin/env python
 path = '/home/javi/exoter/development/data/20141024_planetary_lab/20141025-0005_odometry_comparison/'
 
 # ################## #
 # Planetary Lab Data #
 # ################## #
-path_odometry_file = path + 'pose_odo_position.0.data'
+odometry_file = path + 'pose_odo_position.reaction_forces.0.data'
 
-path_skid_file = path + 'pose_skid_position.0.data'
+skid_file = path + 'pose_skid_position.0.data'
 
-path_reference_file =  path + 'pose_ref_position.0.data'
+reference_file =  path + 'pose_ref_position.0.data'
+#######################################
+delta_reference_file =  path + 'delta_pose_ref_position.0.data'
 #######################################
 
+import sys
+sys.path.insert(0, './src/core')
+import csv
+from pylab import *
+import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib.patches import Ellipse
+import quaternion as quat
+import datadisplay as data
+import cov_ellipse as cov
+from plyfile import PlyData, PlyElement
+import scipy
+
+
+#ExoTeR Odometry
+odometry = data.ThreeData()
+odometry.readData(odometry_file, cov=True)
+
+#Skid Odometry
+skid_odometry = data.ThreeData()
+skid_odometry.readData(skid_file, cov=True)
+
+#Vicon Pose
+reference = data.ThreeData()
+reference.readData(reference_file, cov=True)
+
+#Vicon Delta Pose
+delta_reference = data.ThreeData()
+delta_reference.readData(delta_reference_file, cov=True)
+
+########################
+### REMOVE OUTLIERS  ###
+########################
+temindex = np.where(np.isnan(reference.cov[:,0,0]))
+temindex = np.asarray(temindex)
+
+reference.delete(temindex)
+odometry.delete(temindex)
+skid_odometry.delete(temindex)
+
+################################
+### COMPUTE COV EIGENVALUES  ###
+################################
+reference.eigenValues()
+odometry.eigenValues()
+skid_odometry.eigenValues()
+
+###########################
+##   Distance traveled   ##
+###########################
+position = np.column_stack((delta_reference.getAxis(0),
+    delta_reference.getAxis(1), delta_reference.getAxis(2)))
+
+norm_delta_position = []
+norm_delta_position = [np.linalg.norm(x) for x in position ]
+distance_traveled = np.nansum(norm_delta_position)
+
+###################
+###    MEAN     ###
+###################
 numbersamples=200
-
-odoPos = data.ThreeData()
-odoPos.readData(path_odometry_file, cov=True)
-odoPos.eigenValues()
-
 #Create a mean value to synchronize the trajectories
 odotime = []
 odoposx = []
 odoposy = []
 odoposz = []
-for i in range(0, len(odoPos.getAxis(0)), numbersamples):
-    odotime.append(mean(odoPos.t[0+i:numbersamples+i]))
-    odoposx.append(mean(odoPos.getAxis(0)[0+i:numbersamples+i]))
-    odoposy.append(mean(odoPos.getAxis(1)[0+i:numbersamples+i]))
-    odoposz.append(mean(odoPos.getAxis(2)[0+i:numbersamples+i]))
+for i in range(0, len(odometry.getAxis(0)), numbersamples):
+    odotime.append(mean(odometry.t[0+i:numbersamples+i]))
+    odoposx.append(mean(odometry.getAxis(0)[0+i:numbersamples+i]))
+    odoposy.append(mean(odometry.getAxis(1)[0+i:numbersamples+i]))
+    odoposz.append(mean(odometry.getAxis(2)[0+i:numbersamples+i]))
 
 odopos=[]
 odopos.append(np.array(odoposx))
@@ -46,20 +92,17 @@ odopos.append(np.array(odoposz))
 
 del(odoposx, odoposy, odoposz)
 
-skidodoPos = data.ThreeData()
-skidodoPos.readData(path_skid_file, cov=True)
-skidodoPos.eigenValues()
 
 #Create a mean value to synchronize the trajectories
 skidtime = []
 skidposx = []
 skidposy = []
 skidposz = []
-for i in range(0, len(skidodoPos.getAxis(0)), numbersamples):
-    skidtime.append(mean(skidodoPos.t[0+i:numbersamples+i]))
-    skidposx.append(mean(skidodoPos.getAxis(0)[0+i:numbersamples+i]))
-    skidposy.append(mean(skidodoPos.getAxis(1)[0+i:numbersamples+i]))
-    skidposz.append(mean(skidodoPos.getAxis(2)[0+i:numbersamples+i]))
+for i in range(0, len(skid_odometry.getAxis(0)), numbersamples):
+    skidtime.append(mean(skid_odometry.t[0+i:numbersamples+i]))
+    skidposx.append(mean(skid_odometry.getAxis(0)[0+i:numbersamples+i]))
+    skidposy.append(mean(skid_odometry.getAxis(1)[0+i:numbersamples+i]))
+    skidposz.append(mean(skid_odometry.getAxis(2)[0+i:numbersamples+i]))
 
 
 skidpos=[]
@@ -69,20 +112,16 @@ skidpos.append(np.array(skidposz))
 
 del(skidposx, skidposy, skidposz)
 
-refPos = data.ThreeData()
-refPos.readData(path_reference_file, cov=False)
-refPos.eigenValues()
-
 #Create a mean value to synchronize the trajectories
 reftime = []
 refposx = []
 refposy = []
 refposz = []
-for i in range(0, len(refPos.getAxis(0)), numbersamples):
-    reftime.append(mean(refPos.t[0+i:numbersamples+i]))
-    refposx.append(mean(refPos.getAxis(0)[0+i:numbersamples+i]))
-    refposy.append(mean(refPos.getAxis(1)[0+i:numbersamples+i]))
-    refposz.append(mean(refPos.getAxis(2)[0+i:numbersamples+i]))
+for i in range(0, len(reference.getAxis(0)), numbersamples):
+    reftime.append(mean(reference.t[0+i:numbersamples+i]))
+    refposx.append(mean(reference.getAxis(0)[0+i:numbersamples+i]))
+    refposy.append(mean(reference.getAxis(1)[0+i:numbersamples+i]))
+    refposz.append(mean(reference.getAxis(2)[0+i:numbersamples+i]))
 
 
 refpos=[]
@@ -218,6 +257,16 @@ skidmediane = []
 skidmediane.append(np.median(np.absolute(skidpos[0][0:datasize[0]] - refpos[0][0:datasize[0]])))
 skidmediane.append(np.median(np.absolute(skidpos[1][0:datasize[1]] - refpos[1][0:datasize[1]])))
 skidmediane.append(np.median(np.absolute(skidpos[2][0:datasize[2]] - refpos[2][0:datasize[2]])))
+
+# RMSE for Reference (it shoudl be zero)
+datasize=[]
+datasize.append(min(len(refpos[0]), len(refpos[0])))
+datasize.append(min(len(refpos[1]), len(refpos[1])))
+datasize.append(min(len(refpos[2]), len(refpos[2])))
+refrmse = []
+refrmse.append(sqrt(((refpos[0][0:datasize[0]] - refpos[0][0:datasize[0]]) ** 2).mean()))
+refrmse.append(sqrt(((refpos[1][0:datasize[1]] - refpos[1][0:datasize[1]]) ** 2).mean()))
+refrmse.append(sqrt(((refpos[2][0:datasize[2]] - refpos[2][0:datasize[2]]) ** 2).mean()))
 
 # Print values
 odormse
