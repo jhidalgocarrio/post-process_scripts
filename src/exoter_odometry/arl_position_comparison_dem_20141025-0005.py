@@ -106,8 +106,6 @@ CS = plt.contourf(xi, yi, zi, 15, cmap=plt.cm.gray, vmax=abs(zi).max(), vmin=-ab
 cbar = plt.colorbar()  # draw colorbar
 cbar.ax.set_ylabel('terrain elevation')
 # plot data points.
-plt.xlim(min(px), max(xi))
-plt.ylim(min(py), max(yi))
 
 # Odometry trajectory
 plt.rc('text', usetex=False)# activate latex text rendering
@@ -168,13 +166,13 @@ position[:] = [navigation_orient.data[0].rot(x) +  navigation_position.data[0] f
 # Display Reference trajectory
 x = position[:,0]
 y = position[:,1]
-ax.plot(x, y, marker='D', linestyle='--', label="Reference Trajectory", color=[0.5,0,0], alpha=0.5, lw=2)
+ax.plot(x, y, marker='D', linestyle='--', label="Reference", color=[0.5,0,0], alpha=0.5, lw=2)
 
 # Start and End Labels
 ax.scatter(x[0], y[0], marker='D', color=[0,0.5,0.5], alpha=0.5, lw=20)
 ax.scatter(x[len(x)-1], y[len(y)-1], marker='D', color=[0.5,0,0.5], alpha=0.5, lw=20)
 ax.annotate(r'Start', xy=(x[0], y[0]), xycoords='data',
-                                xytext=(-40, -40), textcoords='offset points', fontsize=22,
+                                xytext=(20, -40), textcoords='offset points', fontsize=22,
                                 arrowprops=dict(arrowstyle="->", connectionstyle="arc3,rad=.2", lw=2.0))
 ax.annotate(r'End', xy=(x[len(xposition)-1], y[len(yposition)-1]), xycoords='data',
                                 xytext=(-40, +40), textcoords='offset points', fontsize=22,
@@ -185,6 +183,8 @@ plt.xlabel(r'X [$m$]', fontsize=35, fontweight='bold')
 plt.ylabel(r'Y [$m$]', fontsize=35, fontweight='bold')
 ax.legend(loc=2, prop={'size':30})
 plt.axis('equal')
+plt.xlim(0, 13)
+plt.ylim(1, 9)
 plt.grid(True)
 plt.show(block=False)
 
