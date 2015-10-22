@@ -22,7 +22,7 @@ vertex = plydata['vertex'].data
 [px, py, pz] = (vertex[t] for t in ('x', 'y', 'z'))
 
 # define grid.
-npts=100
+npts=500
 xi = np.linspace(min(px), max(px), npts)
 yi = np.linspace(min(py), max(py), npts)
 
@@ -59,10 +59,10 @@ plt.show()
 fig = plt.figure()
 ax = fig.gca(projection='3d')
 ax.plot_surface(x, y, zi, rstride=2, cstride=2, alpha=1.0, linewidth=0.3, cmap=plt.cm.gray, vmax=abs(zi).max(), vmin=-abs(zi).max())
-cset = ax.contour(x, y, zi, zdir='z', cmap=plt.cm.coolwarm,
+cset = ax.contour(x, y, zi, zdir='z', cmap=plt.cm.gist_earth,
         vmax=abs(zi).max(), vmin=-abs(zi).max(), linewidth=4.0)
-#cset = ax.contour(x, y, zi, zdir='x', cmap=plt.cm.gray, vmax=abs(xi).max(), vmin=-abs(xi).max())
-#cset = ax.contour(x, y, zi, zdir='y', cmap=plt.cm.gray, vmax=abs(yi).max(), vmin=-abs(yi).max())
+cset = ax.contour(x, y, zi, zdir='x', cmap=plt.cm.gray, vmax=abs(xi).max(), vmin=-abs(xi).max())
+cset = ax.contour(x, y, zi, zdir='y', cmap=plt.cm.gray, vmax=abs(yi).max(), vmin=-abs(yi).max())
 
 ax.set_xlabel('X')
 ax.set_xlim(0, max(xi))
