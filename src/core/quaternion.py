@@ -228,7 +228,7 @@ class quaternion(object):
         return np.sqrt(np.dot(self.__q,self.__q))
 
     def __invert__(self):
-        return quaternion(self.__q * 1./np.dot(self.__q,self.__q))
+        return quaternion(self.conj() * 1./np.dot(self.__q,self.__q))
 
     def __pos__(self):
         return quaternion(self.__q)
