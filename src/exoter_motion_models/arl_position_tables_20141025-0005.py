@@ -10,14 +10,16 @@ import matplotlib.pyplot as plt
 import quaternion as quat
 from math import sqrt
 
+path = '/home/javi/exoter/development/data/20141024_planetary_lab/20141025-0005_odometry_comparison/'
+
 # ################## #
 # Planetary Lab Data #
 # ################## #
-path_odometry_file = '/home/jhidalgocarrio/exoter/development/data/20141024_planetary_lab/20141025-0005/pose_odo_position.0.data'
+path_odometry_file = path + 'pose_odo_position.0.data'
 
-path_skid_file = '/home/jhidalgocarrio/exoter/development/data/20141024_planetary_lab/20141025-0005/pose_skid_position.0.data'
+path_skid_file = path + 'pose_skid_position.0.data'
 
-path_reference_file = '/home/jhidalgocarrio/exoter/development/data/20141024_planetary_lab/20141025-0005/pose_ref_position.0.data'
+path_reference_file =  path + 'pose_ref_position.0.data'
 #######################################
 
 numbersamples=200
