@@ -68,7 +68,7 @@ for i in range(0,len(refPos.data)):
 xposition = xposition[0::50]
 yposition = yposition[0::50]
 
-ax.plot(xposition, yposition, marker='D', linestyle='--', label="GPS", color=[0.5,0,0], alpha=0.5, lw=2)
+ax.plot(xposition, yposition, marker='D', linestyle='--', label="GPS Reference", color=[0.5,0,0], alpha=0.5, lw=2)
 ax.scatter(xposition[0], yposition[0], marker='D', color=[0,0.5,0.5], alpha=0.5, lw=20)
 ax.scatter(xposition[len(xposition)-1], yposition[len(yposition)-1], marker='D', color=[0.5,0,0.5], alpha=0.5, lw=20)
 ax.annotate('Start', xy=(xposition[0], yposition[0]), xycoords='data',
@@ -136,7 +136,7 @@ ax.annotate(r'End', xy=(xposition[len(xposition)-1], zposition[len(zposition)-1]
 
 plt.xlabel(r'X [$m$]', fontsize=35, fontweight='bold')
 plt.ylabel(r'Y [$m$]', fontsize=35, fontweight='bold')
-#plt.grid(True)
+plt.grid(True)
 ax.legend(prop={'size':20})
 plt.show(block=False)
 
