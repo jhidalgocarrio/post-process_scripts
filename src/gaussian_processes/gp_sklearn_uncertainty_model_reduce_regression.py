@@ -182,6 +182,30 @@ gp = GaussianProcess(corr='squared_exponential', theta0=1e-1,
 gp.fit(X, Y)
 
 ###################
+matplotlib.rcParams.update({'font.size': 30, 'font.weight': 'bold'})
+fig = plt.figure(3)
+ax = fig.add_subplot(111)
+t = np.linspace(0, Y.shape[0], Y.shape[0])
+plt.rc('text', usetex=False)# activate latex text rendering
+ax.plot(t, error[:,0], 'r:', label=u'Error')
+ax.errorbar(t, Y, dY, fmt='r.', markersize=10, label=u'Observations')
+prediction, mse = gp.predict(X, eval_MSE=True)
+sigma = np.sqrt(mse)
+ax.plot(t, prediction, 'b-', label=u'Prediction')
+ax.fill(np.concatenate([t, t[::-1]]),
+        np.concatenate([prediction - 1.9600 * sigma,
+                       (prediction + 1.9600 * sigma)[::-1]]),
+        alpha=.5, fc='b', ec='None', label='95% confidence interval')
+
+plt.xlabel(r'Samples', fontsize=35, fontweight='bold')
+plt.ylabel(r'f(x) [$m/s$]', fontsize=35, fontweight='bold')
+plt.grid(True)
+ax.legend(loc=1, prop={'size':30})
+plt.show(block=False)
+
+
+
+###################
 ## PREDICTION    ##
 ###################
 path = '/home/javi/exoter/development/data/20141024_planetary_lab/20141027-2034/'

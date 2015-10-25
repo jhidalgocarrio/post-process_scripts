@@ -86,6 +86,16 @@ imu_gyro.delete(temindex)
 imu_acc.delete(temindex)
 robot_joints.delete(temindex)
 
+################################
+### COMPUTE COV EIGENVALUES  ###
+################################
+reference_position.eigenValues()
+odometry_position.eigenValues()
+reference_velocity.eigenValues()
+odometry_velocity.eigenValues()
+imu_orient.eigenValues()
+imu_acc.eigenValues()
+imu_gyro.eigenValues()
 
 #########################
 ## LOAD INPUT TEST    ##
@@ -161,8 +171,8 @@ odometry, odometrystd = data.input_reduction(odometry, number_blocks)
 #########################
 
 # GP Multidimensional Input
-#X = np.column_stack((joints, inertia[:,3:6], orient))
-X = np.column_stack((joints, inertia, orient))
+X = np.column_stack((joints, inertia[:,3:6], orient))
+#X = np.column_stack((joints, inertia, orient))
 
 # GP onedimensional Output
 Y =  reference[:,0]
@@ -375,8 +385,10 @@ odometry, odometrystd = data.input_reduction(odometry, number_blocks)
 
 ###########################
 # GP Multidimensional vector
-#Xp = np.column_stack((joints, inertia[:,3:6], orient))
-Xp = np.column_stack((joints, inertia, orient))
+Xp = np.column_stack((joints, inertia[:,3:6], orient))
+#Xp = np.column_stack((joints, inertia, orient))
+
+#Xp = np.column_stack([0.0128508, 0.0129279, 0.0128284, 0.0127709, 0.0130365, 0.0129305, 0, 0, 0, 0, -5.20876e-07, -2.08351e-07, -3.12526e-07, 1.04175e-06, 3.12526e-07, 1.04175e-06, -0.00727919, -0.000483395, 0.00443184, 0.00043783, -0.00104897, -0.00061128, 0.0039152, -0.000721737])
 
 ###################
 matplotlib.rcParams.update({'font.size': 30, 'font.weight': 'bold'})
@@ -395,17 +407,18 @@ xvelocity = reference[:,0]
 ax.scatter(time, xvelocity, marker='D', color=[1.0,0.0,0.0], s=80)
 ax.plot(time, xvelocity, marker='D', linestyle='--', label="Reduced Reference", color=[1.0,0.0,0.0], lw=2)
 
+# Mean Squared Error is equivalent to the variance
 meanxp, covxp = gp.predict(Xp, eval_MSE=True)
 #meanxp, covxp = gp.predict(Xp, return_cov=True)
 time = odometry_velocity.time
 time, timestd = data.input_reduction(time, number_blocks)
 xvelocity = meanxp
 sigma = np.sqrt(covxp)
-sigma = 2 * sigma
+sigma = 3.0 * sigma
 ax.plot(time, xvelocity, marker='None', linestyle='-', label="GP Velocity", color=[0.0,1.0,0.0], lw=4)
 ax.fill(np.concatenate([time, time[::-1]]),
         np.concatenate([xvelocity - sigma,
-                       (xvelocity + sigma)[::-1]]), alpha=.5, fc='b', ec='None', label=r'2$\sigma$ confidence interval')
+                       (xvelocity + sigma)[::-1]]), alpha=.5, fc='b', ec='None', label=r'3$\sigma$ confidence interval')
 
 plt.xlabel(r'Time [$s$]', fontsize=35, fontweight='bold')
 plt.ylabel(r'X [$m/s$]', fontsize=35, fontweight='bold')
@@ -429,15 +442,16 @@ time, timestd = data.input_reduction(time, number_blocks)
 xvelocity = reference[:,0]
 ax.scatter(time, xvelocity, marker='D', label="Reduced Reference", color=[1.0,0.0,0.0], s=80)
 
-meanxp, covxp = gp.predict(Xp, return_cov=True)
+#meanxp, covxp = gp.predict(Xp, return_cov=True)
+meanxp, covxp = gp.predict(Xp, eval_MSE=True)
 time = odometry_velocity.time
 time, timestd = data.input_reduction(time, number_blocks)
 xvelocity = odometry[:,0]
 sigma =  np.absolute(odometry[:,0] - meanxp)
-sigma = 2.0 * sigma
+sigma = sigma
 #ax.plot(time, xvelocity, marker='None', linestyle='-', label="GP Velocity", color=[0.0,1.0,0.0], lw=4)
-ax.fill_between(time, xvelocity - sigma, xvelocity + sigma, alpha=0.4, where=sigma <= 0.02, color='k', label='95% confidence interval')
-ax.fill_between(time, xvelocity - sigma, xvelocity + sigma, alpha=0.4, where=sigma > 0.02, color='r', label='95% confidence interval')
+ax.fill_between(time, xvelocity - sigma, xvelocity + sigma, alpha=0.4, where=sigma <= 0.002, color='k', label=r'3$\sigma$ confidence interval')
+ax.fill_between(time, xvelocity - sigma, xvelocity + sigma, alpha=0.4, where=sigma > 0.002, color='r', label=r'3$\sigma$ confidence interval')
 
 plt.xlabel(r'Time [$s$]', fontsize=35, fontweight='bold')
 plt.ylabel(r'X [$m/s$]', fontsize=35, fontweight='bold')
