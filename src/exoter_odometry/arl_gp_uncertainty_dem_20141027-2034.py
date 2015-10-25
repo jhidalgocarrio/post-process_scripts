@@ -1,4 +1,5 @@
-path ='/home/javi/exoter/development/data/20141024_planetary_lab/20141027-2034_dem_coloring_with_gp_with_sam/'
+#path ='/home/javi/exoter/development/data/20141024_planetary_lab/20141027-2034_dem_coloring_with_gp_with_sam/'
+path='/home/javi/exoter/development/data/20141024_planetary_lab/20141027-2034_threed_odometry_with_gp/'
 #######################################
 path_odometry_file = path + 'pose_odo_position.0.data'
 
@@ -129,11 +130,11 @@ plt.gca().add_collection(lc)
 #color bar of the covariamve
 #cbaxes = fig.add_axes([0.8, 0.1, 0.03, 0.8]) 
 h_cbar = plt.colorbar(lc)#, orientation='horizontal')
-h_cbar.ax.set_ylabel(r'standard deviation[$m/s$]')
+h_cbar.ax.set_ylabel(r' measurement residual [$m/s$]')
 
 # Color bar of the dem
 cbar = plt.colorbar()  # draw colorbar
-cbar.ax.set_ylabel(r'terrain elevation[$m$]')
+cbar.ax.set_ylabel(r' terrain elevation[$m$]')
 
 #Q = ax.plot(x, y, marker='o', linestyle='-', color=[0.3,0.2,0.4], alpha=0.5, lw=40)
 
