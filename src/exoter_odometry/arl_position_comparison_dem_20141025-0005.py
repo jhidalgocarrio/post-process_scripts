@@ -151,7 +151,7 @@ position[:] = [navigation_orient.data[0].rot(x) +  navigation_position.data[0] f
 # Display Planar Odometry trajectory
 x = position[:,0]
 y = position[:,1]
-#ax.plot(x, y, marker='^', linestyle='.-', label="Contact Point Odometry", color=[0.3,0.5,1], lw=2)
+ax.plot(x, y, marker='^', linestyle='.-', label="Contact Point Odometry", color=[0.3,0.5,1], lw=2)
 
 # Reference trajectory
 plt.rc('text', usetex=False)# activate latex text rendering
@@ -191,7 +191,7 @@ plt.show(block=False)
 
 
 ##################3
-# 3D Ploting
+# 3D Plotting
 #
 #
 
