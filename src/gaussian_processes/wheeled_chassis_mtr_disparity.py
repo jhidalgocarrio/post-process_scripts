@@ -70,4 +70,44 @@ plt.ylabel('Y')
 plt.grid(True)
 plt.show(block=False)
 
+################################################
+from scipy import stats
+noise=stats.distributions.norm.rvs(0, 0.003, size=z.shape)
+z_noise = z + noise
+################################################
+matplotlib.rcParams.update({'font.size': 30, 'font.weight': 'bold'})
+fig = plt.figure(1)
+ax = fig.gca(projection='3d')
+ax.plot_surface(xx, yy, z_noise, rstride=4, cstride=4, alpha=0.3)
+cset = ax.contour(xx, yy, z_noise, zdir='z', cmap=plt.cm.coolwarm,
+        vmax=abs(z_noise).max(), vmin=-abs(z_noise).max(), linewidth=4.0)
+cset = ax.contour(xx, yy, z_noise, zdir='x', cmap=cm.coolwarm)
+cset = ax.contour(xx, yy, z_noise, zdir='y', cmap=cm.coolwarm)
+ax.set_aspect('equal')
+ax.set_xlabel('X')
+ax.set_xlim(min(xi), max(xi))
+ax.set_ylabel('Y')
+ax.set_ylim(min(yi), max(yi))
+ax.set_zlabel('Z')
+
+plt.show(block=False)
+
+################################################
+matplotlib.rcParams.update({'font.size': 30, 'font.weight': 'bold'})
+fig = plt.figure(1)
+ax = fig.gca(projection='3d')
+ax.plot_surface(xx, yy, noise, rstride=4, cstride=4, alpha=0.3)
+cset = ax.contour(xx, yy, noise, zdir='z', cmap=plt.cm.coolwarm,
+        vmax=abs(noise).max(), vmin=-abs(noise).max(), linewidth=4.0)
+cset = ax.contour(xx, yy, noise, zdir='x', cmap=cm.coolwarm)
+cset = ax.contour(xx, yy, noise, zdir='y', cmap=cm.coolwarm)
+ax.set_aspect('equal')
+ax.set_xlabel('X')
+ax.set_xlim(min(xi), max(xi))
+ax.set_ylabel('Y')
+ax.set_ylim(min(yi), max(yi))
+ax.set_zlabel('Z')
+ax.set_zlim(0.12, -0.12)
+
+plt.show(block=False)
 
