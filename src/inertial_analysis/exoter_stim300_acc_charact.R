@@ -7,9 +7,10 @@
 
 #libraries
 library(allanvar)
+library(timeSeries)
 
 # You may change this path
-setwd ("/home/javi/exoter/development/post-process_data/20140325_stim300_test")
+setwd ("/home/javi/exoter/development/data/20140325_stim300_test")
 
 #load("stim300_acc_16bnw_500hz_analysis.Rdata")
 #load("stim300_acc_16bnw_250hz_analysis.Rdata")
@@ -19,9 +20,9 @@ setwd ("/home/javi/exoter/development/post-process_data/20140325_stim300_test")
 # TEST Acc
 #############
 #values <- read.table ("stim300_acc_16bnw_500hz.data", sep=" ")
-#values <- read.table ("stim300_acc_16bnw_250hz.data", sep=" ")
+values <- read.table ("stim300_acc_16bnw_250hz.data", sep=" ")
 #values <- read.table ("stim300_acc_262bnw_500hz.data", sep=" ")
-values <- read.table ("stim300_acc_33bnw_125hz.data", sep=" ")
+#values <- read.table ("stim300_acc_33bnw_125hz.data", sep=" ")
 
 names(values) = c("time", "accx", "accy", "accz")
 

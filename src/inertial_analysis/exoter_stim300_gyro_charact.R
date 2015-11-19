@@ -7,9 +7,10 @@
 
 #libraries
 library(allanvar)
+library(timeSeries)
 
 # You may change this path
-setwd ("/home/jhidalgocarrio/exoter/development/post-process_data/20140325_stim300_test")
+setwd ("/home/jhidalgocarrio/exoter/development/data/20140325_stim300_test")
 
 #load("stim300_gyro_16bnw_500hz_analysis.Rdata")
 #load("stim300_gyro_16bnw_250hz_analysis.Rdata")

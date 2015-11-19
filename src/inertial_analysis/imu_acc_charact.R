@@ -7,6 +7,7 @@
 
 #libraries
 library(allanvar)
+library(timeSeries)
 
 # You may change this path
 setwd ("/home/javi/flatfish/development/data/20150227-0019_static_8h_imu_run")
@@ -60,22 +61,28 @@ frequency (imu)
 avacc1z <- avar (imu@.Data, frequency (imu))
 
 
-#### Ploting the results ####
-plotCI (x=avacc1x$time, y=sqrt(avacc1x$av), uiw =  sqrt(avacc1x$av)*avacc1x$error, xaxt="n", yaxt="n", pch=0, gap=0, col="red", slty=par("lty.2") , log= "xy", xlab="", ylab="")
+#### Plotting the results ####
+plotCI (x=avacc1x$time, y=sqrt(avacc1x$av), uiw =
+        avacc1x$error, xaxt="n", yaxt="n", pch=0, gap=0,
+        col="red", slty=par("lty.2") , log= "xy", xlab="", ylab="",
+        ylim=c(0.0001, 0.01))
 lines (avacc1x$time,sqrt(avacc1x$av), col="red")
-plotCI (avacc1y$time,sqrt(avacc1y$av),uiw =  sqrt(avacc1y$av)*avacc1y$error,log= "xy", xaxt="n", yaxt="n", pch=8, gap=0, col="green", xlab="", ylab="", add=TRUE)
+plotCI (avacc1y$time,sqrt(avacc1y$av),uiw =  avacc1y$error,log= "xy", xaxt="n", yaxt="n", pch=8, gap=0, col="green", xlab="", ylab="", add=TRUE)
 lines (avacc1y$time,sqrt(avacc1y$av), col="green")
-plotCI (avacc1z$time,sqrt(avacc1z$av),uiw =  sqrt(avacc1y$av)*avacc1y$error, log= "xy", xaxt="n", yaxt="n", pch=17, gap=0,  col="blue", xlab="", ylab="", add=TRUE)
+plotCI (avacc1z$time,sqrt(avacc1z$av),uiw =  avacc1z$error, log= "xy", xaxt="n", yaxt="n", pch=17, gap=0,  col="blue", xlab="", ylab="", add=TRUE)
 lines (avacc1z$time,sqrt(avacc1z$av), col="blue")
-axis(1, c(0.001, 0.01, 0.1, 0, 1, 10, 100, 1000, 10000))
-axis(2, c(0.000001, 0.00001, 0.0001, 0.001, 0.01, 0.1, 0, 1, 10, 100, 1000))
-grid(equilogs=TRUE, lwd=1, col="orange")
-title(main = "Allan variance Analysis", xlab = "Cluster Times (Sec)", ylab = "Allan Standard Deviation (m/s^2)")
+axis(1, c(0.000001, 0.00001, 0.0001, 0.001, 0.01, 0.1, 0, 1, 10, 100, 1000, 10000))
+axis(2, c(0.000001, 0.00001, 0.0001, 0.001, 0.01, 0.1, 0, 1, 10, 100, 1000, 10000))
+abline(h=c(0.000001, 0.00001, 0.0001, 0.001, 0.01, 0.1, 0, 1, 10, 100, 1000, 10000),
+       v=c(0.000001, 0.00001, 0.0001, 0.001, 0.01, 0.1, 0, 1, 10, 100, 1000, 10000),
+       col="gray",  lwd=2, lty=6)
+title(main = "Allan variance Analysis", xlab = paste("Cluster Times [",expression(sec),"]"),
+      ylab = paste("Allan Standard Deviation [",expression(m/s^2),"]"))
 
 legend(50, 5e-03, c("Accelerometer X", "Accelerometer Y", "Accelerometer Z"),  col = c("red", "green", "blue"), pch=c(0, 8, 17))
 
-#### Ploting the results ####
-plotCI (x=avacc1x$time, y=sqrt(avacc1x$av), uiw =  sqrt(avacc1x$av)*avacc1x$error, xaxt="n", yaxt="n", pch=0, gap=0, col="red", slty=par("lty.2") , log= "xy", xlab="", ylab="")
+#### Plotting the results ####
+plotCI (x=avacc1x$time, y=sqrt(avacc1x$av), uiw =  avacc1x$error, xaxt="n", yaxt="n", pch=0, gap=0, col="red", slty=par("lty.2") , log= "xy", xlab="", ylab="")
 lines (avacc1x$time,sqrt(avacc1x$av), col="red")
 points (avacc1y$time,sqrt(avacc1y$av), log= "xy", xaxt="n", yaxt="n", pch=8, col="green", xlab="", ylab="", add=TRUE)
 lines (avacc1y$time,sqrt(avacc1y$av), col="green")
@@ -89,19 +96,24 @@ title(main = "Allan variance Analysis", xlab = "Cluster Times (Sec)", ylab = "Al
 legend(50, 5e-03, c("Accelerometer X", "Accelerometer Y", "Accelerometer Z"),  col = c("red", "green", "blue"), pch=c(0, 8, 17))
 
 #### Plotting the results in a file ####
-png(filename = "stim300_acc_allanvar.png", width=1024, height=768, units = "px", pointsize = 22, bg = "white", res = NA)
-plotCI (x=avacc1x$time, y=sqrt(avacc1x$av), uiw =  sqrt(avacc1x$av)*avacc1x$error, xaxt="n", yaxt="n", pch=0, gap=0, col="red", slty=par("lty.2") , log= "xy", xlab="", ylab="")
+png(filename = "kvh1750_acc_allanvar.png", width=1024, height=768, units = "px", pointsize = 22, bg = "white", res = NA)
+plotCI (x=avacc1x$time, y=sqrt(avacc1x$av), uiw =
+        avacc1x$error, xaxt="n", yaxt="n", pch=0, gap=0,
+        col="red", slty=par("lty.2") , log= "xy", xlab="", ylab="",
+        ylim=c(0.0001, 0.01))
 lines (avacc1x$time,sqrt(avacc1x$av), col="red")
-plotCI (avacc1y$time,sqrt(avacc1y$av),uiw =  sqrt(avacc1y$av)*avacc1y$error,log= "xy", xaxt="n", yaxt="n", pch=8, gap=0, col="green", xlab="", ylab="", add=TRUE)
+plotCI (avacc1y$time,sqrt(avacc1y$av),uiw = avacc1y$error,log= "xy", xaxt="n", yaxt="n", pch=8, gap=0, col="green", xlab="", ylab="", add=TRUE)
 lines (avacc1y$time,sqrt(avacc1y$av), col="green")
-plotCI (avacc1z$time,sqrt(avacc1z$av),uiw =  sqrt(avacc1y$av)*avacc1y$error, log= "xy", xaxt="n", yaxt="n", pch=17, gap=0,  col="blue", xlab="", ylab="", add=TRUE)
+plotCI (avacc1z$time,sqrt(avacc1z$av),uiw = avacc1z$error, log= "xy", xaxt="n", yaxt="n", pch=17, gap=0,  col="blue", xlab="", ylab="", add=TRUE)
 lines (avacc1z$time,sqrt(avacc1z$av), col="blue")
-axis(1, c(0.001, 0.01, 0.1, 0, 1, 10, 100, 1000, 10000))
-axis(2, c(0.000001, 0.00001, 0.0001, 0.001, 0.01, 0.1, 0, 1, 10, 100, 1000))
-grid(equilogs=TRUE, lwd=2.0, col="orange")
-title(xlab = "Cluster Times (Sec)", ylab = "Allan Standard Deviation (m/s^2)", prob=TRUE,
+axis(1, c(0.000001, 0.00001, 0.0001, 0.001, 0.01, 0.1, 0, 1, 10, 100, 1000, 10000))
+axis(2, c(0.000001, 0.00001, 0.0001, 0.001, 0.01, 0.1, 0, 1, 10, 100, 1000, 10000))
+abline(h=c(0.000001, 0.00001, 0.0001, 0.001, 0.01, 0.1, 0, 1, 10, 100, 1000,10000),
+       v=c(0.000001, 0.00001, 0.0001, 0.001, 0.01, 0.1, 0, 1, 10, 100, 1000,10000),
+       col="gray",  lwd=2, lty=6)
+title(xlab = paste("Cluster time [",expression(sec),"]"),
+      ylab = paste("Allan standard deviation [",expression(m/s^2),"]"), prob=TRUE,
      cex.lab=1.5, cex.axis=1.5, cex.main=1.5, cex.sub=1.5)
-
 legend(50, 5e-03, c("Accelerometer X", "Accelerometer Y", "Accelerometer Z"),  col = c("red", "green", "blue"), pch=c(0, 8, 17))
 
 dev.off()
@@ -117,7 +129,9 @@ rm (values, imu)
 #######################################
 #### Calculate the values (STIM300 Acc) #
 #######################################
+png(filename = "kvh1750_acc_allanvar_errorbars.png", width=1024, height=768, units = "px", pointsize = 22, bg = "white", res = NA)
 plotav (avacc1x)
+dev.off()
 
 ##
 #Random Walk, can be directly obtained by reading the slope line at T = 1
