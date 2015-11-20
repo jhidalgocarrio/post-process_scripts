@@ -7,6 +7,7 @@
 
 #libraries
 library(allanvar)
+library(timeSeries)
 
 # You may change this path
 setwd ("/home/javi/flatfish/development/data/20150227-0019_static_8h_imu_run")
@@ -18,8 +19,8 @@ setwd ("/home/javi/flatfish/development/data/20150227-0019_static_8h_imu_run")
 #############
 # TEST Gyro
 #############
-values <- read.table ("kvh_imu_gyro.0.data", sep=" ")
-#values <- read.table ("stim300_imu_gyro.0.data", sep=" ")
+#values <- read.table ("kvh_imu_gyro.0.data", sep=" ")
+values <- read.table ("stim300_imu_gyro.0.data", sep=" ")
 
 names(values) = c("time", "gyrox", "gyroy", "gyroz")
 
@@ -67,12 +68,12 @@ lines (avgyro1y$time,sqrt(avgyro1y$av), col="green")
 plotCI (avgyro1z$time,sqrt(avgyro1z$av),uiw =  avgyro1z$error, log= "xy", xaxt="n", yaxt="n", pch=17, gap=0,  col="blue", xlab="", ylab="", add=TRUE)
 lines (avgyro1z$time,sqrt(avgyro1z$av), col="blue")
 axis(1, c(0.001, 0.01, 0.1, 0, 1, 10, 100, 1000, 10000, 100000))
-axis(2, c(0.000001, 0.00001, 0.0001, 0.001, 0.01, 0.1, 0, 1, 10, 100, 1000, 10000))
-abline(v=c(0.000001, 0.00001, 0.0001, 0.001, 0.01, 0.1, 0, 1, 10, 100, 1000, 10000),
+axis(2, c(0.0000001, 0.000001, 0.00001, 0.0001, 0.001, 0.01, 0.1, 0, 1, 10, 100, 1000, 10000))
+abline(v=c(0.0000001, 0.000001, 0.00001, 0.0001, 0.001, 0.01, 0.1, 0, 1, 10, 100, 1000, 10000),
        col="gray",  lwd=2, lty=6)
 grid(equilogs=TRUE, lwd=2.0, col="gray")
-title(main = "Allan variance Analysis", xlab = paste("Cluster Times [",expression(sec),"]"),
-      ylab = paste("Allan Standard Deviation [",expression(rad/s),"]"))
+title(main = "Allan variance Analysis", xlab = paste("Cluster times [",expression(sec),"]"),
+      ylab = paste("Allan standard deviation [",expression(rad/s),"]"))
 legend(10, 1e-04, c("Gyroscope X", "Gyroscope Y", "Gyroscope Z"),  col = c("red", "green", "blue"), pch=c(0, 8, 17))
 
 #dev.print(png, file="xsens_gyro.png", width=1024, height=768, bg = "white") # To save the x11 device in a png
@@ -83,8 +84,8 @@ lines (avgyro1y$time,sqrt(avgyro1y$av), col="green")
 points (avgyro1z$time,sqrt(avgyro1z$av), log= "xy", xaxt="n", yaxt="n", pch=17, col="blue", xlab="", ylab="", add=TRUE)
 lines (avgyro1z$time,sqrt(avgyro1z$av), col="blue")
 axis(1, c(0.001, 0.01, 0.1, 0, 1, 10, 100, 1000, 10000, 100000))
-axis(2, c(0.000001, 0.00001, 0.0001, 0.001, 0.01, 0.1, 0, 1, 10, 100, 1000,10000))
-abline(v=c(0.000001, 0.00001, 0.0001, 0.001, 0.01, 0.1, 0, 1, 10, 100, 1000, 10000),
+axis(2, c(0.0000001, 0.000001, 0.00001, 0.0001, 0.001, 0.01, 0.1, 0, 1, 10, 100, 1000, 10000))
+abline(v=c(0.0000001, 0.000001, 0.00001, 0.0001, 0.001, 0.01, 0.1, 0, 1, 10, 100, 1000, 10000),
        col="gray",  lwd=2, lty=6)
 grid(equilogs=TRUE, lwd=2.0, col="gray")
 title(main = "Allan variance Analysis", xlab = "Cluster Times (Sec)", ylab = "Allan Standard Deviation (rad/s)")
@@ -92,7 +93,8 @@ title(main = "Allan variance Analysis", xlab = "Cluster Times (Sec)", ylab = "Al
 legend(10, 1e-04, c("Gyroscope X", "Gyroscope Y", "Gyroscope Z"),  col = c("red", "green", "blue"), pch=c(0, 8, 17))
 
 #### Plotting the results in a file ####
-png(filename = "kvh1750_gyro_allanvar.png", width=1024, height=768, units = "px", pointsize = 22, bg = "white", res = NA)
+#png(filename = "kvh1750_gyro_allanvar.png", width=1024, height=768, units = "px", pointsize = 22, bg = "white", res = NA)
+png(filename = "stim300_gyro_allanvar.png", width=1024, height=768, units = "px", pointsize = 22, bg = "white", res = NA)
 plotCI (x=avgyro1x$time, y=sqrt(avgyro1x$av), uiw = avgyro1x$error, xaxt="n", yaxt="n", pch=0, gap=0, col="red", slty=par("lty.2") , log= "xy", xlab="", ylab="")
 lines (avgyro1x$time,sqrt(avgyro1x$av), col="red")
 plotCI (avgyro1y$time,sqrt(avgyro1y$av),uiw =  avgyro1y$error,log= "xy", xaxt="n", yaxt="n", pch=8, gap=0, col="green", xlab="", ylab="", add=TRUE)
@@ -100,12 +102,13 @@ lines (avgyro1y$time,sqrt(avgyro1y$av), col="green")
 plotCI (avgyro1z$time,sqrt(avgyro1z$av),uiw =  avgyro1z$error, log= "xy", xaxt="n", yaxt="n", pch=17, gap=0,  col="blue", xlab="", ylab="", add=TRUE)
 lines (avgyro1z$time,sqrt(avgyro1z$av), col="blue")
 axis(1, c(0.001, 0.01, 0.1, 0, 1, 10, 100, 1000, 10000, 100000))
-axis(2, c(0.000001, 0.00001, 0.0001, 0.001, 0.01, 0.1, 0, 1, 10, 100, 1000, 10000))
-abline(v=c(0.000001, 0.00001, 0.0001, 0.001, 0.01, 0.1, 0, 1, 10, 100, 1000, 10000),
+axis(2, c(0.0000001, 0.000001, 0.00001, 0.0001, 0.001, 0.01, 0.1, 0, 1, 10, 100, 1000, 10000))
+abline(v=c(0.0000001, 0.000001, 0.00001, 0.0001, 0.001, 0.01, 0.1, 0, 1, 10, 100, 1000, 10000),
        col="gray",  lwd=2, lty=6)
 grid(equilogs=TRUE, lwd=2.0, col="gray")
-title(xlab = "Cluster Times (Sec)", ylab = "Allan Standard Deviation (rad/s)", prob=TRUE,
-     cex.lab=1.5, cex.axis=1.5, cex.main=1.5, cex.sub=1.5)
+title(xlab = paste("Cluster times [",expression(sec),"]"), prob=TRUE,
+      ylab = paste("Allan standard deviation [",expression(rad/s),"]"),
+    cex.lab=1.5, cex.axis=1.5, cex.main=1.5, cex.sub=1.5)
 
 legend(10, 1e-04, c("Gyroscope X", "Gyroscope Y", "Gyroscope Z"),  col = c("red", "green", "blue"), pch=c(0, 8, 17))
 dev.off()
@@ -121,8 +124,8 @@ rm (values, imu)
 #######################################
 #### Calculate the values (STIM300 Gyro)#
 #######################################
-#png(filename = "stim300_gyro_allanvar_errorbars.png", width=1024, height=768, units = "px", pointsize = 22, bg = "white", res = NA)
-png(filename = "kvh1750_gyro_allanvar_errorbars.png", width=1024, height=768, units = "px", pointsize = 22, bg = "white", res = NA)
+#png(filename = "kvh1750_gyro_allanvar_errorbars.png", width=1024, height=768, units = "px", pointsize = 22, bg = "white", res = NA)
+png(filename = "stim300_gyro_allanvar_errorbars.png", width=1024, height=768, units = "px", pointsize = 22, bg = "white", res = NA)
 plotav (avgyro1x)
 dev.off()
 

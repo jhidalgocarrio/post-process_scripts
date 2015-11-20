@@ -76,8 +76,8 @@ axis(2, c(0.000001, 0.00001, 0.0001, 0.001, 0.01, 0.1, 0, 1, 10, 100, 1000, 1000
 abline(h=c(0.000001, 0.00001, 0.0001, 0.001, 0.01, 0.1, 0, 1, 10, 100, 1000, 10000),
        v=c(0.000001, 0.00001, 0.0001, 0.001, 0.01, 0.1, 0, 1, 10, 100, 1000, 10000),
        col="gray",  lwd=2, lty=6)
-title(main = "Allan variance Analysis", xlab = paste("Cluster Times [",expression(sec),"]"),
-      ylab = paste("Allan Standard Deviation [",expression(m/s^2),"]"))
+title(main = "Allan variance Analysis", xlab = paste("Cluster times [",expression(sec),"]"),
+      ylab = paste("Allan standard deviation [",expression(m/s^2),"]"))
 
 legend(50, 5e-03, c("Accelerometer X", "Accelerometer Y", "Accelerometer Z"),  col = c("red", "green", "blue"), pch=c(0, 8, 17))
 
