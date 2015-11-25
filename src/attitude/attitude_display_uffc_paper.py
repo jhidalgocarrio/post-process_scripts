@@ -3,7 +3,7 @@
 path = '/home/javi/exoter/development/data/20150323_ww_dlr/imu_stim300_attitude_test_20150325-1716/'
 
 ##################################
-pose_ikf_orient_file = path + 'pose_ikf_orientation.0.data'
+pose_ikf_orient_file = path + 'pose_ikf_orientation.3.data'
 
 pose_ikf_inflated_coef_orient_file = path + 'pose_ikf_inflated_coef_orientation.0.data'
 
@@ -117,7 +117,7 @@ euler[1] = euler[1][0::50]
 euler[2] = euler[2][0::50]
 
 # IKF Filter
-axis = 0
+axis = 1
 if axis == 2:
     label_text = "Roll [filter w/ Allan data]"
     color_value = [1.0,0,0]
