@@ -20,9 +20,9 @@ setwd ("/home/javi/exoter/development/data/20140325_stim300_test")
 # TEST Acc
 #############
 #values <- read.table ("stim300_acc_16bnw_500hz.data", sep=" ")
-values <- read.table ("stim300_acc_16bnw_250hz.data", sep=" ")
+#values <- read.table ("stim300_acc_16bnw_250hz.data", sep=" ")
 #values <- read.table ("stim300_acc_262bnw_500hz.data", sep=" ")
-#values <- read.table ("stim300_acc_33bnw_125hz.data", sep=" ")
+values <- read.table ("stim300_acc_33bnw_125hz.data", sep=" ")
 
 names(values) = c("time", "accx", "accy", "accz")
 
@@ -164,4 +164,31 @@ sqrt(avacc1z$av[16])/(sqrt(2*log(2)/pi))
 0.0003779767 #STIM300 m/s^2
 0.0007197698 #iMAR m/s^2
 0.0006744514 #XSens m/s^2
+
+##
+#Correlation time of the Bias Instability
+##
+avacc1x$time[15]
+131.0704
+
+avacc1y$time[17]
+524.2816
+
+avacc1z$time[16]
+262.1408
+
+
+##
+#Rate Random Walk can be obtained by reading the allan variance value
+#by a slope at +1/2. K=sqrt(3)*allandeviation(t)/sqrt(t)
+# or K=sqrt((3*allandeviation(t))/sqrt)t))
+##
+sqrt((3.0 * avacc1x$av[18])/avacc1x$time[18])
+5.568148e-06
+
+sqrt((3.0 * avacc1y$av[18])/avacc1y$time[18])
+1.876804e-05
+
+sqrt((3.0 * avacc1z$av[18])/avacc1z$time[18])
+1.077722e-05
 

@@ -57,6 +57,7 @@ frequency (imu)
 #### Calculating the Allan Variance for the gyroscope ####
 avgyro1z <- avar (imu@.Data, frequency (imu))
 
+library(gplots)
 #### Plotting the results ####
 x11()
 plotCI (x=avgyro1x$time, y=sqrt(avgyro1x$av), uiw =
@@ -72,7 +73,7 @@ axis(2, c(0.0000001, 0.000001, 0.00001, 0.0001, 0.001, 0.01, 0.1, 0, 1, 10, 100,
 abline(v=c(0.0000001, 0.000001, 0.00001, 0.0001, 0.001, 0.01, 0.1, 0, 1, 10, 100, 1000, 10000),
        col="gray",  lwd=2, lty=6)
 grid(equilogs=TRUE, lwd=2.0, col="gray")
-title(main = "Allan variance Analysis", xlab = paste("Cluster times [",expression(sec),"]"),
+title(main = "Allan variance analysis", xlab = paste("Cluster times [",expression(sec),"]"),
       ylab = paste("Allan standard deviation [",expression(rad/s),"]"))
 legend(10, 1e-04, c("Gyroscope X", "Gyroscope Y", "Gyroscope Z"),  col = c("red", "green", "blue"), pch=c(0, 8, 17))
 
@@ -129,16 +130,18 @@ png(filename = "stim300_gyro_allanvar_errorbars.png", width=1024, height=768, un
 plotav (avgyro1x)
 dev.off()
 
-##
-#Random Walk, can be directly obtained by reading the slope line at T = 1
-##
-#Test 1 #
+
+# Unit conversion function
 rwtodeghr <- function(rad_s)
 {
     rad_hr = (rad_s * (180/pi))*sqrt(3600)
     return(rad_hr)
 }
 
+##
+#Random Walk, can be directly obtained by reading the slope line at T = 1
+##
+#Test 1 #
 
 approx (x=c(avgyro1x$time[7], avgyro1x$time[8]), y= c(sqrt(avgyro1x$av[7]), sqrt(avgyro1x$av[8])), n=100)
 
@@ -182,10 +185,10 @@ approx (x=c(avgyro1z$time[7], avgyro1z$time[8]), y= c(sqrt(avgyro1z$av[7]), sqrt
 
 #DATASHEET for STIM300
 0.15 #deg/sqrt(hr)
-(0.15*2.9e-04) #rad/s/sqrt(Hz) ot rad/sqrt(s)
+(0.15*2.9e-04) #rad/s/sqrt(Hz) or rad/sqrt(s)
 
 ##
-#Bias Instability, can be directly obtained by reading the 0 slope line 
+#Bias Instability, can be directly obtained by reading the 0 slope line
 ##
 
 biastodeghr <- function(rad_s)
@@ -258,4 +261,7 @@ sqrt((3.0 * avgyro1z$av[20])/avgyro1z$time[20])#KVH1750 & STIM300
 5.058095e-08 #STIM300 (8 hours test) 33Hz bandwidth 10g
 (5.058095e-08 / 2.9e-04)*3600 #STIM300 deg/hr/sqrt(hr)
 
-
+##
+# 1st Order Gauss Markov Process
+##
+std_gm = sqrt(avgyro1x$av[16])*(sqrt(2*log(2)/pi))(1-exp(-2*AT/Tc))

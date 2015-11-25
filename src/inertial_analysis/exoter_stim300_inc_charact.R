@@ -7,12 +7,13 @@
 
 #libraries
 library(allanvar)
+library(timeSeries)
 
 # You may change this path
-setwd ("/home/jhidalgocarrio/exoter/development/post-process_data/20140325_stim300_test")
+setwd ("/home/javi/exoter/development/data/20140325_stim300_test")
 
 #load("stim300_inc_16bnw_500hz_analysis.Rdata")
-load("stim300_inc_16bnw_250hz_analysis.Rdata")
+#load("stim300_inc_16bnw_250hz_analysis.Rdata")
 #load("stim300_inc_262bnw_500hz_analysis.Rdata")
 
 #############
@@ -148,5 +149,31 @@ sqrt(avinc1z$av[13])/(sqrt(2*log(2)/pi))
 0.00146485
 #COMPARISON WITH OTHERS
 
+##
+#Correlation time of the Bias Instability
+##
+avinc1x$time[13]
+32.7676
+
+avinc1y$time[13]
+32.7676
+
+avinc1z$time[13]
+32.7676
+
+
+##
+#Rate Random Walk can be obtained by reading the allan variance value
+#by a slope at +1/2. K=sqrt(3)*allandeviation(t)/sqrt(t)
+# or K=sqrt((3*allandeviation(t))/sqrt)t))
+##
+sqrt((3.0 * avinc1x$av[18])/avinc1x$time[18])
+4.1328e-05
+
+sqrt((3.0 * avinc1y$av[18])/avinc1y$time[18])
+3.351992e-05
+
+sqrt((3.0 * avinc1z$av[18])/avinc1z$time[18])
+6.312786e-05
 
 

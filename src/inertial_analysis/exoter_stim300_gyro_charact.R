@@ -10,7 +10,7 @@ library(allanvar)
 library(timeSeries)
 
 # You may change this path
-setwd ("/home/jhidalgocarrio/exoter/development/data/20140325_stim300_test")
+setwd ("/home/javi/exoter/development/data/20140325_stim300_test")
 
 #load("stim300_gyro_16bnw_500hz_analysis.Rdata")
 #load("stim300_gyro_16bnw_250hz_analysis.Rdata")
@@ -150,13 +150,16 @@ approx (x=c(avgyro1z$time[7], avgyro1z$time[8]), y= c(sqrt(avgyro1z$av[7]), sqrt
 ##
 
 #Test 1 Bias instability Coeff
-sqrt(avgyro1x$av[18])/(sqrt(2*log(2)/pi))
+sqrt(avgyro1x$av[15])/(sqrt(2*log(2)/pi))
 7.051878e-06 #16bnw_500hz
 #COMPARISON WITH OTHERS
 6.882191e-06 #(5 hours test)
 4.697074e-06 #STIM300 rad/s datasheet is 0.5 deg/hr 0.016 deg/hr
 1.857284e-06 #iMAR rad/s datasheet
 0.0001463489 #XSens rad/s
+
+sqrt(avgyro1x$av[15])/(sqrt(2*log(2)/pi)) #33bnw_125hz
+9.451377e-06 #33bnw_125hz
 
 sqrt(avgyro1y$av[19])/(sqrt(2*log(2)/pi))
 4.814562e-06 #16bnw_500hz
@@ -166,6 +169,10 @@ sqrt(avgyro1y$av[19])/(sqrt(2*log(2)/pi))
 6.456726e-06 #iMAR rad/s
 0.000151518 #XSens rad/s
 
+sqrt(avgyro1y$av[15])/(sqrt(2*log(2)/pi)) #33bnw_125hz
+7.260477e-06 #33bnw_125hz
+
+
 sqrt(avgyro1z$av[18])/(sqrt(2*log(2)/pi))
 6.35727e-06 #16bnw_500hz
 #COMPARISON WITH OTHERS
@@ -174,5 +181,33 @@ sqrt(avgyro1z$av[18])/(sqrt(2*log(2)/pi))
 1.459917e-05 #iMAR rad/s
 0.0001488385 #XSens rad/s
 
+sqrt(avgyro1z$av[14])/(sqrt(2*log(2)/pi)) #33bnw_125hz
+1.057187e-05 #33bnw_125hz
 
+
+##
+#Correlation time of the Bias Instability
+##
+avgyro1x$time[15]
+131.0704
+
+avgyro1y$time[15]
+131.0704
+
+avgyro1z$time[14]
+65.5352
+
+##
+#Rate Random Walk can be obtained by reading the allan variance value
+#by a slope at +1/2. K=sqrt(3)*allandeviation(t)/sqrt(t)
+# or K=sqrt((3*allandeviation(t))/sqrt)t))
+##
+sqrt((3.0 * avgyro1x$av[18])/avgyro1x$time[18])#STIM300
+2.011177e-07
+
+sqrt((3.0 * avgyro1y$av[18])/avgyro1y$time[18])#STIM300
+1.773912e-07
+
+sqrt((3.0 * avgyro1z$av[18])/avgyro1z$time[18])#STIM300
+1.023536e-07
 
