@@ -161,6 +161,23 @@ odometry, odometrystd = data.input_reduction(odometry, number_blocks)
 
 error = np.absolute(reference - odometry)
 
+###################
+matplotlib.rcParams.update({'font.size': 30, 'font.weight': 'bold'})
+fig = plt.figure(2)
+ax = fig.add_subplot(111)
+t = np.linspace(0, reference.shape[0], reference.shape[0])
+plt.rc('text', usetex=False)# activate latex text rendering
+
+ax.plot(t, error[:,0], 'r:', label=u'Error')
+ax.plot(t, odometry[:,0], 'b-', label=u'Odometry')
+ax.plot(t, reference[:,0], 'g-', label=u'Reference')
+
+plt.xlabel(r'Samples', fontsize=35, fontweight='bold')
+plt.ylabel(r'f(x) [$m/s$]', fontsize=35, fontweight='bold')
+plt.grid(True)
+ax.legend(loc=1, prop={'size':30})
+plt.show(block=False)
+
 #########################
 ## GAUSSIAN PROCESS    ##
 #########################
@@ -381,7 +398,7 @@ time = odometry_velocity.time
 time, timestd = data.input_reduction(time, number_blocks)
 xvelocity = meanxp #odometry[:,0]
 sigma = np.sqrt(covxp)
-sigma = 2 * sigma
+sigma = 1.0 * sigma
 ax.plot(time, xvelocity, marker='None', linestyle='-', label="GP Velocity", color=[0.0,1.0,0.0], lw=4)
 ax.fill_between(time, xvelocity - sigma, xvelocity + sigma, alpha=0.5, color='k')
 

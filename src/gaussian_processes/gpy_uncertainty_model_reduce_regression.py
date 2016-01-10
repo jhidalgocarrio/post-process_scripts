@@ -7,6 +7,10 @@ joints_position_file = path + 'joints_position.0.data'
 
 joints_speed_file = path + 'joints_speed.0.data'
 
+pose_ref_position_file =  path + 'delta_pose_ref_position.0.data'
+
+pose_odo_position_file =  path + 'delta_pose_odo_position.0.data'
+
 pose_ref_velocity_file =  path + 'delta_pose_ref_velocity.0.data'
 
 pose_odo_velocity_file =  path + 'delta_pose_odo_velocity.0.data'
@@ -138,9 +142,8 @@ reference, referencestd = data.input_reduction(reference, number_blocks)
 # Split odometry (one axis info per column)
 odometry, odometrystd = data.input_reduction(odometry, number_blocks)
 
-error = abs(reference) - abs(odometry)
-errorstd = abs(reference) + abs(odometry)
-#delete(reference, odometry)
+error = np.absolute(reference - odometry)
+errorstd = np.absolute(referencestd + odometrystd)
 
 #########################
 ## PLOT THE VALUES     ##
@@ -148,18 +151,21 @@ errorstd = abs(reference) + abs(odometry)
 matplotlib.rcParams.update({'font.size': 30, 'font.weight': 'bold'})
 fig = plt.figure(1)
 ax = fig.add_subplot(111)
-
 plt.rc('text', usetex=False)# activate latex text rendering
 
 time = mean(reference_velocity.delta[0:100]) * r_[0:len(reference_velocity.time)]
 time, timestd = data.input_reduction(time, number_blocks)
 label_text = "Error Velocity"
 color_value = [0.2,0.2,0.2]
-ax.plot(time, error[:,0], marker='o', linestyle='-', label=label_text, color=color_value, lw=6)
+ax.plot(time, error[:,0], marker='o', linestyle='-', label=label_text,
+        color=color_value, lw=2)
 ax.fill(np.concatenate([time, time[::-1]]),
         np.concatenate([error[:,0] - errorstd[:,0],
             (error[:,0] + errorstd[:,0])[::-1]]),
         alpha=.5, fc='0.50', ec='None', label='68% confidence interval')
+
+ax.plot(time, odometry[:,0], 'b-', label=u'Odometry', lw=2)
+ax.plot(time, reference[:,0], 'g-', label=u'Reference', lw=2)
 
 plt.xlabel(r'Time [$s$]')
 plt.ylabel(r'Angle [${}^\circ$]')
@@ -256,15 +262,16 @@ print m
 ## PREDICTION    ##
 ###################
 #path = '/home/javi/exoter/development/data/20141023_pink_test/20141023-2001/'
-path = '/home/javi/exoter/development/data/20141024_planetary_lab/20141024-2317/'
+#path = '/home/javi/exoter/development/data/20141024_planetary_lab/20141024-2317/'
+path = '/home/javi/exoter/development/data/20141024_planetary_lab/20141027-2034/'
 #######################################
 joints_position_file = path + 'joints_position.0.data'
 
 joints_speed_file = path + 'joints_speed.0.data'
 
-pose_ref_velocity_file =  path + 'pose_ref_velocity.0.data'
+pose_ref_velocity_file =  path + 'delta_pose_ref_velocity.0.data'
 
-pose_odo_velocity_file =  path + 'pose_odo_velocity.0.data'
+pose_odo_velocity_file =  path + 'delta_pose_odo_velocity.0.data'
 
 pose_imu_orientation_file =  path + 'pose_imu_orientation.0.data'
 
@@ -391,23 +398,29 @@ matplotlib.rcParams.update({'font.size': 30, 'font.weight': 'bold'})
 fig = plt.figure(1)
 ax = fig.add_subplot(111)
 
-#time = reference_velocity.time
-#xvelocity = reference_velocity.getAxis(0)
-#ax.plot(time, xvelocity, marker='o', linestyle='-.', label="Reference Velocity", color=[0.3,0.2,0.4], lw=2)
-
-
 plt.rc('text', usetex=False)# activate latex text rendering
-time = mean(odometry_velocity.delta[0:100]) * r_[0:len(odometry_velocity.time)]
+time = odometry_velocity.time
 time, timestd = data.input_reduction(time, number_blocks)
 xvelocity = odometry[:,0]
 ax.plot(time, xvelocity, marker='o', linestyle='-.', label="Odometry Velocity", color=[0.0,0.0,1.0], lw=2)
 
-[meanxp, varxp] = m.predict(Xp, full_cov=True)
+time = reference_velocity.time
+time, timestd = data.input_reduction(time, number_blocks)
+xvelocity = reference[:,0]
+ax.scatter(time, xvelocity, marker='D', label="Reduced Reference", color=[1.0,0.0,0.0], s=80)
+ax.plot(time, xvelocity, marker='D', linestyle='--', label="Reduced Reference", color=[1.0,0.0,0.0], lw=2)
+
+
+[meanxp, covxp] = m.predict(Xp, full_cov=True)
+
 sigma = 2.0 * abs(meanxp[0:len(xvelocity),:])
 ax.fill(np.concatenate([time, time[::-1]]),
         np.concatenate([xvelocity - sigma[:,0],
             (xvelocity + sigma[:,0])[::-1]]),
         alpha=.5, fc='0.50', ec='None', label='95% confidence interval')
+
+ax.plot(time, meanxp[:,0], marker='<', linestyle='--', label="GP mean",
+        color=[0.0,1.0,0.0], lw=2)
 
 plt.xlabel(r'Time [$s$]', fontsize=35, fontweight='bold')
 plt.ylabel(r'X [$m/s$]', fontsize=35, fontweight='bold')
