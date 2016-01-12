@@ -78,3 +78,117 @@ m.optimize()
 print m
 m.plot()
 
+#----------------------------------------------------------------------
+# GPy Heteroscedastic
+#----------------------------------------------------------------------
+import numpy as np
+import pylab as pb
+import GPy
+
+def f(X):
+        return 10. + .1*X + 2*np.sin(X)/X
+        #return 0.00 * X
+
+fig,ax = pb.subplots()
+ax.plot(np.linspace(-15,25),f(np.linspace(-10,20)),'r-')
+ax.grid()
+
+###########################
+X = np.random.uniform(-10,20, 50)
+X = X[~np.logical_and(X>-2,X<3)] #Remove points between -2 and 3 (just for illustration)
+X = np.hstack([np.random.uniform(-1,1,1),X]) #Prepend a point between -1 and 1  (just for illustration)
+error = np.random.normal(0,.02,X.size)
+Y = f(X) + error
+fig,ax = pb.subplots()
+ax.plot(np.linspace(-15,25),f(np.linspace(-10,20)),'r-')
+ax.plot(X,Y,'kx',mew=1.5)
+ax.grid()
+
+kern = GPy.kern.RBF(input_dim = 1, ARD=True)
+#kern = GPy.kern.MLP(1) + GPy.kern.Bias(1)
+
+
+m = GPy.models.GPHeteroscedasticRegression(X[:,None],Y[:,None],kern)
+error = np.ones(X.size) * 5
+error[20:39] = 0.01
+#m.param_array[4:43] = abs(error) # by regular expression does not keep the order(alphabetic order instead)
+m['.*het_Gauss.variance'] = abs(error)[:,None] #Set the noise parameters to the error in Y
+m.het_Gauss.variance.fix() #We can fix the noise term, since we already know it
+m.optimize()
+
+m.plot_f() #Show the predictive values of the GP.
+pb.errorbar(X,Y,yerr=np.array(m.likelihood.flattened_parameters).flatten(),fmt=None,ecolor='r',zorder=1)
+pb.grid()
+pb.plot(X,Y,'kx',mew=1.5)
+
+def noise_effect(noise):
+    m.het_Gauss.variance[:1] = noise
+    m.het_Gauss.variance.fix()
+    m.optimize()
+
+    m.plot_f() 
+    pb.errorbar(X.flatten(),Y.flatten(),yerr=np.array(m.likelihood.flattened_parameters).flatten(),fmt=None,ecolor='r',zorder=1)        
+    pb.plot(X[1:],Y[1:],'kx',mew=1.5)
+    pb.plot(X[:1],Y[:1],'ko',mew=.5)
+    pb.grid()
+
+#from IPython.html.widgets import *
+#interact(noise_effect, noise=(0.1,2.))
+
+#Heteroscedastic model
+m1 = GPy.models.GPHeteroscedasticRegression(X[:,None],Y[:,None],kern)
+m1.het_Gauss.variance = .05
+m1.het_Gauss.variance.fix()
+m1.optimize()
+
+# Homoscedastic model
+m2 = GPy.models.GPRegression(X[:,None],Y[:,None],kern)
+#m2['.*Gaussian_noise'] = .05
+#m2['.*noise'].fix()
+m2.optimize()
+
+m1.plot_f()
+pb.title('Homoscedastic model')
+m2.plot_f()
+pb.title('Heteroscedastic model')
+
+print "Kernel parameters (optimized) in the heteroscedastic model"
+print m1.kern
+print "\nKernel parameters (optimized) in the homoscedastic model"
+print m2.kern
+
+kern = GPy.kern.MLP(1) + GPy.kern.Bias(1)
+
+m = GPy.models.GPHeteroscedasticRegression(X[:,None],Y[:,None],kern)
+m.optimize()
+
+fig, ax = pl.subplots(1,1,figsize=(13,5))
+m.plot_f(ax=ax)
+m.plot_data(ax=ax)
+m.plot_errorbars_trainset(ax=ax, alpha=1)
+fig.tight_layout()
+pb.grid()
+
+
+########### FROM PR FIXING THE LENGTH ISSUE ######
+import numpy as np
+import GPy
+
+Ns = 100
+#Generate data
+X = 10*np.random.random((Ns,1))
+y = np.sin(X) + np.random.random((Ns,1)) - 0.5
+Xtest = np.linspace(np.min(X), np.max(X), 121)
+Xtest = Xtest[:,None]
+
+# Estimate model
+heteroscedastic_variance = np.random.random((X.shape[0],1)) # Here you define your variances
+g = GPy.likelihoods.HeteroscedasticGaussian(variance=heteroscedastic_variance,Y_metadata=np.arange(Ns)[:,None])
+m = GPy.core.GP(X=X, Y=y, kernel=GPy.kern.RBF(X.shape[1]), likelihood=g)
+m.likelihood.variance.fix()
+m.optimize()
+
+# Make predictions
+noise_dict = {'output_index':1*np.ones_like(Xtest).astype(int)}
+ytest = m.predict(Xtest, Y_metadata=noise_dict)[0]
+

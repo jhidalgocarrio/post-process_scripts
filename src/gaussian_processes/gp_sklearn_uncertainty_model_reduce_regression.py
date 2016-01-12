@@ -37,11 +37,11 @@ from sklearn.gaussian_process import GaussianProcess
 from sklearn.gaussian_process import GaussianProcessRegressor
 from sklearn.gaussian_process.kernels import RBF, WhiteKernel
 
-# Reference Robot Velocity
+# Reference Robot Position
 reference_position = data.ThreeData()
 reference_position.readData(pose_ref_position_file, cov=True)
 
-# Odometry Robot Velocity
+# Odometry Robot Position
 odometry_position = data.ThreeData()
 odometry_position.readData(pose_odo_position_file, cov=True)
 
