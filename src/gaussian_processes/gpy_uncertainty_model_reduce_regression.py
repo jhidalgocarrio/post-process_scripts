@@ -231,14 +231,12 @@ plt.grid(True)
 plt.legend(prop={'size':25}, loc=1)
 plt.show(block=False)
 
-
-
 #########################
 ## GAUSSIAN PROCESS    ##
 #########################
 
 # GP Multidimensional Input
-X = np.column_stack((joints, inertia[:,3:6], orient))
+X = np.column_stack((joints, inertia[:,0:2], inertia[:,3:6], orient))
 
 # GP Multidimensional Output
 sigma = np.absolute(error) * np.ones(error.shape)
@@ -246,7 +244,7 @@ Y =  np.column_stack((sigma))
 Y = np.column_stack(Y)
 
 # KERNEL
-ker_rbf = GPy.kern.RBF(input_dim = X.shape[1], ARD=True)
+ker_rbf = GPy.kern.RBF(input_dim = X.shape[1], ARD=True) # with ARD one lengthscale parameter per dimension
 ker =  ker_rbf
 
 # GP MODEL
@@ -390,7 +388,7 @@ odometry, odometrystd = data.input_reduction(odometry, number_blocks)
 
 ######################
 # GP Multidimensional vector
-Xp = np.column_stack((joints, inertia[:,3:6], orient))
+Xp = np.column_stack((joints, inertia[:,0:2], inertia[:,3:6], orient))
 
 
 ###################
@@ -404,23 +402,22 @@ time, timestd = data.input_reduction(time, number_blocks)
 xvelocity = odometry[:,0]
 ax.plot(time, xvelocity, marker='o', linestyle='-.', label="Odometry Velocity", color=[0.0,0.0,1.0], lw=2)
 
+[meanxp, varxp] = m.predict(Xp)
+
+sigma = 1.0 * abs(meanxp[0:len(xvelocity),:]+varxp[0:len(xvelocity),:])
+ax.fill(np.concatenate([time, time[::-1]]),
+        np.concatenate([xvelocity - sigma[:,0],
+            (xvelocity + sigma[:,0])[::-1]]),
+        alpha=.5, fc='0.50', ec='None', label='68% confidence interval')
+
+ax.plot(time, meanxp[:,0], marker='<', linestyle='--', label="GP mean",
+        color=[0.0,1.0,0.0], lw=2)
+
 time = reference_velocity.time
 time, timestd = data.input_reduction(time, number_blocks)
 xvelocity = reference[:,0]
 ax.scatter(time, xvelocity, marker='D', label="Reduced Reference", color=[1.0,0.0,0.0], s=80)
 ax.plot(time, xvelocity, marker='D', linestyle='--', label="Reduced Reference", color=[1.0,0.0,0.0], lw=2)
-
-
-[meanxp, covxp] = m.predict(Xp, full_cov=True)
-
-sigma = 2.0 * abs(meanxp[0:len(xvelocity),:])
-ax.fill(np.concatenate([time, time[::-1]]),
-        np.concatenate([xvelocity - sigma[:,0],
-            (xvelocity + sigma[:,0])[::-1]]),
-        alpha=.5, fc='0.50', ec='None', label='95% confidence interval')
-
-ax.plot(time, meanxp[:,0], marker='<', linestyle='--', label="GP mean",
-        color=[0.0,1.0,0.0], lw=2)
 
 plt.xlabel(r'Time [$s$]', fontsize=35, fontweight='bold')
 plt.ylabel(r'X [$m/s$]', fontsize=35, fontweight='bold')
