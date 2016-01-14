@@ -257,6 +257,14 @@ m.optimize('bfgs', messages=True, max_f_eval=1000)
 print m
 
 ###################
+m.plot_f(ax=0) #Show the predictive values of the GP.
+plt.errorbar(X[:,0],Y[:,0],yerr=errorstd[:,0],fmt=None,ecolor='r',zorder=1)
+plt.grid()
+plt.plot(X[:,0],Y[:,0],'kx',mew=1.5)
+###################
+
+
+###################
 ## PREDICTION    ##
 ###################
 #path = '/home/javi/exoter/development/data/20141023_pink_test/20141023-2001/'
@@ -386,6 +394,9 @@ reference, referencestd = data.input_reduction(reference, number_blocks)
 # Split odometry (one axis info per column)
 odometry, odometrystd = data.input_reduction(odometry, number_blocks)
 
+# Ground truth error
+error = np.absolute(reference - odometry)
+
 ######################
 # GP Multidimensional vector
 Xp = np.column_stack((joints, inertia[:,0:2], inertia[:,3:6], orient))
@@ -400,7 +411,7 @@ plt.rc('text', usetex=False)# activate latex text rendering
 time = odometry_velocity.time
 time, timestd = data.input_reduction(time, number_blocks)
 xvelocity = odometry[:,0]
-ax.plot(time, xvelocity, marker='o', linestyle='-.', label="Odometry Velocity", color=[0.0,0.0,1.0], lw=2)
+ax.plot(time, xvelocity, marker='o', linestyle='-.', label="Odometry velocity", color=[0.0,0.0,1.0], lw=2)
 
 [meanxp, varxp] = m.predict(Xp)
 
@@ -410,14 +421,21 @@ ax.fill(np.concatenate([time, time[::-1]]),
             (xvelocity + sigma[:,0])[::-1]]),
         alpha=.5, fc='0.50', ec='None', label='68% confidence interval')
 
-ax.plot(time, meanxp[:,0], marker='<', linestyle='--', label="GP mean",
+ax.plot(time, meanxp[:,0], marker='<', linestyle='--', label="GP mean residual",
         color=[0.0,1.0,0.0], lw=2)
+ax.plot(time, (meanxp[:,0]+2*varxp[:,0]).flatten(), linestyle='--',
+        color=[0.0,1.0,0.0], lw=1.0)
+ax.plot(time, (meanxp[:,0]-2*varxp[:,0]).flatten(), linestyle='--',
+        color=[0.0,1.0,0.0], lw=1.0)
 
 time = reference_velocity.time
 time, timestd = data.input_reduction(time, number_blocks)
 xvelocity = reference[:,0]
-ax.scatter(time, xvelocity, marker='D', label="Reduced Reference", color=[1.0,0.0,0.0], s=80)
+ax.scatter(time, xvelocity, marker='D', label="Reference velocity", color=[1.0,0.0,0.0], s=80)
 ax.plot(time, xvelocity, marker='D', linestyle='--', label="Reduced Reference", color=[1.0,0.0,0.0], lw=2)
+
+ax.plot(time, error[:,0], marker='o', linestyle='-', label="Ground truth error",
+        color=color_value, lw=2)
 
 plt.xlabel(r'Time [$s$]', fontsize=35, fontweight='bold')
 plt.ylabel(r'X [$m/s$]', fontsize=35, fontweight='bold')
