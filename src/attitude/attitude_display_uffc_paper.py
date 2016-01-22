@@ -3,14 +3,14 @@
 path = '/home/javi/exoter/development/data/20150323_ww_dlr/imu_stim300_attitude_test_20150325-1716/'
 
 ##################################
-pose_ikf_orient_file = path + 'pose_ikf_orientation.3.data'
+pose_ikf_orient_file = path + 'pose_ikf_orientation.0.data'
 
 #without allan data
 pose_ikf_inflated_coef_orient_file = path + 'pose_ikf_inflated_coef_orientation.4.data'
 
-#pose_ikf_data_sheet_coef_orient_file = path + 'pose_ikf_data_sheet_coef_orientation.0.data'
+pose_ikf_data_sheet_coef_orient_file = path + 'pose_ikf_data_sheet_coef_orientation.0.data'
 # incomplete mdel
-pose_ikf_data_sheet_coef_orient_file = path + 'pose_ikf_incomplete_model.1.data'
+#pose_ikf_data_sheet_coef_orient_file = path + 'pose_ikf_incomplete_model.1.data'
 
 pose_imu_orient_file = path + 'pose_imu_orientation.0.data'
 
@@ -119,7 +119,7 @@ euler[1] = euler[1][0::50]
 euler[2] = euler[2][0::50]
 
 # IKF Filter
-axis = 1
+axis = 0
 if axis == 2:
     label_text = "Roll [filter w/ Allan data]"
     color_value = [1.0,0,0]
@@ -303,7 +303,7 @@ ax.plot(time, euler[axis], marker='D', linestyle='None', label=label_text, color
 plt.xlabel(r'Time [$s$]')
 plt.ylabel(r'Angle [${}^\circ$]')
 plt.grid(True)
-plt.legend(prop={'size':25}, loc=1)
+#plt.legend(prop={'size':25}, loc=1)
 plt.show(block=False)
 
 raw_input("Press Enter to continue...")
