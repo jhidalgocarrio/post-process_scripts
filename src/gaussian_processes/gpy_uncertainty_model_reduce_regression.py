@@ -444,3 +444,65 @@ ax.legend(loc=1, prop={'size':30})
 plt.show(block=False)
 
 
+###########################
+npts=10000
+time = odometry_velocity.time
+time, timestd = data.input_reduction(time, number_blocks)
+ti = np.linspace(min(time), max(time), npts)
+
+# Interpolate 3-Dimensions
+meanxp_inter = np.column_stack((
+                    np.interp(ti, time, meanxp[:,0]),
+                    np.interp(ti, time, meanxp[:,1]),
+                    np.interp(ti, time, meanxp[:,2])
+                    ))
+# Plot X axis
+matplotlib.rcParams.update({'font.size': 30, 'font.weight': 'bold'})
+fig = plt.figure(1)
+ax = fig.add_subplot(111)
+
+ax.scatter(time, meanxp[:,0], marker='D', label="GP mean residual", color=[1.0,0.0,0.0], s=80)
+
+ax.plot(ti, meanxp_inter[:,0], marker='*', linestyle='', label="Interpolation",
+        color=[0.0,1.0,0.0], lw=1)
+
+plt.xlabel(r'Time [$s$]', fontsize=35, fontweight='bold')
+plt.ylabel(r'X [$m/s$]', fontsize=35, fontweight='bold')
+plt.grid(True)
+ax.legend(loc=1, prop={'size':30})
+plt.show(block=False)
+
+
+# Plot Y axis
+matplotlib.rcParams.update({'font.size': 30, 'font.weight': 'bold'})
+fig = plt.figure(2)
+ax = fig.add_subplot(111)
+
+ax.scatter(time, meanxp[:,1], marker='D', label="GP mean residual", color=[1.0,0.0,0.0], s=80)
+
+ax.plot(ti, meanxp_inter[:,1], marker='*', linestyle='', label="Interpolation",
+        color=[0.0,1.0,0.0], lw=1)
+
+plt.xlabel(r'Time [$s$]', fontsize=35, fontweight='bold')
+plt.ylabel(r'X [$m/s$]', fontsize=35, fontweight='bold')
+plt.grid(True)
+ax.legend(loc=1, prop={'size':30})
+plt.show(block=False)
+
+# Plot Z axis
+matplotlib.rcParams.update({'font.size': 30, 'font.weight': 'bold'})
+fig = plt.figure(3)
+ax = fig.add_subplot(111)
+
+ax.scatter(time, meanxp[:,2], marker='D', label="GP mean residual", color=[1.0,0.0,0.0], s=80)
+
+ax.plot(ti, meanxp_inter[:,2], marker='*', linestyle='', label="Interpolation",
+        color=[0.0,1.0,0.0], lw=1)
+
+plt.xlabel(r'Time [$s$]', fontsize=35, fontweight='bold')
+plt.ylabel(r'X [$m/s$]', fontsize=35, fontweight='bold')
+plt.grid(True)
+ax.legend(loc=1, prop={'size':30})
+plt.show(block=False)
+
+
