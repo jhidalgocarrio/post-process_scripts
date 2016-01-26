@@ -190,7 +190,7 @@ position[:] = [navigation_orient.data[0].rot(x) +  navigation_position.data[0] f
 xposition = position[:,0]
 yposition = position[:,1]
 ax.plot(xposition, yposition, marker='D', linestyle='', label="Pose SLAM",
-        color=[0,0.5,0], alpha=0.5, lw=2)
+        color=[0,0.5,0.5], alpha=0.5, lw=2)
 
 ax.plot(xposition, yposition, marker='', linestyle='--', color=[0,0,0], alpha=0.5, lw=2)
 
