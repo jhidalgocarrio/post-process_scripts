@@ -445,7 +445,7 @@ plt.show(block=False)
 
 
 ####### GP PREDICTION ####################
-npts=8145
+npts=10000
 time = odometry_velocity.time
 time, timestd = data.input_reduction(time, number_blocks)
 ti = np.linspace(min(time), max(time), npts)
@@ -532,7 +532,7 @@ error_inter = np.column_stack((
 
 # Plot X axis
 matplotlib.rcParams.update({'font.size': 30, 'font.weight': 'bold'})
-fig = plt.figure(1)
+fig = plt.figure(11)
 ax = fig.add_subplot(111)
 
 ax.scatter(time, error[:,0], marker='D', label="Reference residual", color=[1.0,0.0,0.0], s=80)
@@ -548,7 +548,7 @@ plt.show(block=False)
 
 # Plot Y axis
 matplotlib.rcParams.update({'font.size': 30, 'font.weight': 'bold'})
-fig = plt.figure(2)
+fig = plt.figure(12)
 ax = fig.add_subplot(111)
 
 ax.scatter(time, error[:,1], marker='D', label="GP mean residual", color=[1.0,0.0,0.0], s=80)
@@ -564,7 +564,7 @@ plt.show(block=False)
 
 # Plot Z axis
 matplotlib.rcParams.update({'font.size': 30, 'font.weight': 'bold'})
-fig = plt.figure(3)
+fig = plt.figure(13)
 ax = fig.add_subplot(111)
 
 ax.scatter(time, error[:,2], marker='D', label="GP mean residual", color=[1.0,0.0,0.0], s=80)
