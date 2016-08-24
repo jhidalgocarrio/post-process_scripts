@@ -444,18 +444,23 @@ ax.legend(loc=1, prop={'size':30})
 plt.show(block=False)
 
 
-###########################
-npts=10000
+####### GP PREDICTION ####################
+npts=8145
 time = odometry_velocity.time
 time, timestd = data.input_reduction(time, number_blocks)
 ti = np.linspace(min(time), max(time), npts)
 
-# Interpolate 3-Dimensions
+# Interpolate GP residual 3-Dimensions
 meanxp_inter = np.column_stack((
                     np.interp(ti, time, meanxp[:,0]),
                     np.interp(ti, time, meanxp[:,1]),
                     np.interp(ti, time, meanxp[:,2])
                     ))
+
+# Interpolate GP uncertainty residual 3-Dimensions
+varxp_inter = np.column_stack(np.interp(ti, time, varxp[:,0]))
+varxp_inter = np.column_stack(varxp_inter)
+
 # Plot X axis
 matplotlib.rcParams.update({'font.size': 30, 'font.weight': 'bold'})
 fig = plt.figure(1)
@@ -464,7 +469,12 @@ ax = fig.add_subplot(111)
 ax.scatter(time, meanxp[:,0], marker='D', label="GP mean residual", color=[1.0,0.0,0.0], s=80)
 
 ax.plot(ti, meanxp_inter[:,0], marker='*', linestyle='', label="Interpolation",
-        color=[0.0,1.0,0.0], lw=1)
+        color=[0.0,0.0,1.0], lw=1)
+ax.plot(ti, (meanxp_inter[:,0]+3.0*varxp_inter[:,0]).flatten(), linestyle='--',
+        color=[0.0,1.0,0.0], lw=1.0)
+ax.plot(ti, (meanxp_inter[:,0]-3.0*varxp_inter[:,0]).flatten(), linestyle='--',
+        color=[0.0,1.0,0.0], lw=1.0)
+
 
 plt.xlabel(r'Time [$s$]', fontsize=35, fontweight='bold')
 plt.ylabel(r'X [$m/s$]', fontsize=35, fontweight='bold')
@@ -481,7 +491,7 @@ ax = fig.add_subplot(111)
 ax.scatter(time, meanxp[:,1], marker='D', label="GP mean residual", color=[1.0,0.0,0.0], s=80)
 
 ax.plot(ti, meanxp_inter[:,1], marker='*', linestyle='', label="Interpolation",
-        color=[0.0,1.0,0.0], lw=1)
+        color=[0.0,0.0,1.0], lw=1)
 
 plt.xlabel(r'Time [$s$]', fontsize=35, fontweight='bold')
 plt.ylabel(r'X [$m/s$]', fontsize=35, fontweight='bold')
@@ -497,6 +507,69 @@ ax = fig.add_subplot(111)
 ax.scatter(time, meanxp[:,2], marker='D', label="GP mean residual", color=[1.0,0.0,0.0], s=80)
 
 ax.plot(ti, meanxp_inter[:,2], marker='*', linestyle='', label="Interpolation",
+        color=[0.0,0.0,1.0], lw=1)
+
+plt.xlabel(r'Time [$s$]', fontsize=35, fontweight='bold')
+plt.ylabel(r'X [$m/s$]', fontsize=35, fontweight='bold')
+plt.grid(True)
+ax.legend(loc=1, prop={'size':30})
+plt.show(block=False)
+
+
+####### REFERENCE ERROR ###########################
+time = reference_velocity.time
+time, timestd = data.input_reduction(time, number_blocks)
+ti = np.linspace(min(time), max(time), npts)
+
+np.argmax(error, 0) # return the index pf the maximum indexes
+
+# Interpolate Ground Truth Error 3-Dimensions
+error_inter = np.column_stack((
+                    np.interp(ti, time, error[:,0]),
+                    np.interp(ti, time, error[:,1]),
+                    np.interp(ti, time, error[:,2])
+                    ))
+
+# Plot X axis
+matplotlib.rcParams.update({'font.size': 30, 'font.weight': 'bold'})
+fig = plt.figure(1)
+ax = fig.add_subplot(111)
+
+ax.scatter(time, error[:,0], marker='D', label="Reference residual", color=[1.0,0.0,0.0], s=80)
+
+ax.plot(ti, error_inter[:,0], marker='*', linestyle='', label="Interpolation",
+        color=[0.0,1.0,0.0], lw=1)
+
+plt.xlabel(r'Time [$s$]', fontsize=35, fontweight='bold')
+plt.ylabel(r'X [$m/s$]', fontsize=35, fontweight='bold')
+plt.grid(True)
+ax.legend(loc=1, prop={'size':30})
+plt.show(block=False)
+
+# Plot Y axis
+matplotlib.rcParams.update({'font.size': 30, 'font.weight': 'bold'})
+fig = plt.figure(2)
+ax = fig.add_subplot(111)
+
+ax.scatter(time, error[:,1], marker='D', label="GP mean residual", color=[1.0,0.0,0.0], s=80)
+
+ax.plot(ti, error_inter[:,1], marker='*', linestyle='', label="Interpolation",
+        color=[0.0,1.0,0.0], lw=1)
+
+plt.xlabel(r'Time [$s$]', fontsize=35, fontweight='bold')
+plt.ylabel(r'X [$m/s$]', fontsize=35, fontweight='bold')
+plt.grid(True)
+ax.legend(loc=1, prop={'size':30})
+plt.show(block=False)
+
+# Plot Z axis
+matplotlib.rcParams.update({'font.size': 30, 'font.weight': 'bold'})
+fig = plt.figure(3)
+ax = fig.add_subplot(111)
+
+ax.scatter(time, error[:,2], marker='D', label="GP mean residual", color=[1.0,0.0,0.0], s=80)
+
+ax.plot(ti, error_inter[:,2], marker='*', linestyle='', label="Interpolation",
         color=[0.0,1.0,0.0], lw=1)
 
 plt.xlabel(r'Time [$s$]', fontsize=35, fontweight='bold')
