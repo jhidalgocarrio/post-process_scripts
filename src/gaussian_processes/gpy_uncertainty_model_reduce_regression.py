@@ -470,11 +470,11 @@ ax.scatter(time, meanxp[:,0], marker='D', label="GP mean residual", color=[1.0,0
 
 ax.plot(ti, meanxp_inter[:,0], marker='*', linestyle='', label="Interpolation",
         color=[0.0,0.0,1.0], lw=1)
-ax.plot(ti, (meanxp_inter[:,0]+3.0*varxp_inter[:,0]).flatten(), linestyle='--',
-        color=[0.0,1.0,0.0], lw=1.0)
-ax.plot(ti, (meanxp_inter[:,0]-3.0*varxp_inter[:,0]).flatten(), linestyle='--',
-        color=[0.0,1.0,0.0], lw=1.0)
 
+ax.fill(np.concatenate([ti, ti[::-1]]),
+        np.concatenate([meanxp_inter[:,0]-3.0*varxp_inter[:,0],
+            (meanxp_inter[:,0]+3.0*varxp_inter[:,0])[::-1]]),
+        alpha=.5, fc='0.50', ec='None', label='68% confidence interval')
 
 plt.xlabel(r'Time [$s$]', fontsize=35, fontweight='bold')
 plt.ylabel(r'X [$m/s$]', fontsize=35, fontweight='bold')
@@ -493,6 +493,12 @@ ax.scatter(time, meanxp[:,1], marker='D', label="GP mean residual", color=[1.0,0
 ax.plot(ti, meanxp_inter[:,1], marker='*', linestyle='', label="Interpolation",
         color=[0.0,0.0,1.0], lw=1)
 
+ax.fill(np.concatenate([ti, ti[::-1]]),
+        np.concatenate([meanxp_inter[:,1]-3.0*varxp_inter[:,0],
+            (meanxp_inter[:,1]+3.0*varxp_inter[:,0])[::-1]]),
+        alpha=.5, fc='0.50', ec='None', label='68% confidence interval')
+
+
 plt.xlabel(r'Time [$s$]', fontsize=35, fontweight='bold')
 plt.ylabel(r'X [$m/s$]', fontsize=35, fontweight='bold')
 plt.grid(True)
@@ -508,6 +514,12 @@ ax.scatter(time, meanxp[:,2], marker='D', label="GP mean residual", color=[1.0,0
 
 ax.plot(ti, meanxp_inter[:,2], marker='*', linestyle='', label="Interpolation",
         color=[0.0,0.0,1.0], lw=1)
+
+ax.fill(np.concatenate([ti, ti[::-1]]),
+        np.concatenate([meanxp_inter[:,2]-3.0*varxp_inter[:,0],
+            (meanxp_inter[:,2]+3.0*varxp_inter[:,0])[::-1]]),
+        alpha=.5, fc='0.50', ec='None', label='68% confidence interval')
+
 
 plt.xlabel(r'Time [$s$]', fontsize=35, fontweight='bold')
 plt.ylabel(r'X [$m/s$]', fontsize=35, fontweight='bold')
