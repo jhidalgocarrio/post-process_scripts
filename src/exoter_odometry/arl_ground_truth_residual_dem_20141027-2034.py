@@ -59,14 +59,18 @@ navigation_position.readData(path_navigation_position_file, cov=False)
 ########################
 temindex = np.where(np.isnan(reference.data[:,0]))
 temindex = np.asarray(temindex)
-
 odometry.delete(temindex)
 reference.delete(temindex)
-odometry_velocity.delete(temindex)
 
 temindex = np.where(np.isnan(reference_velocity.data[:,0]))
 temindex = np.asarray(temindex)
 reference_velocity.delete(temindex)
+odometry_velocity.delete(temindex)
+
+temindex = np.where(fabs(reference_velocity.data) > 0.60)
+temindex = np.asarray(temindex[0])
+reference_velocity.delete(temindex)
+odometry_velocity.delete(temindex)
 
 ################################
 ### COMPUTE COV EIGENVALUES  ###
@@ -95,41 +99,52 @@ yi = np.linspace(min(py), max(py), npts)
 # grid the data.
 zi = griddata(px, py, pz, xi, yi, interp='linear')
 
-###################
-## MEAN FILTER   ##
-###################
+########################
+## CONVOLUTE FILTER   ##
+########################
 sampling_frequency = 1.0/mean(odometry_velocity.delta[0:100])
-size_block = 15 * sampling_frequency
-number_blocks = int(len(odometry_velocity.delta)/size_block)
+size_block = 1 * sampling_frequency
+window = np.ones(size_block)
+window /= sum(window)
 
 # Display Reference trajectory
 #rotate and translate the trajectory wrt the world frame
-position = np.column_stack((reference.getAxis(0)[0::5], reference.getAxis(1)[0::5],  reference.getAxis(2)[0::5]))
+position = np.column_stack((reference.getAxis(0), reference.getAxis(1),  reference.getAxis(2)))
 position[:] = [navigation_orient.data[0].rot(x) +  navigation_position.data[0] for x in position]
 
-# Split joints (one joint info per column)
-position, positionstd = data.input_reduction(position, number_blocks)
-
-
 # Reference velocity in body frame
-rvelocity = np.column_stack((reference_velocity.getAxis(0)[0::5],
-    reference_velocity.getAxis(1)[0::5], reference_velocity.getAxis(2)[0::5]))
-
-rvelocity, rvelocitystd = data.input_reduction(rvelocity, number_blocks)
+rvelocity = np.column_stack((
+            np.convolve(reference_velocity.getAxis(0), window, mode='same'),
+            np.convolve(reference_velocity.getAxis(1), window, mode='same'),
+            np.convolve(reference_velocity.getAxis(2), window, mode='same')
+            ))
 
 # Odometry velocity in body frame
-ovelocity = np.column_stack((odometry_velocity.getAxis(0)[0::5],
-    odometry_velocity.getAxis(1)[0::5], odometry_velocity.getAxis(2)[0::5]))
+ovelocity = np.column_stack((
+            np.convolve(odometry_velocity.getAxis(0), window, mode='same'),
+            np.convolve(odometry_velocity.getAxis(1), window, mode='same'),
+            np.convolve(odometry_velocity.getAxis(2), window, mode='same')
+            ))
 
+length = min (rvelocity.shape[0], ovelocity.shape[0])
+standard_deviation = np.absolute(ovelocity[0:length,:]-rvelocity[0:length,:])
+
+###################################
+## SPLIT INPUT TEST  (OPTIONAL)  ##
+###################################
+number_blocks = int(len(reference_velocity.delta)/size_block)
+
+# Split in block to reduce the samples
+position, positionstd = data.input_reduction(position, number_blocks)
+rvelocity, rvelocitystd = data.input_reduction(rvelocity, number_blocks)
 ovelocity, ovelocitystd = data.input_reduction(ovelocity, number_blocks)
-
-standard_deviation = np.absolute(ovelocity-rvelocity)
+standard_deviation, standard_deviationstd = data.input_reduction(standard_deviation, number_blocks)
 
 ############
 ### PLOT ###
 ############
 matplotlib.rcParams.update({'font.size': 30, 'font.weight': 'bold'})
-fig = plt.figure(1)
+fig = plt.figure(3)
 ax = fig.add_subplot(111)
 
 # Display the DEM
@@ -151,7 +166,7 @@ segments = np.concatenate([points[:-1], points[1:]], axis=1)
 from matplotlib.collections import LineCollection
 from matplotlib.colors import ListedColormap, BoundaryNorm
 from matplotlib.colors import LinearSegmentedColormap as lscm
-cmap = plt.get_cmap('Blues')
+cmap = plt.get_cmap('Reds')
 #cmap = lscm.from_list('temp', colors)
 norm = plt.Normalize(min(sd), max(sd))
 lc = LineCollection(segments, cmap=cmap, norm=norm)
