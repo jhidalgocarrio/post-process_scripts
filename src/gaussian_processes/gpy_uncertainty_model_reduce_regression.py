@@ -1,21 +1,19 @@
 #!/usr/bin/env python
 
 #path = '/home/javi/exoter/development/data/20141023_pink_test/20141023-2011/'
-path = '/home/javi/exoter/development/data/20140000_gaussian_processes/merged/'
+path = '/home/javi/exoter/development/data/20140000_gaussian_processes/merged_bis/'
 #######################################
 joints_position_file = path + 'joints_position.0.data'
 
 joints_speed_file = path + 'joints_speed.0.data'
-
-pose_ref_position_file =  path + 'delta_pose_ref_position.0.data'
-
-pose_odo_position_file =  path + 'delta_pose_odo_position.0.data'
 
 pose_ref_velocity_file =  path + 'delta_pose_ref_velocity.0.data'
 
 pose_odo_velocity_file =  path + 'delta_pose_odo_velocity.0.data'
 
 pose_imu_orientation_file =  path + 'pose_imu_orientation.0.data'
+
+pose_odo_orientation_file =  path + 'pose_odo_orientation.0.data'
 
 pose_imu_angular_velocity_file =  path + 'pose_imu_angular_velocity.0.data'
 
@@ -72,6 +70,15 @@ imu_gyro.delete(temindex)
 imu_acc.delete(temindex)
 robot_joints.delete(temindex)
 
+temindex = np.where(fabs(reference_velocity.data) > 0.10)
+temindex = np.asarray(temindex[0])
+reference_velocity.delete(temindex)
+odometry_velocity.delete(temindex)
+imu_orient.delete(temindex)
+imu_gyro.delete(temindex)
+imu_acc.delete(temindex)
+robot_joints.delete(temindex)
+
 
 #########################
 ## LOAD INPUT TEST    ##
@@ -88,6 +95,10 @@ joints = np.column_stack((
                         robot_joints.getSpeed("mr_translation"),
                         robot_joints.getSpeed("rl_translation"),
                         robot_joints.getSpeed("rr_translation"),
+                        robot_joints.getSpeed("fl_steer"),
+                        robot_joints.getSpeed("fr_steer"),
+                        robot_joints.getSpeed("rl_steer"),
+                        robot_joints.getSpeed("rr_steer"),
                         robot_joints.getPosition("fl_steer"),
                         robot_joints.getPosition("fr_steer"),
                         robot_joints.getPosition("rl_steer"),
@@ -119,12 +130,74 @@ reference = np.column_stack((reference_velocity.getAxis(0), reference_velocity.g
 
 odometry = np.column_stack((odometry_velocity.getAxis(0), odometry_velocity.getAxis(1), odometry_velocity.getAxis(2)))
 
+########################
+## CONVOLUTE FILTER   ##
+########################
+sampling_frequency = 1.0/mean(odometry_velocity.delta[0:100])
+size_block = 2 * sampling_frequency
+window = np.ones(size_block)
+window /= sum(window)
+
+# Filter joints (one joint info per column)
+for i in range(0,joints.shape[1]):
+    joints[:,i] = np.convolve(joints[:,i], window, mode='same')
+
+
+# Filter inertia (one axis info per column)
+for i in range(0,inertia.shape[1]):
+    inertia[:,i] = np.convolve(inertia[:,i], window, mode='same')
+
+# Filter orientation (one axis info per column)
+for i in range(0,orient.shape[1]):
+    orient[:,i] = np.convolve(orient[:,i], window, mode='same')
+
+# Filter reference (one axis info per column)
+for i in range(0,reference.shape[1]):
+    reference[:,i] = np.convolve(reference[:,i], window, mode='same')
+
+# Filter odometry (one axis info per column)
+for i in range(0,odometry.shape[1]):
+    odometry[:,i] = np.convolve(odometry[:,i], window, mode='same')
+
+length = min (reference.shape[0], odometry.shape[0])
+error = np.absolute(reference[0:length,:] - odometry[0:length,:])
+
+#########################
+## PLOT THE VALUES     ##
+#########################
+matplotlib.rcParams.update({'font.size': 30, 'font.weight': 'bold'})
+fig = plt.figure(1)
+ax = fig.add_subplot(111)
+plt.rc('text', usetex=False)# activate latex text rendering
+
+#time = mean(reference_velocity.delta[0:100]) * r_[0:error.shape[0]]
+time = reference_velocity.time
+label_text = "Error Velocity"
+color_value = [0.2,0.2,0.2]
+ax.plot(time, error[:,0], marker='o', linestyle='-', label=label_text,
+        color=color_value, lw=2)
+
+time = mean(odometry_velocity.delta[0:100]) * r_[0:len(odometry_velocity.time)]
+time = odometry_velocity.time
+color_value = [0.0,0.0,1.0]
+ax.plot(time, odometry[:,0], marker='x', linestyle='-', label=u'Odometry',
+        color=color_value, lw=2)
+
+time = mean(reference_velocity.delta[0:100]) * r_[0:len(reference_velocity.time)]
+time = reference_velocity.time
+color_value = [0.0,1.0,0.0]
+ax.plot(time, reference[:,0], marker='o', linestyle='-', label=u'Reference',
+        color=color_value, lw=2)
+
+plt.xlabel(r'Time [$s$]')
+plt.ylabel(r'Angle [${}^\circ$]')
+plt.grid(True)
+plt.legend(prop={'size':25}, loc=1)
+plt.show(block=False)
 
 #########################
 ## SPLIT INPUT TEST    ##
 #########################
-sampling_frequency = 1.0/mean(reference_velocity.delta[0:100])
-size_block = 5 * sampling_frequency
 number_blocks = int(len(reference_velocity.delta)/size_block)
 
 # Split joints (one joint info per column)
@@ -149,7 +222,7 @@ errorstd = np.absolute(referencestd + odometrystd)
 ## PLOT THE VALUES     ##
 #########################
 matplotlib.rcParams.update({'font.size': 30, 'font.weight': 'bold'})
-fig = plt.figure(1)
+fig = plt.figure(2)
 ax = fig.add_subplot(111)
 plt.rc('text', usetex=False)# activate latex text rendering
 
@@ -168,7 +241,7 @@ ax.plot(time, odometry[:,0], 'b-', label=u'Odometry', lw=2)
 ax.plot(time, reference[:,0], 'g-', label=u'Reference', lw=2)
 
 plt.xlabel(r'Time [$s$]')
-plt.ylabel(r'Angle [${}^\circ$]')
+plt.ylabel(r'Velocity[$m/s$]')
 plt.grid(True)
 plt.legend(prop={'size':25}, loc=1)
 plt.show(block=False)
@@ -236,10 +309,11 @@ plt.show(block=False)
 #########################
 
 # GP Multidimensional Input
-X = np.column_stack((joints, inertia[:,0:2], inertia[:,3:6], orient))
+length = min (joints.shape[0], inertia.shape[0], orient.shape[0], error.shape[0])
+X = np.column_stack((joints[0:length,:], inertia[0:length,0:2], inertia[0:length,3:6], orient[0:length, :]))
 
 # GP Multidimensional Output
-sigma = np.absolute(error) * np.ones(error.shape)
+sigma = np.absolute(error[0:length,:]) * np.ones(shape=(length,error.shape[1]))
 Y =  np.column_stack((sigma))
 Y = np.column_stack(Y)
 
@@ -347,6 +421,10 @@ joints = np.column_stack((
                         robot_joints.getSpeed("mr_translation"),
                         robot_joints.getSpeed("rl_translation"),
                         robot_joints.getSpeed("rr_translation"),
+                        robot_joints.getSpeed("fl_steer"),
+                        robot_joints.getSpeed("fr_steer"),
+                        robot_joints.getSpeed("rl_steer"),
+                        robot_joints.getSpeed("rr_steer"),
                         robot_joints.getPosition("fl_steer"),
                         robot_joints.getPosition("fr_steer"),
                         robot_joints.getPosition("rl_steer"),
@@ -378,6 +456,34 @@ reference = np.column_stack((reference_velocity.getAxis(0), reference_velocity.g
 
 odometry = np.column_stack((odometry_velocity.getAxis(0), odometry_velocity.getAxis(1), odometry_velocity.getAxis(2)))
 
+########################
+## CONVOLUTE FILTER   ##
+########################
+
+# Filter joints (one joint info per column)
+for i in range(0,joints.shape[1]):
+    joints[:,i] = np.convolve(joints[:,i], window, mode='same')
+
+
+# Filter inertia (one axis info per column)
+for i in range(0,inertia.shape[1]):
+    inertia[:,i] = np.convolve(inertia[:,i], window, mode='same')
+
+# Filter orientation (one axis info per column)
+for i in range(0,orient.shape[1]):
+    orient[:,i] = np.convolve(orient[:,i], window, mode='same')
+
+# Filter reference (one axis info per column)
+for i in range(0,reference.shape[1]):
+    reference[:,i] = np.convolve(reference[:,i], window, mode='same')
+
+# Filter odometry (one axis info per column)
+for i in range(0,odometry.shape[1]):
+    odometry[:,i] = np.convolve(odometry[:,i], window, mode='same')
+
+length = min (reference.shape[0], odometry.shape[0])
+error = np.absolute(reference[0:length,:] - odometry[0:length,:])
+
 ######################
 # Split joints (one joint info per column)
 joints, jointstd = data.input_reduction(joints, number_blocks)
@@ -399,7 +505,8 @@ error = np.absolute(reference - odometry)
 
 ######################
 # GP Multidimensional vector
-Xp = np.column_stack((joints, inertia[:,0:2], inertia[:,3:6], orient))
+length = min (joints.shape[0], inertia.shape[0], orient.shape[0], error.shape[0])
+Xp = np.column_stack((joints[0:length,:], inertia[0:length,0:2], inertia[0:length,3:6], orient[0:length, :]))
 
 
 ###################
@@ -432,8 +539,10 @@ time = reference_velocity.time
 time, timestd = data.input_reduction(time, number_blocks)
 xvelocity = reference[:,0]
 ax.scatter(time, xvelocity, marker='D', label="Reference velocity", color=[1.0,0.0,0.0], s=80)
-ax.plot(time, xvelocity, marker='D', linestyle='--', label="Reduced Reference", color=[1.0,0.0,0.0], lw=2)
+ax.plot(time, xvelocity, marker='D', linestyle='--', color=[1.0,0.0,0.0], lw=2)
 
+time = odometry_velocity.time
+time, timestd = data.input_reduction(time, number_blocks)
 ax.plot(time, error[:,0], marker='o', linestyle='-', label="Ground truth error",
         color=color_value, lw=2)
 
@@ -445,7 +554,7 @@ plt.show(block=False)
 
 
 ####### GP PREDICTION ####################
-npts=10000
+npts=1312
 time = odometry_velocity.time
 time, timestd = data.input_reduction(time, number_blocks)
 ti = np.linspace(min(time), max(time), npts)
@@ -589,5 +698,12 @@ plt.ylabel(r'X [$m/s$]', fontsize=35, fontweight='bold')
 plt.grid(True)
 ax.legend(loc=1, prop={'size':30})
 plt.show(block=False)
+
+####################################################################################################################################################################################
+# SAVE WORKSPACE
+####################################################################################################################################################################################
+
+#data.save_object(m, r'./data/gaussian_processes/gpy_uncertainty_model_xyz_velocities.data')
+#otro = data.open_object('./data/gpy_model.out')
 
 
