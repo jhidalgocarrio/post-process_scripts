@@ -171,6 +171,14 @@ imu_gyro = imu_gyro[training_mask]
 joints_position = joints_position[training_mask]
 joints_speed = joints_speed[training_mask]
 
+reference_velocity = reference_velocity[training_mask]
+odometry_velocity = odometry_velocity[training_mask]
+imu_orient = imu_orient[training_mask]
+imu_acc = imu_acc[training_mask]
+imu_gyro = imu_gyro[training_mask]
+joints_position = joints_position[training_mask]
+joints_speed = joints_speed[training_mask]
+
 ##########################################################################
 # GAUSSIAN PROCESS X INPUT VECTOR
 ##########################################################################
@@ -219,7 +227,7 @@ X = np.column_stack((X_orientation, X_joints_position, X_joints_speed, X_acc,
     X_gyro))
 
 ##########################################################################
-# GAUSSIAN PROCESS X OUTPUT VECTOR
+# GAUSSIAN PROCESS Y OUTPUT VECTOR
 ##########################################################################
 Y = np.column_stack((odometry_velocity.error_x.as_matrix(),
                 odometry_velocity.error_y.as_matrix(),
@@ -335,16 +343,40 @@ imu_gyro = imu_gyro.resample(resampling_time)
 joints_position = joints_position.resample(resampling_time)
 joints_speed = joints_speed.resample(resampling_time)
 
-#Compute the error
+#Compute the error in odometry
 odometry_velocity['error_x'] = pandas.Series (fabs(odometry_velocity.x - reference_velocity.x))
 odometry_velocity['error_y'] = pandas.Series (fabs(odometry_velocity.y - reference_velocity.y))
 odometry_velocity['error_z'] = pandas.Series (fabs(odometry_velocity.z - reference_velocity.z))
+
+#Compute the error in reference
+reference_velocity['error_x'] = pandas.Series (fabs(reference_velocity.x - odometry_velocity.x))
+reference_velocity['error_y'] = pandas.Series (fabs(reference_velocity.y - odometry_velocity.y))
+reference_velocity['error_z'] = pandas.Series (fabs(reference_velocity.z - odometry_velocity.z))
 
 ##########################################################################
 # ELIMINATE NULL VALUES
 ##########################################################################
 test_mask = pandas.notnull(odometry_velocity.error_x) & pandas.notnull(odometry_velocity.error_y) & pandas.notnull(odometry_velocity.error_z)
 
+# Equalize the length of data
+reference_velocity = reference_velocity[0:test_mask.shape[0]]
+odometry_velocity = odometry_velocity[0:test_mask.shape[0]]
+imu_orient = imu_orient[0:test_mask.shape[0]]
+imu_acc = imu_acc[0:test_mask.shape[0]]
+imu_gyro = imu_gyro[0:test_mask.shape[0]]
+joints_position = joints_position[0:test_mask.shape[0]]
+joints_speed = joints_speed[0:test_mask.shape[0]]
+
+# Sync index with odometry
+reference_velocity.index = test_mask.index
+odometry_velocity.index = test_mask.index
+imu_orient.index = test_mask.index
+imu_acc.index = test_mask.index
+imu_gyro.index = test_mask.index
+joints_position.index = test_mask.index
+joints_speed.index = test_mask.index
+
+# Apply the mask
 reference_velocity = reference_velocity[test_mask]
 odometry_velocity = odometry_velocity[test_mask]
 imu_orient = imu_orient[test_mask]
@@ -352,7 +384,6 @@ imu_acc = imu_acc[test_mask]
 imu_gyro = imu_gyro[test_mask]
 joints_position = joints_position[test_mask]
 joints_speed = joints_speed[test_mask]
-
 
 ##########################################################################
 # GAUSSIAN PROCESS X INPUT VECTOR
