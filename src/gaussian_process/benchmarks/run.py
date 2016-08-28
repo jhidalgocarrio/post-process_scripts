@@ -3,7 +3,7 @@
 
 from __future__ import print_function
 from evaluation import RMSE
-from methods import GP_RBF, SVIGP_RBF, SparseGP_RBF
+from methods import GP_RBF, SVIGP_RBF, SparseGP_RBF, GP_MAT32, SparseGP_MAT32
 from tasks import ExoTerOdometryResiduals
 from outputs import ScreenOutput, CSVOutput, H5Output
 from figures import ExoTerFigures
@@ -25,14 +25,16 @@ outpath = '.'
 prjname = 'exoter_odometry_residual_regression'
 config = {
           'evaluations':[RMSE],
-          'methods':[GP_RBF, SparseGP_RBF],
+          'methods':[GP_RBF, SparseGP_RBF, GP_MAT32, SparseGP_MAT32],
           'tasks':[ExoTerOdometryResiduals],
-          'sampling_time':['10s'],
-          'outputs': [ScreenOutput(), CSVOutput(outpath, prjname)]
+          'train_sampling_time':['500ms', '1s', '2s', '5s'],
+          'test_sampling_time':['500ms', '1s', '2s', '5s'],
+          'outputs': [ScreenOutput()]
+          #'outputs': [ScreenOutput(), CSVOutput(outpath, prjname)]
           }
 
 if __name__=='__main__':
-    results = np.zeros((len(config['tasks']), len(config['methods']), len(config['evaluations'])+1, len(config['sampling_time'])))
+    results = np.zeros((len(config['tasks']), len(config['methods']), len(config['evaluations'])+1, len(config['train_sampling_time']), len(config['test_sampling_time'])))
 
     fig_num = 0
 
@@ -46,31 +48,35 @@ if __name__=='__main__':
             method = config['methods'][method_i]
             print(bcolors.WARNING + 'With the method '+method.name + bcolors.ENDC)
 
-            for rt in range(len(config['sampling_time'])):
-                stime = config['sampling_time'][rt]
-                print('Re-sampling time '+stime)
-                train = dataset.get_training_data(stime)
-                test = dataset.get_test_data(stime)
+            for train_t in range(len(config['train_sampling_time'])):
+                train_time = config['train_sampling_time'][train_t]
+                print(bcolors.BOLD + 'Train sampling time: '+ bcolors.ENDC + bcolors.WARNING + train_time + bcolors.ENDC)
+                train = dataset.get_training_data(train_time)
 
-                m = method()
-                t_st = time.time()
-                m.fit(train)
-                pred_mean = m.predict(test[0])
-                t_pd = time.time() - t_st
+                for test_t in range(len(config['test_sampling_time'])):
+                    test_time = config['test_sampling_time'][test_t]
+                    print(bcolors.BOLD + 'Test sampling time: '+ bcolors.ENDC + bcolors.WARNING + test_time + bcolors.ENDC)
+                    test = dataset.get_test_data(test_time)
 
-                print (bcolors.OKGREEN + "Prediction shape" + str(pred_mean.shape) + bcolors.ENDC)
+                    m = method()
+                    t_st = time.time()
+                    m.fit(train)
+                    pred_mean = m.predict(test[0])
+                    t_pd = time.time() - t_st
 
-                for ei in range(len(config['evaluations'])):
-                    evalu = config['evaluations'][ei]()
-                    print(bcolors.OKBLUE + 'With evaluation method '+evalu.name + bcolors.ENDC)
-                    results[task_i, method_i, ei, rt] = evalu.evaluate(test[1], pred_mean)
-                results[task_i, method_i, -1, rt] = t_pd
+                    print (bcolors.OKGREEN + "Prediction shape" + str(pred_mean.shape) + bcolors.ENDC)
 
-                figure = ExoTerFigures()
-                figure.output(fig_num, dataset, m, pred_mean, 0, stime)
-                fig_num = fig_num + 1
+                    for ei in range(len(config['evaluations'])):
+                        evalu = config['evaluations'][ei]()
+                        print(bcolors.OKBLUE + 'With evaluation method '+evalu.name + bcolors.ENDC)
+                        results[task_i, method_i, ei, train_t, test_t] = evalu.evaluate(test[1], pred_mean)
+                    results[task_i, method_i, -1, train_t, test_t] = t_pd
 
-                print('',end='')
-            print()
+                    figure = ExoTerFigures()
+                    figure.output(fig_num, dataset, m, pred_mean, 0, train_time, test_time)
+                    fig_num = fig_num + 1
+
+                    print('',end='')
+                print()
 
     [out.output(config, results) for out in config['outputs']]
