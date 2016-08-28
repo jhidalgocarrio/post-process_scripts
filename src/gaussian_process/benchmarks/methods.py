@@ -61,7 +61,20 @@ class GP_RBF(RegressionMethod):
     
     def _predict(self, test_data):
         return self.model.predict(test_data)[0]
+
+class GP_MAT32(RegressionMethod):
+    name = 'GP_MAT32'
     
+    def _fit(self, train_data):
+        inputs, labels = train_data
+        self.model = GPy.models.GPRegression(inputs, labels,kernel=GPy.kern.Matern32(inputs.shape[-1],ARD=True) +GPy.kern.Linear(inputs.shape[1], ARD=True)   )
+        self.model.likelihood.variance[:] = labels.var()*0.01
+        self.model.optimize(messages=True)
+        return True
+    
+    def _predict(self, test_data):
+        return self.model.predict(test_data)[0]
+ 
 class SparseGP_RBF(RegressionMethod):
     name = 'SparseGP_RBF'
     
@@ -74,7 +87,25 @@ class SparseGP_RBF(RegressionMethod):
     
     def _predict(self, test_data):
         return self.model.predict(test_data)[0]
+
+class SparseGP_MAT32(RegressionMethod):
+    name = 'SparseGP_MAT32'
     
+    def _fit(self, train_data):
+        inputs, labels = train_data
+        self.model = GPy.models.SparseGPRegression(inputs, labels,kernel=GPy.kern.Matern32(inputs.shape[-1],ARD=True) +GPy.kern.Linear(inputs.shape[1], ARD=True) ,num_inducing=100)
+        self.model.likelihood.variance[:] = labels.var()*0.01
+        self.model.optimize(messages=True)
+        return True
+    
+    def _predict(self, test_data):
+        return self.model.predict(test_data)[0]
+
+
+
+
+
+
 # class MRD_RBF(RegressionMethod):
 #     name = 'MRD_RBF'
 #     
