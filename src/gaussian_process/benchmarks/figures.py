@@ -19,12 +19,12 @@ class Figures(object):
         return None
 
 class ExoTerFigures(Figures):
-    def output(self, fig_num, dataset, method, prediction_mean, prediction_var, sampling_time):
+    def output(self, fig_num, dataset, method, prediction_mean, prediction_var, train_sampling_time, test_sampling_time):
 
         #######################################
         # TEST DATA
         #######################################
-        fig_time = dataset.test_odometry_velocity.resample(sampling_time).index.to_datetime()[dataset.testing_mask]
+        fig_time = dataset.test_odometry_velocity.resample(test_sampling_time).index.to_datetime()[dataset.testing_mask]
         #######################################
 
         matplotlib.rcParams.update({'font.size': 15, 'font.weight': 'bold'})
@@ -69,7 +69,7 @@ class ExoTerFigures(Figures):
         plt.ylabel(r'X [$m/s$]', fontsize=35, fontweight='bold')
         plt.grid(True)
         ax.legend(loc=1, prop={'size':15})
-        title_str = "ExoTerOdometryResiduals:_" + method.name + "_"+sampling_time
+        title_str = "ExoTerOdometryResiduals:_" + method.name + "_train_at_"+train_sampling_time+"_test_at_"+test_sampling_time
         plt.title(title_str)
         #plt.show(block=False)
 
