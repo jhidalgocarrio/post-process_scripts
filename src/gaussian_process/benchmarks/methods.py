@@ -4,6 +4,7 @@
 import abc
 import numpy as np
 import GPy
+import pickle
 
 class RegressionMethod(object):
     __metaclass__ = abc.ABCMeta
@@ -48,6 +49,12 @@ class RegressionMethod(object):
     def _predict(self, test_data):
         """Predict on test data"""
         return None
+
+    def save_model(self, filepath, mode='wb'):
+        with open(filepath, mode) as output:
+            pickle.dump(self.model, output, pickle.HIGHEST_PROTOCOL)
+        return None
+
 
 class GP_RBF(RegressionMethod):
     name = 'GP_RBF'
