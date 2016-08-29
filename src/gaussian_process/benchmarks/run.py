@@ -27,8 +27,8 @@ config = {
           'evaluations':[RMSE],
           'methods':[GP_RBF, SparseGP_RBF, GP_MAT32, SparseGP_MAT32],
           'tasks':[ExoTerOdometryResiduals],
-          'train_sampling_time':['1s', '2s', '5s'],
-          'test_sampling_time':['1s', '2s', '5s'],
+          'train_sampling_time':['10s'],
+          'test_sampling_time':['10s'],
           'outputs': [ScreenOutput()]
           #'outputs': [ScreenOutput(), CSVOutput(outpath, prjname)]
           }
@@ -59,24 +59,29 @@ if __name__=='__main__':
                 m.fit(train)
                 t_pd = time.time() - t_st
 
+                pred_train_mean = m.predict(train[0])
+
                 for test_t in range(len(config['test_sampling_time'])):
                     test_time = config['test_sampling_time'][test_t]
                     print(bcolors.BOLD + 'Test sampling time: '+ bcolors.ENDC + bcolors.WARNING + test_time + bcolors.ENDC)
 
                     test = dataset.get_test_data(test_time)
-                    pred_mean = m.predict(test[0])
-
-                    print (bcolors.OKGREEN + "Prediction shape" + str(pred_mean.shape) + bcolors.ENDC)
+                    pred_test_mean = m.predict(test[0])
 
                     for ei in range(len(config['evaluations'])):
                         evalu = config['evaluations'][ei]()
-                        print(bcolors.OKBLUE + 'With evaluation method '+evalu.name + bcolors.ENDC)
+                        eval_test = evalu.evaluate(test[1], pred_test_mean)
+                        eval_train = evalu.evaluate(train[1], pred_train_mean)
 
-                        results[task_i, method_i, ei, train_t, test_t] = evalu.evaluate(test[1], pred_mean)
+                        print(bcolors.OKBLUE + 'With evaluation method '+evalu.name + bcolors.ENDC, end=' ')
+                        print('ERROR Train ['+ bcolors.FAIL + str(eval_train.mean()) + bcolors.ENDC + ']', end=' ')
+                        print('ERROR Test ['+ bcolors.FAIL + str(eval_test.mean()) + bcolors.ENDC + ']')
+
+                        results[task_i, method_i, ei, train_t, test_t] = eval_test
 
                     results[task_i, method_i, -1, train_t, test_t] = t_pd
                     figure = ExoTerFigures()
-                    figure.output(fig_num, dataset, m, pred_mean, 0, train_time, test_time)
+                    figure.output(fig_num, dataset, m, pred_test_mean, 0, train_time, test_time)
                     fig_num = fig_num + 1
 
                     print('',end='')

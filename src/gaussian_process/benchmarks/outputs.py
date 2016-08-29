@@ -5,6 +5,7 @@ from __future__ import print_function
 import abc
 import os
 import numpy as np
+import datetime
 
 class bcolors:
     HEADER = '\033[95m'
@@ -27,7 +28,8 @@ class Output(object):
 class ScreenOutput(Output):
 
     def output(self, config, results):
-        print(bcolors.BOLD + '='*20+' REPORT '+'='*20 + bcolors.ENDC)
+        now = datetime.datetime.now()
+        print(bcolors.BOLD + '='*20+' REPORT ['+now.strftime("%d.%m.%Y %H:%M")+'] '+'='*20 + bcolors.ENDC)
 
         for task_i in range(len(config['tasks'])):
             print(bcolors.WARNING + config['tasks'][task_i].name + bcolors.ENDC)
