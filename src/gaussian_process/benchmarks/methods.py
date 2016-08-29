@@ -34,10 +34,10 @@ class RegressionMethod(object):
     def predict(self, test_data):
         if self.preprocess:
             test_data = self._preprocess(test_data, False)
-        labels = self._predict(test_data)
+        [labels, var] = self._predict(test_data)
         if self.preprocess:
             labels = self._reverse_trans_labels(labels)
-        return labels
+        return [labels, var]
 
     @abc.abstractmethod
     def _fit(self, train_data):
@@ -60,7 +60,7 @@ class GP_RBF(RegressionMethod):
         return True
 
     def _predict(self, test_data):
-        return self.model.predict(test_data)[0]
+        return self.model.predict(test_data)
 
 class GP_MAT32(RegressionMethod):
     name = 'GP_MAT32'
@@ -73,7 +73,7 @@ class GP_MAT32(RegressionMethod):
         return True
 
     def _predict(self, test_data):
-        return self.model.predict(test_data)[0]
+        return self.model.predict(test_data)
 
 class GP_MAT52(RegressionMethod):
     name = 'GP_MAT52'
@@ -86,7 +86,7 @@ class GP_MAT52(RegressionMethod):
         return True
 
     def _predict(self, test_data):
-        return self.model.predict(test_data)[0]
+        return self.model.predict(test_data)
 
 
 class SparseGP_RBF(RegressionMethod):
@@ -100,7 +100,7 @@ class SparseGP_RBF(RegressionMethod):
         return True
 
     def _predict(self, test_data):
-        return self.model.predict(test_data)[0]
+        return self.model.predict(test_data)
 
 class SparseGP_MAT32(RegressionMethod):
     name = 'SparseGP_MAT32'
@@ -113,7 +113,7 @@ class SparseGP_MAT32(RegressionMethod):
         return True
 
     def _predict(self, test_data):
-        return self.model.predict(test_data)[0]
+        return self.model.predict(test_data)
 
 class SparseGP_MAT52(RegressionMethod):
     name = 'SparseGP_MAT52'
@@ -126,7 +126,7 @@ class SparseGP_MAT52(RegressionMethod):
         return True
 
     def _predict(self, test_data):
-        return self.model.predict(test_data)[0]
+        return self.model.predict(test_data)
 
 
 
@@ -161,4 +161,4 @@ class SVIGP_RBF(RegressionMethod):
         return True
 
     def _predict(self, test_data):
-        return self.model.predict(test_data)[0]    
+        return self.model.predict(test_data)

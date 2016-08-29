@@ -59,14 +59,17 @@ if __name__=='__main__':
                 m.fit(train)
                 t_pd = time.time() - t_st
 
-                pred_train_mean = m.predict(train[0])
+                [pred_train_mean, pred_train_var] = m.predict(train[0])
 
                 for test_t in range(len(config['test_sampling_time'])):
                     test_time = config['test_sampling_time'][test_t]
-                    print(bcolors.BOLD + 'Test sampling time: '+ bcolors.ENDC + bcolors.WARNING + test_time + bcolors.ENDC)
 
                     test = dataset.get_test_data(test_time)
-                    pred_test_mean = m.predict(test[0])
+                    [pred_test_mean, pred_test_var] = m.predict(test[0])
+
+                    print(bcolors.BOLD + 'Test sampling time: '+ bcolors.ENDC + bcolors.WARNING + test_time + bcolors.ENDC, end=' ')
+                    print('VAR Train ['+ bcolors.BOLD + str(pred_train_var.mean()) + bcolors.ENDC + ']', end=' ')
+                    print('VAR Test ['+ bcolors.BOLD + str(pred_test_var.mean()) + bcolors.ENDC + ']')
 
                     for ei in range(len(config['evaluations'])):
                         evalu = config['evaluations'][ei]()
