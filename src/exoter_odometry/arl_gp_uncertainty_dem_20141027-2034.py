@@ -1,3 +1,4 @@
+#! /usr/bin/env python
 #path ='/home/javi/exoter/development/data/20141024_planetary_lab/20141027-2034_dem_coloring_with_gp_with_sam/'
 path='/home/javi/exoter/development/data/20141024_planetary_lab/20141027-2034_threed_odometry_with_gp/'
 #######################################
@@ -31,13 +32,44 @@ from plyfile import PlyData, PlyElement
 import scipy
 from numpy import linalg as la
 
-#ExoTeR Odometry
-odometry = data.ThreeData()
-odometry.readData(path_odometry_file, cov=True)
+import pandas as pandas
+import datetime
+pandas.set_option('display.mpl_style', 'default') # Make the graphs a bit prettier
+def dateparse (time_in_microsecs):
+    return datetime.datetime.fromtimestamp(float(time_in_microsecs * 1e-06))
 
-#Vicon Pose
-reference = data.ThreeData()
-reference.readData(path_reference_file, cov=True)
+##########################################################################
+# READ THE VALUES IN PANDAS
+##########################################################################
+
+#ExoTeR Odometry
+odometry = pandas.read_csv(path_odometry_file, sep=" ", parse_dates=True,
+    date_parser=dateparse , index_col='time',
+    names=['time', 'x', 'y', 'z', 'cov_xx', 'cov_xy', 'cov_xz', 'cov_yx', 'cov_yy', 'cov_yz',
+        'cov_zx', 'cov_zy', 'cov_zz'], header=None)
+
+# Odometry Robot Velocity
+gp_odometry_velocity = data.ThreeData()
+gp_odometry_velocity.readData(path_gp_odo_velocity_file, cov=True)
+gp_odometry_velocity = pandas.read_csv(path_gp_odo_velocity_file, sep=" ", parse_dates=True,
+    date_parser=dateparse , index_col='time',
+    names=['time', 'x', 'y', 'z', 'cov_xx', 'cov_xy', 'cov_xz', 'cov_yx', 'cov_yy', 'cov_yz',
+        'cov_zx', 'cov_zy', 'cov_zz'], header=None)
+
+#Reference Pose
+reference = pandas.read_csv(path_reference_file, sep=" ", parse_dates=True,
+    date_parser=dateparse , index_col='time',
+    names=['time', 'x', 'y', 'z', 'cov_xx', 'cov_xy', 'cov_xz', 'cov_yx', 'cov_yy', 'cov_yz',
+        'cov_zx', 'cov_zy', 'cov_zz'], header=None)
+
+
+#Reference Velocity
+reference_velocity = pandas.read_csv(path_reference_velocity_file, sep=" ", parse_dates=True,
+    date_parser=dateparse , index_col='time',
+    names=['time', 'x', 'y', 'z', 'cov_xx', 'cov_xy', 'cov_xz', 'cov_yx', 'cov_yy', 'cov_yz',
+        'cov_zx', 'cov_zy', 'cov_zz'], header=None)
+
+
 
 #World to Navigation Pose
 navigation_orient = data.QuaternionData()
@@ -45,31 +77,34 @@ navigation_orient.readData(path_navigation_orientation_file, cov=False)
 navigation_position = data.ThreeData()
 navigation_position.readData(path_navigation_position_file, cov=False)
 
-# Odometry Robot Velocity
-gp_odometry_velocity = data.ThreeData()
-gp_odometry_velocity.readData(path_gp_odo_velocity_file, cov=True)
 
 ########################
 ### REMOVE OUTLIERS  ###
 ########################
-temindex = np.where(np.isnan(reference.data[:,0]))
-temindex = np.asarray(temindex)
+reference_velocity = reference_velocity.drop(reference_velocity[fabs(reference_velocity.x) > 0.15].index)
+gp_odometry_velocity =gp_odometry_velocity.drop(gp_odometry_velocity[fabs(gp_odometry_velocity.x) > 0.15].index)
 
-odometry.delete(temindex)
-reference.delete(temindex)
-gp_odometry_velocity.delete(temindex)
 
-################################
-### COMPUTE COV EIGENVALUES  ###
-################################
-odometry.covSymmetry()
-odometry.eigenValues()
-reference.covSymmetry()
-reference.eigenValues()
-gp_odometry_velocity.covSymmetry()
-gp_odometry_velocity.eigenValues()
+########################
+## CONVOLUTE FILTER   ##
+########################
+#delta = (reference_velocity.index[14] - reference_velocity.index[13])
+#sampling_frequency = 1.0/delta.total_seconds()
+#size_block = 1 * sampling_frequency
+#window = np.ones(size_block)
+#window /= sum(window)
+#
+#reference_velocity.x = np.convolve(reference_velocity.x, window, mode='same')
+#reference_velocity.y = np.convolve(reference_velocity.y, window, mode='same')
+#reference_velocity.z = np.convolve(reference_velocity.z, window, mode='same')
+#
+#gp_odometry_velocity.x = np.convolve(gp_odometry_velocity.x, window, mode='same')
+#gp_odometry_velocity.y = np.convolve(gp_odometry_velocity.y, window, mode='same')
+#gp_odometry_velocity.z = np.convolve(gp_odometry_velocity.z, window, mode='same')
 
-# Terrain DEM
+########################
+# Load Terrain DEM
+########################
 plydata = PlyData.read(open(esa_arl_dem_file))
 
 vertex = plydata['vertex'].data
@@ -84,11 +119,31 @@ yi = np.linspace(min(py), max(py), npts)
 # grid the data.
 zi = griddata(px, py, pz, xi, yi, interp='linear')
 
+#################
+## RE-SAMPLE   ##
+#################
+resampling_time = '1s'
+reference = reference.resample(resampling_time)
+reference_velocity = reference_velocity.resample(resampling_time)
+odometry = odometry.resample(resampling_time)
+gp_odometry_velocity = gp_odometry_velocity.resample(resampling_time)
+
+########################################################
+#rotate and translate the trajectory wrt the world frame
+########################################################
+position = np.column_stack((reference.x.values, reference.y.values,  reference.z.values ))
+position[:] = [navigation_orient.data[0].rot(x) +  navigation_position.data[0] for x in position]
+
+########################
+## GET THE ERROR
+########################
+variance = np.column_stack((gp_odometry_velocity.cov_xx, gp_odometry_velocity.cov_yy, gp_odometry_velocity.cov_zz))
+
 ############
 ### PLOT ###
 ############
 matplotlib.rcParams.update({'font.size': 30, 'font.weight': 'bold'})
-fig = plt.figure(1)
+fig = plt.figure(3)
 ax = fig.add_subplot(111)
 
 # Display the DEM
@@ -99,13 +154,6 @@ CS = plt.contourf(xi, yi, zi, 15, cmap=plt.cm.gray, vmax=abs(zi).max(), vmin=-ab
 plt.xlim(min(px), max(xi))
 plt.ylim(min(py), max(yi))
 
-# Display Odometry trajectory
-
-
-# rotate and translate the trajectory wrt the world frame
-position = np.column_stack((reference.getAxis(0)[0::5], reference.getAxis(1)[0::5],  reference.getAxis(2)[0::5]))
-position[:] = [navigation_orient.data[0].rot(x) +  navigation_position.data[0] for x in position]
-variance = np.column_stack((gp_odometry_velocity.var[:,0][0::5], gp_odometry_velocity.var[:,1][0::5], gp_odometry_velocity.var[:,2][0::5]))
 
 # Display Ground Truth trajectory
 x = position[:,0]
@@ -117,7 +165,7 @@ segments = np.concatenate([points[:-1], points[1:]], axis=1)
 from matplotlib.collections import LineCollection
 from matplotlib.colors import ListedColormap, BoundaryNorm
 from matplotlib.colors import LinearSegmentedColormap as lscm
-cmap = plt.get_cmap('Reds')
+cmap = plt.get_cmap('Greens')
 #cmap = lscm.from_list('temp', colors)
 norm = plt.Normalize(min(sd), max(sd))
 lc = LineCollection(segments, cmap=cmap, norm=norm)
@@ -130,7 +178,7 @@ plt.gca().add_collection(lc)
 #color bar of the covariamve
 #cbaxes = fig.add_axes([0.8, 0.1, 0.03, 0.8]) 
 h_cbar = plt.colorbar(lc)#, orientation='horizontal')
-h_cbar.ax.set_ylabel(r' measurement residual [$m/s$]')
+h_cbar.ax.set_ylabel(r' ground truth residual [$m/s$]')
 
 # Color bar of the dem
 cbar = plt.colorbar()  # draw colorbar
@@ -168,5 +216,4 @@ plt.ylabel(r'Y [$m$]', fontsize=35, fontweight='bold')
 plt.grid(True)
 #ax.legend(handles=[exoter], loc=1, prop={'size':30})
 plt.show(block=False)
-
 
