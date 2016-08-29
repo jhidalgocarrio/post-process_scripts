@@ -3,7 +3,7 @@
 
 from __future__ import print_function
 from evaluation import RMSE
-from methods import GP_RBF, SVIGP_RBF, SparseGP_RBF, GP_MAT32, SparseGP_MAT32
+from methods import GP_RBF, SVIGP_RBF, SparseGP_RBF, GP_MAT32, SparseGP_MAT32, GP_MAT52, SparseGP_MAT52
 from tasks import ExoTerOdometryResiduals
 from outputs import ScreenOutput, CSVOutput, H5Output
 from figures import ExoTerFigures
@@ -25,10 +25,10 @@ outpath = '.'
 prjname = 'exoter_odometry_residual_regression'
 config = {
           'evaluations':[RMSE],
-          'methods':[GP_RBF, SparseGP_RBF, GP_MAT32, SparseGP_MAT32],
+          'methods':[GP_RBF, SparseGP_RBF, GP_MAT32, SparseGP_MAT32, GP_MAT52, SparseGP_MAT52],
           'tasks':[ExoTerOdometryResiduals],
-          'train_sampling_time':['10s'],
-          'test_sampling_time':['10s'],
+          'train_sampling_time':['1s'],
+          'test_sampling_time':['80ms','1s'],
           'outputs': [ScreenOutput()]
           #'outputs': [ScreenOutput(), CSVOutput(outpath, prjname)]
           }
