@@ -21,13 +21,13 @@ class bcolors:
     UNDERLINE = '\033[4m'
 
 
-outpath = '.'
+outpath = './data/gaussian_processes'
 prjname = 'exoter_odometry_residual_regression'
 config = {
           'evaluations':[RMSE],
-          'methods':[GP_RBF, SparseGP_RBF, GP_MAT32, SparseGP_MAT32, GP_MAT52, SparseGP_MAT52],
+          'methods':[SparseGP_RBF, SparseGP_MAT32, SparseGP_MAT52],
           'tasks':[ExoTerOdometryResiduals],
-          'train_sampling_time':['1s'],
+          'train_sampling_time':['800ms', '1s'],
           'test_sampling_time':['80ms','1s'],
           'outputs': [ScreenOutput()]
           #'outputs': [ScreenOutput(), CSVOutput(outpath, prjname)]
@@ -76,7 +76,7 @@ if __name__=='__main__':
                         eval_test = evalu.evaluate(test[1], pred_test_mean)
                         eval_train = evalu.evaluate(train[1], pred_train_mean)
 
-                        print(bcolors.OKBLUE + 'With evaluation method '+evalu.name + bcolors.ENDC, end=' ')
+                        print(bcolors.OKBLUE + 'With evaluation method '+evalu.name + bcolors.ENDC + '[mean]', end=' ')
                         print('ERROR Train ['+ bcolors.FAIL + str(eval_train.mean()) + bcolors.ENDC + ']', end=' ')
                         print('ERROR Test ['+ bcolors.FAIL + str(eval_test.mean()) + bcolors.ENDC + ']')
 
@@ -88,6 +88,11 @@ if __name__=='__main__':
                     fig_num = fig_num + 1
 
                     print('',end='')
+                print(bcolors.BOLD + 'Saving the model: '+ bcolors.ENDC, end='')
+                filename = outpath + '/'+ m.name + '_xyz_velocities__train_at_' + train_time + '.data'
+                m.save_model(filename)
+                print(bcolors.BOLD + '[OK]'+ bcolors.ENDC)
+
                 print()
 
     [out.output(config, results) for out in config['outputs']]
