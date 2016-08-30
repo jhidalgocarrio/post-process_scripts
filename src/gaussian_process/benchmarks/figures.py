@@ -72,7 +72,6 @@ class ExoTerFigures(Figures):
         title_str = "ExoTerOdometryResiduals:_" + method.name + "_train_at_"+train_sampling_time+"_test_at_"+test_sampling_time
         plt.title(title_str)
         #plt.show(block=False)
-
-        savefig(title_str+".png");
+        fig.savefig(title_str+".png", dpi=fig.dpi)
         return None
 
