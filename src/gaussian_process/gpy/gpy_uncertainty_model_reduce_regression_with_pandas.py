@@ -171,14 +171,6 @@ imu_gyro = imu_gyro[training_mask]
 joints_position = joints_position[training_mask]
 joints_speed = joints_speed[training_mask]
 
-reference_velocity = reference_velocity[training_mask]
-odometry_velocity = odometry_velocity[training_mask]
-imu_orient = imu_orient[training_mask]
-imu_acc = imu_acc[training_mask]
-imu_gyro = imu_gyro[training_mask]
-joints_position = joints_position[training_mask]
-joints_speed = joints_speed[training_mask]
-
 ##########################################################################
 # GAUSSIAN PROCESS X INPUT VECTOR
 ##########################################################################
@@ -484,7 +476,7 @@ plt.show(block=False)
 # SAVE WORKSPACE
 ####################################################################################################################################################################################
 
-data.save_object(m, r'./data/gaussian_processes/gpy_uncertainty_model_xyz_velocities_1s_sampling_time.data')
+#data.save_object(m, r'./data/gaussian_processes/gpy_uncertainty_model_xyz_velocities_1s_sampling_time.data')
 #otro = data.open_object('./data/gpy_model.out')
 
 
