@@ -25,13 +25,14 @@ outpath = './data/gaussian_processes'
 prjname = 'exoter_odometry_residual_regression'
 config = {
           'evaluations':[RMSE, MAE, MARE],
-          'methods':[GP_RBF, SparseGP_RBF, SparseGP_MAT32, SparseGP_MAT52],
+          'methods':[SparseGP_RBF], #, SparseGP_MAT32, SparseGP_MAT52],
           'tasks':[ExoTerOdometryResiduals],
-          'train_sampling_time':['1s'],
-          'test_sampling_time':['1s'],
+          'train_sampling_time':['5s'],
+          'test_sampling_time':['5s'],
           'outputs': [ScreenOutput()],
           #'outputs': [ScreenOutput(), CSVOutput(outpath, prjname)]
-          'save_model': True
+          'save_model': False,
+          'figures': True
           }
 
 if __name__=='__main__':
@@ -84,9 +85,15 @@ if __name__=='__main__':
                         results[task_i, method_i, ei, train_t, test_t] = eval_test
 
                     results[task_i, method_i, -1, train_t, test_t] = t_pd
-                    figure = ExoTerFigures()
-                    figure.output(fig_num, dataset, m, pred_test_mean, 0, train_time, test_time)
-                    fig_num = fig_num + 1
+
+                    if config['figures']:
+                        print(bcolors.BOLD + 'Plotting figures: '+ bcolors.ENDC, end='')
+                        figure = ExoTerFigures()
+                        figure.output(fig_num, dataset, m, pred_test_mean, 0, train_time, test_time)
+                        fig_num = fig_num + 1
+                        dataset.arl_dem_figure(fig_num, m.name, pred_test_mean, pred_test_var, train_time, test_time)
+                        fig_num = fig_num + 1
+                        print(bcolors.BOLD + '[OK]'+ bcolors.ENDC)
 
                     print('',end='')
 
