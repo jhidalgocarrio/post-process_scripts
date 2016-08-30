@@ -492,15 +492,9 @@ class ExoTerOdometryResiduals(RegressionTask):
         from numpy import linalg as la
         x = position[:,0]
         y = position[:,1]
-        print ('\npred_mean '+str(pred_mean.shape))
-        print ('pred_var '+str(pred_var.shape))
-        print ('max(pred_var) '+str(np.sqrt(pred_var).max()))
-        pred_std = pred_mean[:,0] + np.sqrt(pred_var[:,0])
-        print ('pred_std '+str(pred_std.shape))
-        print 'pred_std\n' + str(pred_std)
-        print ('max(pred_std) '+str(pred_std.max()))
-        #sd = la.norm(pred_std, axis=1)
-        sd = la.norm(pred_std)
+        pred_std = np.ndarray(shape=pred_var.shape)
+        pred_std[:,0] = pred_mean[:,0] + np.sqrt(pred_var[:,0])
+        sd = la.norm(pred_std, axis=1)
         points = np.array([x, y]).T.reshape(-1, 1, 2)
         segments = np.concatenate([points[:-1], points[1:]], axis=1)
 
@@ -520,7 +514,7 @@ class ExoTerOdometryResiduals(RegressionTask):
         #color bar of the covariamve
         #cbaxes = fig.add_axes([0.8, 0.1, 0.03, 0.8]) 
         h_cbar = plt.colorbar(lc)#, orientation='horizontal')
-        h_cbar.ax.set_ylabel(r' ground truth residual [$m/s$]')
+        h_cbar.ax.set_ylabel(r' gp odometry residual [$m/s$]')
 
         # Color bar of the dem
         cbar = plt.colorbar()  # draw colorbar
