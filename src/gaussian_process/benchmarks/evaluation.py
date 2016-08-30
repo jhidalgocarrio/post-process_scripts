@@ -6,7 +6,7 @@ import numpy as np
 
 class Evaluation(object):
     __metaclass__ = abc.ABCMeta
-    
+
     @abc.abstractmethod
     def evaluate(self, gt, pred):
         """Compute a scalar for access the performance"""
@@ -15,7 +15,21 @@ class Evaluation(object):
 class RMSE(Evaluation):
     "Rooted Mean Square Error"
     name = 'RMSE'
-    
+
     def evaluate(self, gt, pred):
         return np.sqrt(np.square(gt-pred).astype(np.float).mean())
-    
+
+class MAE(Evaluation):
+    "Mean Absolute Error"
+    name = 'MAE'
+
+    def evaluate(self, gt, pred):
+        return np.mean(np.abs(gt-pred).astype(np.float))
+
+class MARE(Evaluation):
+    "Mean Absolute Relative Error"
+    name = 'MARE'
+
+    def evaluate(self, gt, pred):
+        return np.mean(np.abs((gt-pred) / gt))
+
