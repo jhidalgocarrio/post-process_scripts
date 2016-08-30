@@ -43,7 +43,7 @@ class ScreenOutput(Output):
                         for train_ti in range(len(config['train_sampling_time'])):
                             m = results[task_i, method_i, ei, train_ti, test_ti].mean()
                             t = results[task_i, method_i, -1, train_ti, test_ti]
-                            outputs.append('%fcm [%fs]'%(m*100.0,t))
+                            outputs.append('%f [%fs]'%(m,t))
                         print('test_sampling: ' + config['test_sampling_time'][test_ti]+'\t', end='')
                         print('\t\t'.join(outputs))
                     print('\n')
@@ -66,7 +66,7 @@ class CSVOutput(Output):
                         for sti in range(len(config['sampling_time'])):
                             m = results[task_i, method_i, ei, sti].mean()
                             t = results[task_i, method_i, -1, sti]
-                            outputs.append('%fcm [%fs]'%(m*100.0,t))
+                            outputs.append('%f [%fs]'%(m,t))
                 f.write(','.join(outputs)+'\n')
                 f.close()
 
