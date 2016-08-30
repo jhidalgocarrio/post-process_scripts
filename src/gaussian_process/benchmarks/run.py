@@ -2,7 +2,7 @@
 # Licensed under the BSD 3-clause license (see LICENSE.txt)
 
 from __future__ import print_function
-from evaluation import RMSE
+from evaluation import RMSE, MAE, MARE
 from methods import GP_RBF, SVIGP_RBF, SparseGP_RBF, GP_MAT32, SparseGP_MAT32, GP_MAT52, SparseGP_MAT52
 from tasks import ExoTerOdometryResiduals
 from outputs import ScreenOutput, CSVOutput, H5Output
@@ -24,13 +24,14 @@ class bcolors:
 outpath = './data/gaussian_processes'
 prjname = 'exoter_odometry_residual_regression'
 config = {
-          'evaluations':[RMSE],
-          'methods':[SparseGP_RBF, SparseGP_MAT32, SparseGP_MAT52],
+          'evaluations':[RMSE, MAE, MARE],
+          'methods':[GP_RBF, SparseGP_RBF, SparseGP_MAT32, SparseGP_MAT52],
           'tasks':[ExoTerOdometryResiduals],
-          'train_sampling_time':['800ms', '1s'],
-          'test_sampling_time':['80ms','1s'],
-          'outputs': [ScreenOutput()]
+          'train_sampling_time':['1s'],
+          'test_sampling_time':['1s'],
+          'outputs': [ScreenOutput()],
           #'outputs': [ScreenOutput(), CSVOutput(outpath, prjname)]
+          'save_model': True
           }
 
 if __name__=='__main__':
@@ -88,10 +89,12 @@ if __name__=='__main__':
                     fig_num = fig_num + 1
 
                     print('',end='')
-                print(bcolors.BOLD + 'Saving the model: '+ bcolors.ENDC, end='')
-                filename = outpath + '/'+ m.name + '_xyz_velocities__train_at_' + train_time + '.data'
-                m.save_model(filename)
-                print(bcolors.BOLD + '[OK]'+ bcolors.ENDC)
+
+                if config['save_model']:
+                    print(bcolors.BOLD + 'Saving the model: '+ bcolors.ENDC, end='')
+                    filename = outpath + '/'+ m.name + '_xyz_velocities_train_at_' + train_time + '.data'
+                    m.save_model(filename)
+                    print(bcolors.BOLD + '[OK]'+ bcolors.ENDC)
 
                 print()
 
