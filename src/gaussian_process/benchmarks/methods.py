@@ -27,6 +27,9 @@ class RegressionMethod(object):
     def _reverse_trans_labels(self, labels):
         return labels*self.labels_std+self.labels_mean
 
+    def _reverse_trans_var(self, var):
+        return var*self.labels_std
+
     def fit(self, train_data):
         if self.preprocess:
             train_data = self._preprocess(train_data, True)
@@ -38,6 +41,7 @@ class RegressionMethod(object):
         [labels, var] = self._predict(test_data)
         if self.preprocess:
             labels = self._reverse_trans_labels(labels)
+            var = self._reverse_trans_var(var)
         return [labels, var]
 
     @abc.abstractmethod
@@ -88,6 +92,19 @@ class GP_MAT52(RegressionMethod):
     def _fit(self, train_data):
         inputs, labels = train_data
         self.model = GPy.models.GPRegression(inputs, labels,kernel=GPy.kern.Matern52(inputs.shape[-1],ARD=True) +GPy.kern.Linear(inputs.shape[1], ARD=True)   )
+        self.model.likelihood.variance[:] = labels.var()*0.01
+        self.model.optimize(messages=True)
+        return True
+
+    def _predict(self, test_data):
+        return self.model.predict(test_data)
+
+class SparseGP_RBF_NL(RegressionMethod):
+    name = 'SparseGP_RBF_NL'
+
+    def _fit(self, train_data):
+        inputs, labels = train_data
+        self.model = GPy.models.SparseGPRegression(inputs, labels,kernel=GPy.kern.RBF(inputs.shape[-1],ARD=True), num_inducing=100)
         self.model.likelihood.variance[:] = labels.var()*0.01
         self.model.optimize(messages=True)
         return True

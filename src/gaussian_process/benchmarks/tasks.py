@@ -492,9 +492,9 @@ class ExoTerOdometryResiduals(RegressionTask):
         from numpy import linalg as la
         x = position[:,0]
         y = position[:,1]
-        pred_std = np.ndarray(shape=pred_var.shape)
-        pred_std[:,0] = pred_mean[:,0] + np.sqrt(pred_var[:,0])
-        sd = la.norm(pred_std, axis=1)
+        #pred_std = np.ndarray(shape=pred_var.shape)
+        #pred_std[:,0] = pred_mean[:,0] + np.sqrt(pred_var[:,0])
+        sd = la.norm(pred_mean, axis=1)
         points = np.array([x, y]).T.reshape(-1, 1, 2)
         segments = np.concatenate([points[:-1], points[1:]], axis=1)
 
