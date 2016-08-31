@@ -158,6 +158,7 @@ standard_deviation = np.absolute(ovelocity[0:length,:]-rvelocity[0:length,:])
 ### PLOT ###
 ############
 matplotlib.rcParams.update({'font.size': 30, 'font.weight': 'bold'})
+#fig = plt.figure(3, figsize=(28, 16), dpi=120, facecolor='w', edgecolor='k')
 fig = plt.figure(3)
 ax = fig.add_subplot(111)
 
@@ -230,6 +231,8 @@ plt.ylabel(r'Y [$m$]', fontsize=35, fontweight='bold')
 #plt.axis('equal')
 plt.grid(True)
 #ax.legend(handles=[exoter], loc=1, prop={'size':30})
+title_str = "gp_ground_truth_residual_resample_pandas_dem"
+fig.savefig(title_str+".png", dpi=fig.dpi)
 plt.show(block=False)
 
 
