@@ -25,6 +25,7 @@ pose_imu_acceleration_file =  path + 'pose_imu_acceleration.0.data'
 
 import sys
 sys.path.insert(0, './src/core')
+sys.path.insert(0, './src/gaussian_process/benchmarks')
 import numpy as np
 from pylab import *
 from matplotlib import pyplot as plt
