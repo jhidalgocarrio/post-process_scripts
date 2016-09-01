@@ -174,6 +174,8 @@ plt.ylim(min(py), max(yi))
 # Display Ground Truth trajectory
 x = position[:,0]
 y = position[:,1]
+standard_deviation = fabs(standard_deviation.sum(axis=1))
+standard_deviation = np.row_stack(standard_deviation)
 sd = la.norm(standard_deviation, axis=1)
 points = np.array([x, y]).T.reshape(-1, 1, 2)
 segments = np.concatenate([points[:-1], points[1:]], axis=1)
