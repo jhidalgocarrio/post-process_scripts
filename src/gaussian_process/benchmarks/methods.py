@@ -56,7 +56,7 @@ class RegressionMethod(object):
 
     def save_model(self, filepath, mode='wb'):
         with open(filepath, mode) as output:
-            pickle.dump(self.model, output, pickle.HIGHEST_PROTOCOL)
+            pickle.dump(self, output, pickle.HIGHEST_PROTOCOL)
         return None
 
 
