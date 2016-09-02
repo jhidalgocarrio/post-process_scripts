@@ -359,7 +359,7 @@ class ExoTerOdometryResiduals(RegressionTask):
         ##########################################################################
         self.testing_mask = pandas.notnull(odometry_velocity.error_x) & pandas.notnull(odometry_velocity.error_y) & pandas.notnull(odometry_velocity.error_z)
 
-        # Equalize the length of data
+        # Equalize the length of data -- comment in case you do not need to re shape -- 
         reference_velocity = reference_velocity[0:self.testing_mask.shape[0]]
         odometry_velocity = odometry_velocity[0:self.testing_mask.shape[0]]
         imu_orient = imu_orient[0:self.testing_mask.shape[0]]
@@ -385,6 +385,7 @@ class ExoTerOdometryResiduals(RegressionTask):
         imu_gyro = imu_gyro[self.testing_mask]
         joints_position = joints_position[self.testing_mask]
         joints_speed = joints_speed[self.testing_mask]
+        # -- end of comment in case reshapes is not needed 
 
         ##########################################################################
         # GAUSSIAN PROCESS X INPUT VECTOR
@@ -447,24 +448,24 @@ class ExoTerOdometryResiduals(RegressionTask):
 
         return self.test
 
-    def arl_dem_figure(self, fig_num, method_name, pred_mean, pred_var, train_sampling_time, test_sampling_time):
+    def arl_dem_figure(self, fig_num, method_name, pred_mean, pred_var, train_sampling_time, test_sampling_time, ground_truth=False):
         #################
         # RE-SAMPLE
         #################
         reference = self.test_reference.resample(test_sampling_time)
-        odometry = self.test_odometry.resample(test_sampling_time)
 
-        # Equalize the length of data
+        #################
+        # RE-SHAPE (optional)
+        #################
+
+        ## Equalize the length of data
         reference = reference[0:self.testing_mask.shape[0]]
-        odometry = odometry[0:self.testing_mask.shape[0]]
 
-        # Sync index with odometry
+        ## Sync index with odometry
         reference.index = self.testing_mask.index
-        odometry.index = self.testing_mask.index
 
-        # Apply the mask
+        ## Apply the mask
         reference = reference[self.testing_mask]
-        odometry = odometry[self.testing_mask]
 
         ########################################################
         #rotate and translate the trajectory wrt the world frame
@@ -492,7 +493,8 @@ class ExoTerOdometryResiduals(RegressionTask):
         from numpy import linalg as la
         x = position[:,0]
         y = position[:,1]
-        pred_residual = fabs(pred_mean.sum(axis=1))
+        #pred_residual = fabs(pred_mean.sum(axis=1))
+        pred_residual = np.linalg.norm(pred_mean, axis=1)
         pred_residual = np.row_stack(pred_residual)
         sd = la.norm(pred_residual, axis=1)
         points = np.array([x, y]).T.reshape(-1, 1, 2)
@@ -501,7 +503,12 @@ class ExoTerOdometryResiduals(RegressionTask):
         from matplotlib.collections import LineCollection
         from matplotlib.colors import ListedColormap, BoundaryNorm
         from matplotlib.colors import LinearSegmentedColormap as lscm
-        cmap = plt.get_cmap('Reds')
+
+        if ground_truth:
+            cmap = plt.get_cmap('Greens')
+        else:
+            cmap = plt.get_cmap('Reds')
+
         #cmap = lscm.from_list('temp', colors)
         norm = plt.Normalize(min(sd), max(sd))
         lc = LineCollection(segments, cmap=cmap, norm=norm)
@@ -511,10 +518,13 @@ class ExoTerOdometryResiduals(RegressionTask):
         plt.gca().add_collection(lc)
 
 
-        #color bar of the covariamve
+        #color bar of the covarianve
         #cbaxes = fig.add_axes([0.8, 0.1, 0.03, 0.8]) 
         h_cbar = plt.colorbar(lc)#, orientation='horizontal')
-        h_cbar.ax.set_ylabel(r' gp odometry residual [$m/s$]')
+        if ground_truth:
+            h_cbar.ax.set_ylabel(r' ground truth residual [$m/s$]')
+        else:
+            h_cbar.ax.set_ylabel(r' gp odometry residual [$m/s$]')
 
         # Color bar of the dem
         cbar = plt.colorbar()  # draw colorbar
@@ -551,7 +561,10 @@ class ExoTerOdometryResiduals(RegressionTask):
         #plt.axis('equal')
         plt.grid(True)
         #ax.legend(handles=[exoter], loc=1, prop={'size':30})
-        title_str = "arl_dem_" + method_name + "_train_at_"+train_sampling_time+"_test_at_"+test_sampling_time
+        if ground_truth:
+            title_str = "arl_dem_ground_truth_test_at_"+test_sampling_time
+        else:
+            title_str = "arl_dem_" + method_name + "_train_at_"+train_sampling_time+"_test_at_"+test_sampling_time
         #plt.show(block=False)
         fig.savefig(title_str+".png", dpi=fig.dpi)
         return None
