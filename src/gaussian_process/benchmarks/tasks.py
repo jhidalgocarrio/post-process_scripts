@@ -541,7 +541,7 @@ class ExoTerOdometryResiduals(RegressionTask):
         fn = get_sample_data(os.getcwd()+"/data/img/exoter.png", asfileobj=False)
         exoter = image.imread(fn)
         exoter = ndimage.rotate(exoter, 180)
-        imexoter = OffsetImage(exoter, zoom=0.3)
+        imexoter = OffsetImage(exoter, zoom=0.5)
 
 
         ab = AnnotationBbox(imexoter, xy=(x[0], y[0]),
@@ -550,9 +550,10 @@ class ExoTerOdometryResiduals(RegressionTask):
                                 boxcoords="offset points",
                                 frameon=False)
 
-        ax.annotate("ExoTeR", xy=(x[0], y[0]), xycoords='data',
-                                        xytext=(-40, 45), textcoords='offset points', fontsize=22,
-                                        arrowprops=dict(arrowstyle="->", connectionstyle="arc3,rad=.2", lw=2.0))
+        ax.annotate(r'ExoTeR', xy=(x[0], y[0]), xycoords='data',
+                                        xytext=(-40, 50), textcoords='offset points', fontsize=24,
+                                        #arrowprops=dict(arrowstyle="->", connectionstyle="arc3,rad=.2", lw=2.0)
+                                        )
 
         ax.add_artist(ab)
 
