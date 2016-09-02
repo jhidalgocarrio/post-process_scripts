@@ -26,9 +26,9 @@ class MAE(Evaluation):
     def evaluate(self, gt, pred):
         return np.mean(np.abs(gt-pred).astype(np.float))
 
-class MARE(Evaluation):
-    "Mean Absolute Relative Error"
-    name = 'MARE'
+class MAPE(Evaluation):
+    "Mean Absolute Percentage Error"
+    name = 'MAPE'
 
     def evaluate(self, gt, pred):
         return np.mean(np.abs((gt-pred) / gt))
