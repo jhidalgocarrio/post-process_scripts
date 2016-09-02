@@ -234,7 +234,7 @@ plt.ylabel(r'Y [$m$]', fontsize=35, fontweight='bold')
 plt.grid(True)
 #ax.legend(handles=[exoter], loc=1, prop={'size':30})
 title_str = "gp_ground_truth_residual_resample_pandas_dem"
-fig.savefig(title_str+".png", dpi=fig.dpi)
+#fig.savefig(title_str+".png", dpi=fig.dpi)
 plt.show(block=False)
 
 
