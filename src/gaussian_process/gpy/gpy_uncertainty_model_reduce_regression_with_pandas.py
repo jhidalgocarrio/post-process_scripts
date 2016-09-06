@@ -34,6 +34,7 @@ import datadisplay as data
 import cov_ellipse as cov
 import joints as js
 import GPy
+from methods import GP_RBF, SVIGP_RBF, SparseGP_RBF, SparseGP_RBF_NL, GP_MAT32, SparseGP_MAT32, GP_MAT52, SparseGP_MAT52
 
 
 import pandas as pandas
