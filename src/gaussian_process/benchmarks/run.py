@@ -2,7 +2,7 @@
 # Licensed under the BSD 3-clause license (see LICENSE.txt)
 
 from __future__ import print_function
-from evaluation import RMSE, MAE, MARE
+from evaluation import RMSE, MAE, MAPE
 from methods import GP_RBF, SVIGP_RBF, SparseGP_RBF, SparseGP_RBF_NL, GP_MAT32, SparseGP_MAT32, GP_MAT52, SparseGP_MAT52
 from tasks import ExoTerOdometryResiduals
 from outputs import ScreenOutput, CSVOutput, H5Output
@@ -24,10 +24,10 @@ class bcolors:
 outpath = './data/gaussian_processes'
 prjname = 'exoter_odometry_residual_regression'
 config = {
-          'evaluations':[RMSE, MAE, MARE],
-          'methods':[SparseGP_RBF],#, GP_MAT32, SparseGP_MAT32, GP_MAT52, SparseGP_MAT52],
+          'evaluations':[RMSE, MAE, MAPE],
+          'methods':[SparseGP_RBF],# SparseGP_MAT32, SparseGP_MAT52],
           'tasks':[ExoTerOdometryResiduals],
-          'train_sampling_time':['500ms','1s'],
+          'train_sampling_time':['500ms'],
           'test_sampling_time':['1s'],
           'outputs': [ScreenOutput()],
           #'outputs': [ScreenOutput(), CSVOutput(outpath, prjname)]
@@ -93,6 +93,8 @@ if __name__=='__main__':
                         fig_num = fig_num + 1
                         dataset.arl_dem_figure(fig_num, m.name, pred_test_mean, pred_test_var, train_time, test_time)
                         fig_num = fig_num + 1
+                        dataset.arl_dem_figure(fig_num, m.name, test[1], None, train_time, test_time, True)
+                        fig_num = fig_num + 1
                         print(bcolors.BOLD + '[OK]'+ bcolors.ENDC)
 
                     print('',end='')
@@ -104,5 +106,6 @@ if __name__=='__main__':
                     print(bcolors.BOLD + '[OK]'+ bcolors.ENDC)
 
                 print()
+
 
     [out.output(config, results) for out in config['outputs']]
