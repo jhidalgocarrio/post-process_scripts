@@ -25,9 +25,10 @@ outpath = './data/gaussian_processes'
 prjname = 'exoter_odometry_residual_regression'
 config = {
           'evaluations':[RMSE, MAE, MAPE],
-          'methods':[SparseGP_RBF],# SparseGP_MAT32, SparseGP_MAT52],
+          'methods':[SparseGP_RBF],#, SparseGP_MAT32, SparseGP_MAT52],
+          'normalization': False,
           'tasks':[ExoTerOdometryResiduals],
-          'train_sampling_time':['500ms'],
+          'train_sampling_time':['1s'],
           'test_sampling_time':['1s'],
           'outputs': [ScreenOutput()],
           #'outputs': [ScreenOutput(), CSVOutput(outpath, prjname)]
@@ -50,7 +51,7 @@ if __name__=='__main__':
             method = config['methods'][method_i]
             print(bcolors.WARNING + 'With the method '+method.name + bcolors.ENDC)
 
-            m = method()
+            m = method(config['normalization'])
 
             for train_t in range(len(config['train_sampling_time'])):
                 train_time = config['train_sampling_time'][train_t]
@@ -101,7 +102,11 @@ if __name__=='__main__':
 
                 if config['save_model']:
                     print(bcolors.BOLD + 'Saving the model: '+ bcolors.ENDC, end='')
-                    filename = outpath + '/'+ m.name + '_xyz_velocities_train_at_' + train_time + '.data'
+                    if m.preprocess:
+                        str_norm = "normalized"
+                    else:
+                        str_norm = "unnormalized"
+                    filename = outpath + '/'+ m.name + '_xyz_velocities_train_at_' + train_time + '_' + str_norm+'.data'
                     m.save_model(filename)
                     print(bcolors.BOLD + '[OK]'+ bcolors.ENDC)
 

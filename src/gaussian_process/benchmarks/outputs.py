@@ -35,8 +35,13 @@ class ScreenOutput(Output):
             print(bcolors.WARNING + config['tasks'][task_i].name + bcolors.ENDC)
 
             for method_i in range(len(config['methods'])):
+                if config['normalization']:
+                    str_norm = 'Normalized'
+                else:
+                    str_norm = 'Unnormalized'
+
                 for ei in range(len(config['evaluations'])):
-                    print(bcolors.UNDERLINE + config['methods'][method_i].name+'('+config['evaluations'][ei].name + ')'+bcolors.ENDC, end='')
+                    print(bcolors.UNDERLINE + config['methods'][method_i].name +' '+ str_norm +' ' + '('+config['evaluations'][ei].name + ')'+bcolors.ENDC, end='')
                     print(bcolors.UNDERLINE + '\t'.join([' ']+['train_sampling: '+train_t for train_t in config['train_sampling_time']]) + bcolors.ENDC)
                     for test_ti in range(len(config['test_sampling_time'])):
                         outputs = []
