@@ -3,12 +3,17 @@
 
 #######################################
 path='/home/javi/exoter/development/data/20141024_planetary_lab/20141027-2034_orb_slam2_gp_adaptive_first_test/'
+#path='/home/javi/exoter/development/data/20141024_planetary_lab/20141027-2034_orb_slam2_2.5fps/'
+#path='/home/javi/exoter/development/data/20141024_planetary_lab/20141027-2034_orb_slam2_0.5fps/'
+#path='/home/javi/exoter/development/data/20141024_planetary_lab/20141027-2034_orb_slam2_0.5fps_wo_relocalization/'
 #######################################
 path_odometry_file = path + 'pose_odo_position.0.data'
 
 path_reference_file = path + 'pose_ref_position.0.data'
 
 path_orb_slam2_position_file = path + 'pose_orb_slam2_position.0.data'
+
+path_keyframes_position_file = path + 'pose_keyframe_orb_slam2_position.0.data'
 
 path_keyframes_trajectory_file = path + 'orb_slam2_keyframes_trajectory.data'
 
@@ -48,11 +53,40 @@ def dateparse (time_in_microsecs):
     return datetime.datetime.fromtimestamp(float(time_in_microsecs * 1e-06))
 
 from methods import GP_RBF, SVIGP_RBF, SparseGP_RBF, SparseGP_RBF_NL, GP_MAT32, SparseGP_MAT32, GP_MAT52, SparseGP_MAT52
+##########################################################################
+# ARROW FUNCTION
+##########################################################################
+def add_arrow(line,position = None,direction = 'right',size=15,color = None):
+   """ add an arrow to a line.
+
+       line: Line2D object
+       position: x-position of the arrow. If None, mean of xdata is taken 
+       direction:  'left' or 'right'
+       size:  size of the arrow in fontsize points
+       color: if None, line color is taken.
+       """
+   if color is None:
+       color = line.get_color()
+
+   xdata = line.get_xdata()
+   ydata = line.get_ydata()
+
+   if position is None:
+       position = xdata.mean()
+   # find closest index
+   start_ind = np.argmin(np.absolute(xdata-position))
+   if direction == 'right':
+       end_ind = start_ind + 1
+   else:
+       end_ind = start_ind - 1
+
+   line.axes.annotate('',xytext = (xdata[start_ind],ydata[start_ind]),xy = (xdata[end_ind],ydata[end_ind]),arrowprops=dict(arrowstyle="->",color = color),size = size)
+
 
 ##########################################################################
 # PLOTTING FUNCTION
 ##########################################################################
-def arl_dem_figure(fig_num, dem_file, trajectory, pred_mean, kf_trajectory, frames_trajectory, odo_trajectory = None, color_bar='Reds'):
+def arl_dem_figure(fig_num, dem_file, trajectory, pred_mean, kf_trajectory, frames_trajectory, color_bar='Reds'):
 
     ########################
     # Load Terrain DEM
@@ -99,9 +133,7 @@ def arl_dem_figure(fig_num, dem_file, trajectory, pred_mean, kf_trajectory, fram
 
     cmap = plt.get_cmap(color_bar)
 
-    #cmap = lscm.from_list('temp', colors)
-    #norm = plt.Normalize(0.00, 0.0634491701615)
-    norm = plt.Normalize(min(sd), max(sd))
+    norm = plt.Normalize(0.00, 0.0634491701615)
     lc = LineCollection(segments, cmap=cmap, norm=norm)
     lc.set_array(sd)
     lc.set_linewidth(20)
@@ -112,27 +144,23 @@ def arl_dem_figure(fig_num, dem_file, trajectory, pred_mean, kf_trajectory, fram
     #color bar of the covarianve
     #cbaxes = fig.add_axes([0.8, 0.1, 0.03, 0.8]) 
     h_cbar = plt.colorbar(lc)#, orientation='horizontal')
-    h_cbar.ax.set_ylabel(r' gp odometry residual [$m/s$]')
+    h_cbar.ax.set_ylabel(r' error[$m/s$] ')
 
     # Color bar of the dem
     cbar = plt.colorbar()  # draw colorbar
-    cbar.ax.set_ylabel(r' terrain elevation[$m$]')
-
-    # Plot the key frames
-    fr_x = frames_trajectory[:,0]
-    fr_y = frames_trajectory[:,1]
-    ax.plot(fr_x, fr_y, marker='s', linestyle='-', lw=2, alpha=0.3, color=[0.0, 0.3, 1.0])
+    cbar.ax.set_ylabel(r' terrain elevation[$m$] ')
 
     # Plot all the image frames
+    fr_x = frames_trajectory[:,0]
+    fr_y = frames_trajectory[:,1]
+    ax.plot(fr_x, fr_y, marker='s', linestyle='-', lw=2, alpha=0.3, color=[0.0, 0.3, 1.0],
+            label='slam', zorder=99)
+
+    # Plot the key frames
     kf_x = kf_trajectory[:,0]
     kf_y = kf_trajectory[:,1]
-    ax.scatter(kf_x, kf_y, facecolor=[0.0,1.0,0.0], edgecolor='b', s=150, alpha=1.0)
-
-    # Pure odometry trajectory
-    if odo_trajectory is not None:
-        odo_x = odo_trajectory[:,0]
-        odo_y = odo_trajectory[:,1]
-        ax.plot(odo_x, odo_y, linestyle='-.', lw=2, alpha=1.0, color=[0, 0, 0])
+    ax.scatter(kf_x, kf_y, marker='s', facecolor=[0.2,1.0,0.0], edgecolor='b',
+            label='keyframes', s=20, alpha=1.0, zorder=100)
 
     import os
     from matplotlib.cbook import get_sample_data
@@ -157,11 +185,135 @@ def arl_dem_figure(fig_num, dem_file, trajectory, pred_mean, kf_trajectory, fram
                             #arrowprops=dict(arrowstyle="->", connectionstyle="arc3,rad=.2", lw=2.0)
                             )
 
+    ax.annotate(r'Start', xy=(x[0], y[0]), xycoords='data',
+                            xytext=(-5, 5), textcoords='offset points', fontsize=12,
+                            horizontalalignment='left',
+                            verticalalignment='bottom',
+                            zorder=101
+                            )
+    ax.scatter(x[0], y[0], marker='o', facecolor='k', s=40, alpha=1.0, zorder=103)
+
+    ax.arrow(x[0], y[0], x[130]-x[0], y[130]-y[0], width=0.02, head_width=0.07,
+            head_length=0.1, fc='k', ec='k', zorder=104)
+
+    ax.annotate(r'End', xy=(x[x.shape[0]-1], y[y.shape[0]-1]), xycoords='data',
+                            xytext=(-5, 5), textcoords='offset points', fontsize=12,
+                            horizontalalignment='left',
+                            verticalalignment='bottom',
+                            zorder=101
+                            )
+    ax.scatter(x[x.shape[0]-1], y[y.shape[0]-1], marker='o', facecolor='k', s=40, alpha=1.0, zorder=103)
+
     ax.add_artist(ab)
 
     plt.xlabel(r'X [$m$]', fontsize=15, fontweight='bold')
     plt.ylabel(r'Y [$m$]', fontsize=15, fontweight='bold')
     #plt.axis('equal')
+    plt.grid(True)
+    plt.show(block=False)
+
+def arl_trajectories_figure(fig_num, dem_file, reference_trajectory, kf_trajectory, frames_trajectory, odo_trajectory):
+    ########################
+    # Load Terrain DEM
+    ########################
+    plydata = PlyData.read(open(dem_file))
+
+    vertex = plydata['vertex'].data
+
+    [dem_px, dem_py, dem_pz] = (vertex[t] for t in ('x', 'y', 'z'))
+
+    # define grid.
+    npts=100
+    dem_xi = np.linspace(min(dem_px), max(dem_px), npts)
+    dem_yi = np.linspace(min(dem_py), max(dem_py), npts)
+
+    # grid the data.
+    dem_zi = griddata(dem_px, dem_py, dem_pz, dem_xi, dem_yi, interp='linear')
+
+
+    matplotlib.rcParams.update({'font.size': 15, 'font.weight': 'bold'})
+    fig = plt.figure(fig_num, figsize=(28, 16), dpi=120, facecolor='w', edgecolor='k')
+    ax = fig.add_subplot(111)
+
+    # Display the DEM
+    plt.rc('text', usetex=False)# activate latex text rendering
+    CS = plt.contour(dem_xi, dem_yi, dem_zi, 15, linewidths=0.5, colors='k')
+    CS = plt.contourf(dem_xi, dem_yi, dem_zi, 15, cmap=plt.cm.gray, vmax=abs(dem_zi).max(), vmin=-abs(dem_zi).max())
+
+    # plot data points.
+    plt.xlim(min(dem_px), max(dem_xi))
+    plt.ylim(min(dem_py), max(dem_yi))
+
+    # Display Ground Truth trajectory
+    from numpy import linalg as la
+    x = reference_trajectory[:,0][0::10]
+    y = reference_trajectory[:,1][0::10]
+    ax.plot(x, y, marker='D', linestyle='-', lw=2, alpha=0.3, color=[1.0, 1.0, 0.0],
+            label='ground truth', zorder=80)
+
+    # Plot all the image frames
+    fr_x = frames_trajectory[:,0]
+    fr_y = frames_trajectory[:,1]
+    ax.plot(fr_x, fr_y, marker='s', linestyle='-', lw=2, alpha=0.3, color=[0.0, 0.3, 1.0],
+            label='slam', zorder=99)
+
+    # Plot the key frames
+    kf_x = kf_trajectory[:,0]
+    kf_y = kf_trajectory[:,1]
+    ax.scatter(kf_x, kf_y, marker='s', facecolor=[0.2,1.0,0.0], edgecolor='b',
+            label='keyframes', s=20, alpha=1.0, zorder=100)
+
+    # Pure odometry trajectory
+    odo_x = odo_trajectory[:,0][0::10]
+    odo_y = odo_trajectory[:,1][0::10]
+    ax.plot(odo_x, odo_y, marker='h', linestyle='-', lw=2, alpha=0.3, color=[1.0, 0, 0],
+            label='odometry', zorder=70)
+
+    import os
+    from matplotlib.cbook import get_sample_data
+    from matplotlib._png import read_png
+    import matplotlib.image as image
+    from scipy import ndimage
+    from matplotlib.offsetbox import OffsetImage, AnnotationBbox
+    fn = get_sample_data(os.getcwd()+"/data/img/exoter.png", asfileobj=False)
+    exoter = image.imread(fn)
+    exoter = ndimage.rotate(exoter, 180)
+    imexoter = OffsetImage(exoter, zoom=0.3)
+
+
+    ab = AnnotationBbox(imexoter, xy=(x[0], y[0]),
+                    xybox=None,
+                    xycoords='data',
+                    boxcoords="offset points",
+                    frameon=False)
+
+    ax.annotate(r'ExoTeR', xy=(x[0], y[0]), xycoords='data',
+                            xytext=(-20, 30), textcoords='offset points', fontsize=12,
+                            )
+    ax.annotate(r'Start', xy=(x[0], y[0]), xycoords='data',
+                            xytext=(-5, 5), textcoords='offset points', fontsize=12,
+                            horizontalalignment='left',
+                            verticalalignment='bottom',
+                            zorder=101
+                            )
+    ax.scatter(x[0], y[0], marker='o', facecolor='k', s=40, alpha=1.0, zorder=103)
+
+    ax.arrow(x[0], y[0], x[13]-x[0], y[13]-y[0], width=0.01, head_width=0.05,
+            head_length=0.2, fc='k', ec='k', zorder=104)
+
+    ax.annotate(r'End', xy=(x[x.shape[0]-1], y[y.shape[0]-1]), xycoords='data',
+                            xytext=(-5, 5), textcoords='offset points', fontsize=12,
+                            horizontalalignment='left',
+                            verticalalignment='bottom',
+                            zorder=101
+                            )
+    ax.scatter(x[x.shape[0]-1], y[y.shape[0]-1], marker='o', facecolor='k', s=40, alpha=1.0, zorder=103)
+
+    ax.add_artist(ab)
+
+    plt.xlabel(r'X [$m$]', fontsize=15, fontweight='bold')
+    plt.ylabel(r'Y [$m$]', fontsize=15, fontweight='bold')
+    ax.legend(loc=1, prop={'size':15})
     plt.grid(True)
     plt.show(block=False)
 
@@ -394,3 +546,43 @@ keyframes_position[:] = [navigation_orient.data[0].rot(x) +  navigation_position
 imframes_position = np.column_stack((imageframes.x.values, imageframes.y.values,  imageframes.z.values ))
 imframes_position[:] = [navigation_orient.data[0].rot(x) +  navigation_position.data[0] for x in imframes_position]
 
+##########################################################################
+arl_trajectories_figure(1, esa_arl_dem_file, reference_position, keyframes_position, imframes_position, odometry_position)
+arl_dem_figure(2, esa_arl_dem_file, reference_position, pred_mean, keyframes_position, imframes_position)
+##########################################################################
+# Compute RMSE, FINAL ERROR AND MAXIMUM ERROR
+##########################################################################
+from evaluation import RMSE, MAE, MAPE
+
+#ORB_SLAM2 Keyframes Position
+kf_orb_slam2 = pandas.read_csv(path_keyframes_position_file, sep=" ", parse_dates=True,
+    date_parser=dateparse , index_col='time',
+    names=['time', 'x', 'y', 'z', 'cov_xx', 'cov_xy', 'cov_xz', 'cov_yx', 'cov_yy', 'cov_yz',
+        'cov_zx', 'cov_zy', 'cov_zz'], header=None)
+
+estimation = orb_slam2.resample('1s', fill_method='pad')
+ground_truth = reference.resample('1s', fill_method='pad')
+
+estimation = estimation[['x', 'y', 'z']].copy()
+ground_truth = ground_truth[['x', 'y', 'z']].copy()
+##########################################################################
+
+rmse = RMSE()
+eval_rmse = rmse.evaluate(estimation, ground_truth)
+la.norm(eval_rmse) #0.145m with adaptation # 0.163m original #1.827m 0.5fps w/relocalization # 0.204 m w/o relocalization
+##########################################################################
+final_estimation = np.array([estimation.x[estimation.shape[0]-1], estimation.y[estimation.shape[0]-1], estimation.z[estimation.shape[0]-1]])
+final_groundtruth = np.array([ground_truth.x[ground_truth.shape[0]-1], ground_truth.y[ground_truth.shape[0]-1], ground_truth.z[ground_truth.shape[0]-1]])
+
+final_error = final_estimation - final_groundtruth
+
+la.norm(final_error) #0.264m #0.264m original #0.52m 0.5fps
+
+##########################################################################
+max_error = np.max(estimation - ground_truth)
+la.norm(max_error) #0.468m 0.4553m original #4.620m 0.5fps w/relocalization #0.729m w/o relocalization
+##########################################################################
+# Number of Keyframes and frames
+##########################################################################
+number_keyframes = keyframes.shape[0] # 135 (adaptation) 181(original) 82(0.5fps w/relocalization)  150(0.5fps w/o relocalization)keyframes 
+number_frames = imageframes.shape[0] # 484 (adaptation) 2582 (original) 343+169 (0.5fps w/relocalization) 500 (0.5fps w/o relocalization) images frames
