@@ -493,10 +493,7 @@ class ExoTerOdometryResiduals(RegressionTask):
         from numpy import linalg as la
         x = position[:,0]
         y = position[:,1]
-        #pred_residual = fabs(pred_mean.sum(axis=1))
-        pred_residual = np.linalg.norm(pred_mean, axis=1)
-        pred_residual = np.row_stack(pred_residual)
-        sd = la.norm(pred_residual, axis=1)
+        sd = la.norm(pred_mean, axis=1)
         points = np.array([x, y]).T.reshape(-1, 1, 2)
         segments = np.concatenate([points[:-1], points[1:]], axis=1)
 
@@ -504,13 +501,11 @@ class ExoTerOdometryResiduals(RegressionTask):
         from matplotlib.colors import ListedColormap, BoundaryNorm
         from matplotlib.colors import LinearSegmentedColormap as lscm
 
-        if ground_truth:
-            cmap = plt.get_cmap('Greens')
-        else:
-            cmap = plt.get_cmap('Reds')
+        cmap = plt.get_cmap('Reds')
 
         #cmap = lscm.from_list('temp', colors)
-        norm = plt.Normalize(min(sd), max(sd))
+        norm = plt.Normalize(0.00, 0.0634491701615)
+        #norm = plt.Normalize(min(sd), max(sd))
         lc = LineCollection(segments, cmap=cmap, norm=norm)
         lc.set_array(sd)
         lc.set_linewidth(40)
@@ -521,10 +516,7 @@ class ExoTerOdometryResiduals(RegressionTask):
         #color bar of the covarianve
         #cbaxes = fig.add_axes([0.8, 0.1, 0.03, 0.8]) 
         h_cbar = plt.colorbar(lc)#, orientation='horizontal')
-        if ground_truth:
-            h_cbar.ax.set_ylabel(r' ground truth residual [$m/s$]')
-        else:
-            h_cbar.ax.set_ylabel(r' gp odometry residual [$m/s$]')
+        h_cbar.ax.set_ylabel(r' residual[$m/s$]')
 
         # Color bar of the dem
         cbar = plt.colorbar()  # draw colorbar
@@ -549,22 +541,42 @@ class ExoTerOdometryResiduals(RegressionTask):
                                 xycoords='data',
                                 boxcoords="offset points",
                                 frameon=False)
-
         ax.annotate(r'ExoTeR', xy=(x[0], y[0]), xycoords='data',
-                                        xytext=(-40, 50), textcoords='offset points', fontsize=24,
-                                        #arrowprops=dict(arrowstyle="->", connectionstyle="arc3,rad=.2", lw=2.0)
-                                        )
+                            xytext=(-30, 60), textcoords='offset points', fontsize=20,
+                            #arrowprops=dict(arrowstyle="->", connectionstyle="arc3,rad=.2", lw=2.0)
+                            zorder=101
+                            )
+
+        ax.annotate(r'Start', xy=(x[0], y[0]), xycoords='data',
+                                xytext=(-5, 5), textcoords='offset points', fontsize=20,
+                                horizontalalignment='left',
+                                verticalalignment='bottom',
+                                zorder=101
+                                )
+        ax.scatter(x[0], y[0], marker='o', facecolor='k', s=100, alpha=1.0, zorder=103)
+
+        ax.arrow(x[130], y[130], x[135]-x[130], y[135]-y[130], width=0.04, head_width=0.10,
+                head_length=0.1, fc='k', ec='k', zorder=104)
+
+        ax.annotate(r'End', xy=(x[x.shape[0]-1], y[y.shape[0]-1]), xycoords='data',
+                                xytext=(-5, 5), textcoords='offset points', fontsize=20,
+                                horizontalalignment='left',
+                                verticalalignment='bottom',
+                                zorder=101
+                                )
+        ax.scatter(x[x.shape[0]-1], y[y.shape[0]-1], marker='o', facecolor='k', s=100, alpha=1.0, zorder=103)
 
         ax.add_artist(ab)
 
         plt.xlabel(r'X [$m$]', fontsize=35, fontweight='bold')
         plt.ylabel(r'Y [$m$]', fontsize=35, fontweight='bold')
-        #plt.axis('equal')
         plt.grid(True)
         #ax.legend(handles=[exoter], loc=1, prop={'size':30})
         if ground_truth:
+            ax.set_title(r'Odometry', fontsize=35, fontweight='bold')
             title_str = "arl_dem_ground_truth_test_at_"+test_sampling_time
         else:
+            ax.set_title(r'GP Estimate', fontsize=35, fontweight='bold')
             title_str = "arl_dem_" + method_name + "_train_at_"+train_sampling_time+"_test_at_"+test_sampling_time
         #plt.show(block=False)
         fig.savefig(title_str+".png", dpi=fig.dpi)
