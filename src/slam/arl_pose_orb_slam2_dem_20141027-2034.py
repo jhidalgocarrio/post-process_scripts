@@ -2,14 +2,16 @@
 # by javi 2016-09-06 15:15:16
 
 #######################################
-path='/home/javi/exoter/development/data/20141024_planetary_lab/20141027-2034_orb_slam2_gp_adaptive_first_test/'
+#path='/home/javi/exoter/development/data/20141024_planetary_lab/20141027-2034_orb_slam2_gp_adaptive_first_test/'
 #path='/home/javi/exoter/development/data/20141024_planetary_lab/20141027-2034_orb_slam2_2.5fps/'
 #path='/home/javi/exoter/development/data/20141024_planetary_lab/20141027-2034_orb_slam2_0.5fps/'
-#path='/home/javi/exoter/development/data/20141024_planetary_lab/20141027-2034_orb_slam2_0.5fps_wo_relocalization/'
+path='/home/javi/exoter/development/data/20141024_planetary_lab/20141027-2034_orb_slam2_0.5fps_wo_relocalization/'
 #######################################
 path_odometry_file = path + 'pose_odo_position.0.data'
 
 path_reference_file = path + 'pose_ref_position.0.data'
+
+path_delta_reference_file = path + 'delta_pose_ref_position.0.data'
 
 path_orb_slam2_position_file = path + 'pose_orb_slam2_position.0.data'
 
@@ -28,7 +30,9 @@ path_navigation_position_file = path + 'pose_world_to_navigation_position.0.data
 #######################################
 esa_arl_dem_file = '/home/javi/exoter/development/esa_terrain_lab/DEMclean.ply'
 #######################################
-path_gpy_gaussian_process_model_file = '/home/javi/exoter/dev/bundles/exoter/data/gaussian_processes/SparseGP_RBF_xyz_velocities_train_at_500ms_normalized.data'
+#path_gpy_gaussian_process_model_file = '/home/javi/exoter/dev/bundles/exoter/data/gaussian_processes/SparseGP_RBF_xyz_velocities_train_at_500ms_normalized.data'
+path_gpy_gaussian_process_model_file = '/home/javi/exoter/dev/bundles/exoter/data/gaussian_processes/SparseGP_RBF_NL_xyz_velocities_train_at_1s_normalized.data'
+#path_gpy_gaussian_process_model_file = '/home/javi/exoter/dev/bundles/exoter/data/gaussian_processes/GP_RBF_xyz_velocities_train_at_1s_normalized.data'
 #######################################
 
 import sys
@@ -143,8 +147,8 @@ def arl_dem_figure(fig_num, dem_file, trajectory, pred_mean, kf_trajectory, fram
 
     #color bar of the covarianve
     #cbaxes = fig.add_axes([0.8, 0.1, 0.03, 0.8]) 
-    h_cbar = plt.colorbar(lc)#, orientation='horizontal')
-    h_cbar.ax.set_ylabel(r' error[$m/s$] ')
+    #h_cbar = plt.colorbar(lc)#, orientation='horizontal')
+    #h_cbar.ax.set_ylabel(r' residual[$m/s$] ')
 
     # Color bar of the dem
     cbar = plt.colorbar()  # draw colorbar
@@ -244,6 +248,10 @@ def arl_trajectories_figure(fig_num, dem_file, reference_trajectory, kf_trajecto
     plt.xlim(min(dem_px), max(dem_xi))
     plt.ylim(min(dem_py), max(dem_yi))
 
+    # Color bar of the dem
+    cbar = plt.colorbar()  # draw colorbar
+    cbar.ax.set_ylabel(r' terrain elevation[$m$] ')
+
     # Display Ground Truth trajectory
     from numpy import linalg as la
     x = reference_trajectory[:,0][0::10]
@@ -252,8 +260,8 @@ def arl_trajectories_figure(fig_num, dem_file, reference_trajectory, kf_trajecto
             label='ground truth', zorder=80)
 
     # Plot all the image frames
-    fr_x = frames_trajectory[:,0]
-    fr_y = frames_trajectory[:,1]
+    fr_x = frames_trajectory[:,0][0::10]
+    fr_y = frames_trajectory[:,1][0::10]
     ax.plot(fr_x, fr_y, marker='s', linestyle='-', lw=2, alpha=0.3, color=[0.0, 0.3, 1.0],
             label='slam', zorder=99)
 
@@ -320,7 +328,6 @@ def arl_trajectories_figure(fig_num, dem_file, reference_trajectory, kf_trajecto
 ##########################################################################
 # READ THE VALUES IN PANDAS
 ##########################################################################
-
 #ExoTeR Odometry
 odometry = pandas.read_csv(path_odometry_file, sep=" ", parse_dates=True,
     date_parser=dateparse , index_col='time',
@@ -330,6 +337,12 @@ odometry = pandas.read_csv(path_odometry_file, sep=" ", parse_dates=True,
 
 #Reference Position
 reference = pandas.read_csv(path_reference_file, sep=" ", parse_dates=True,
+    date_parser=dateparse , index_col='time',
+    names=['time', 'x', 'y', 'z', 'cov_xx', 'cov_xy', 'cov_xz', 'cov_yx', 'cov_yy', 'cov_yz',
+        'cov_zx', 'cov_zy', 'cov_zz'], header=None)
+
+#ExoTeR Delta Odometry
+delta_reference = pandas.read_csv(path_delta_reference_file, sep=" ", parse_dates=True,
     date_parser=dateparse , index_col='time',
     names=['time', 'x', 'y', 'z', 'cov_xx', 'cov_xy', 'cov_xz', 'cov_yx', 'cov_yy', 'cov_yz',
         'cov_zx', 'cov_zy', 'cov_zz'], header=None)
@@ -580,7 +593,7 @@ la.norm(final_error) #0.264m #0.264m original #0.52m 0.5fps
 
 ##########################################################################
 max_error = np.max(estimation - ground_truth)
-la.norm(max_error) #0.468m 0.4553m original #4.620m 0.5fps w/relocalization #0.729m w/o relocalization
+la.norm(max_error) #0.468m adaptation 0.4553m original #4.620m 0.5fps w/relocalization #0.729m w/o relocalization
 ##########################################################################
 # Number of Keyframes and frames
 ##########################################################################
