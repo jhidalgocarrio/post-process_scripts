@@ -39,8 +39,8 @@ from methods import GP_RBF, SVIGP_RBF, SparseGP_RBF, SparseGP_RBF_NL, GP_MAT32, 
 
 import pandas as pandas
 import datetime
-#matplotlib.style.use('ggplot') in matplotlib >= 1.5.1
-pandas.set_option('display.mpl_style', 'default') # Make the graphs a bit prettier
+matplotlib.style.use('ggplot')# in matplotlib >= 1.5.1
+#pandas.set_option('display.mpl_style', 'default') # Make the graphs a bit prettier
 def dateparse (time_in_microsecs):
     return datetime.datetime.fromtimestamp(float(time_in_microsecs) * 1e-06)
 
@@ -111,13 +111,13 @@ print(odometry_velocity['x'].sub(odometry_velocity['x'].shift(), fill_value = 0)
 ## RE-SAMPLE   ##
 #################
 resampling_time = '1s'
-reference_velocity = reference_velocity.resample(resampling_time)
-odometry_velocity = odometry_velocity.resample(resampling_time)
-imu_orient = imu_orient.resample(resampling_time)
-imu_acc = imu_acc.resample(resampling_time)
-imu_gyro = imu_gyro.resample(resampling_time)
-joints_position = joints_position.resample(resampling_time)
-joints_speed = joints_speed.resample(resampling_time)
+reference_velocity = reference_velocity.resample(resampling_time).mean()
+odometry_velocity = odometry_velocity.resample(resampling_time).mean()
+imu_orient = imu_orient.resample(resampling_time).mean()
+imu_acc = imu_acc.resample(resampling_time).mean()
+imu_gyro = imu_gyro.resample(resampling_time).mean()
+joints_position = joints_position.resample(resampling_time).mean()
+joints_speed = joints_speed.resample(resampling_time).mean()
 
 #Compute the error
 odometry_velocity['error_x'] = pandas.Series (fabs(odometry_velocity.x - reference_velocity.x))
@@ -263,7 +263,7 @@ plt.plot(X[:,0],Y[:,0],'kx',mew=1.5)
 ###################
 ## PREDICTION    ##
 ###################
-path = '/home/javi/exoter/development/data/20141024_planetary_lab/20141027-2034/'
+path = '~/npi/data/20141024_planetary_lab/20141027-2034/'
 #######################################
 joints_position_file = path + 'joints_position.0.data'
 
@@ -330,13 +330,13 @@ odometry_velocity = odometry_velocity.drop(odometry_velocity[fabs(odometry_veloc
 #################
 ## RE-SAMPLE   ##
 #################
-reference_velocity = reference_velocity.resample(resampling_time)
-odometry_velocity = odometry_velocity.resample(resampling_time)
-imu_orient = imu_orient.resample(resampling_time)
-imu_acc = imu_acc.resample(resampling_time)
-imu_gyro = imu_gyro.resample(resampling_time)
-joints_position = joints_position.resample(resampling_time)
-joints_speed = joints_speed.resample(resampling_time)
+reference_velocity = reference_velocity.resample(resampling_time).mean()
+odometry_velocity = odometry_velocity.resample(resampling_time).mean()
+imu_orient = imu_orient.resample(resampling_time).mean()
+imu_acc = imu_acc.resample(resampling_time).mean()
+imu_gyro = imu_gyro.resample(resampling_time).mean()
+joints_position = joints_position.resample(resampling_time).mean()
+joints_speed = joints_speed.resample(resampling_time).mean()
 
 #Compute the error in odometry
 odometry_velocity['error_x'] = pandas.Series (fabs(odometry_velocity.x - reference_velocity.x))
