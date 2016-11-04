@@ -34,7 +34,8 @@ from numpy import linalg as la
 
 import pandas as pandas
 import datetime
-pandas.set_option('display.mpl_style', 'default') # Make the graphs a bit prettier
+matplotlib.style.use('ggplot') #in matplotlib >= 1.5.1
+#pandas.set_option('display.mpl_style', 'default') # Make the graphs a bit prettier
 def dateparse (time_in_microsecs):
     return datetime.datetime.fromtimestamp(float(time_in_microsecs * 1e-06))
 
@@ -123,10 +124,10 @@ zi = griddata(px, py, pz, xi, yi, interp='linear')
 ## RE-SAMPLE   ##
 #################
 resampling_time = '1s'
-reference = reference.resample(resampling_time)
-reference_velocity = reference_velocity.resample(resampling_time)
-odometry = odometry.resample(resampling_time)
-gp_odometry_velocity = gp_odometry_velocity.resample(resampling_time)
+reference = reference.resample(resampling_time).mean()
+reference_velocity = reference_velocity.resample(resampling_time).mean()
+odometry = odometry.resample(resampling_time).mean()
+gp_odometry_velocity = gp_odometry_velocity.resample(resampling_time).mean()
 
 ########################################################
 #rotate and translate the trajectory wrt the world frame
