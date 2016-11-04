@@ -3,7 +3,7 @@
 
 from __future__ import print_function
 from evaluation import RMSE, MAE, MAPE
-from methods import GP_RBF, SVIGP_RBF, SparseGP_RBF, SparseGP_RBF_NL, GP_MAT32, SparseGP_MAT32, GP_MAT52, SparseGP_MAT52
+from methods import GP_RBF, SVIGP_RBF, SparseGP_LINEAR, SparseGP_RBF, SparseGP_RBF_NL, SparseGP_RBF_RBF, GP_MAT32, SparseGP_MAT32_NL, SparseGP_MAT32, GP_MAT52, SparseGP_MAT52, SparseGP_MAT52_NL
 from tasks import ExoTerOdometryResiduals
 from outputs import ScreenOutput, CSVOutput, H5Output
 from figures import ExoTerFigures
@@ -25,14 +25,14 @@ outpath = './data/gaussian_processes'
 prjname = 'exoter_odometry_residual_regression'
 config = {
           'evaluations':[RMSE, MAE, MAPE],
-          'methods':[SparseGP_RBF],#, SparseGP_MAT32, SparseGP_MAT52],
-          'normalization': False,
+          'methods':[SparseGP_RBF_NL], #'methods':[GP_RBF, GP_MAT32, GP_MAT52],
+          'normalization': True,
           'tasks':[ExoTerOdometryResiduals],
           'train_sampling_time':['1s'],
           'test_sampling_time':['1s'],
           'outputs': [ScreenOutput()],
           #'outputs': [ScreenOutput(), CSVOutput(outpath, prjname)]
-          'save_model': False,
+          'save_model': True,
           'figures': True
           }
 
