@@ -2,10 +2,10 @@
 # by javi 2016-09-06 15:15:16
 
 #######################################
-#path='/home/javi/exoter/development/data/20141024_planetary_lab/20141027-2034_orb_slam2_gp_adaptive_first_test/'
-#path='/home/javi/exoter/development/data/20141024_planetary_lab/20141027-2034_orb_slam2_2.5fps/'
-#path='/home/javi/exoter/development/data/20141024_planetary_lab/20141027-2034_orb_slam2_0.5fps/'
-path='/home/javi/exoter/development/data/20141024_planetary_lab/20141027-2034_orb_slam2_0.5fps_wo_relocalization/'
+#path='~/npi/data/20141024_planetary_lab/20141027-2034_orb_slam2_gp_adaptive_first_test/'
+#path='~/npi/data/20141024_planetary_lab/20141027-2034_orb_slam2_2.5fps/'
+#path='~/npi/data/20141024_planetary_lab/20141027-2034_orb_slam2_0.5fps/'
+path='~/npi/data/20141024_planetary_lab/20141027-2034_orb_slam2_0.5fps_wo_relocalization/'
 #######################################
 path_odometry_file = path + 'pose_odo_position.0.data'
 
@@ -28,11 +28,12 @@ path_navigation_orientation_file = path + 'pose_world_to_navigation_orientation.
 path_navigation_position_file = path + 'pose_world_to_navigation_position.0.data'
 
 #######################################
-esa_arl_dem_file = '/home/javi/exoter/development/esa_terrain_lab/DEMclean.ply'
+esa_arl_dem_file = '~/npi/documentation/esa_terrain_lab/DEMclean.ply'
 #######################################
-#path_gpy_gaussian_process_model_file = '/home/javi/exoter/dev/bundles/exoter/data/gaussian_processes/SparseGP_RBF_xyz_velocities_train_at_500ms_normalized.data'
-path_gpy_gaussian_process_model_file = '/home/javi/exoter/dev/bundles/exoter/data/gaussian_processes/SparseGP_RBF_NL_xyz_velocities_train_at_1s_normalized.data'
-#path_gpy_gaussian_process_model_file = '/home/javi/exoter/dev/bundles/exoter/data/gaussian_processes/GP_RBF_xyz_velocities_train_at_1s_normalized.data'
+#path_gpy_gaussian_process_model_file = '~/npi/dev/bundles/exoter/data/gaussian_processes/SparseGP_RBF_xyz_velocities_train_at_500ms_normalized.data'
+#path_gpy_gaussian_process_model_file = '~/npi/dev/bundles/exoter/data/gaussian_processes/SparseGP_RBF_NL_xyz_velocities_train_at_1s_normalized.data'
+path_gpy_gaussian_process_model_file = '~/npi/scripts/data/gaussian_processes/SparseGP_RBF_NL_xyz_velocities_train_at_1s_normalized.data'
+#path_gpy_gaussian_process_model_file = '~/npi/dev/bundles/exoter/data/gaussian_processes/GP_RBF_xyz_velocities_train_at_1s_normalized.data'
 #######################################
 
 import sys
@@ -52,9 +53,10 @@ from numpy import linalg as la
 
 import pandas as pandas
 import datetime
-pandas.set_option('display.mpl_style', 'default') # Make the graphs a bit prettier
+matplotlib.style.use('ggplot') #in matplotlib >= 1.5.1
+#pandas.set_option('display.mpl_style', 'default') # Make the graphs a bit prettier
 def dateparse (time_in_microsecs):
-    return datetime.datetime.fromtimestamp(float(time_in_microsecs * 1e-06))
+    return datetime.datetime.fromtimestamp(float(time_in_microsecs) * 1e-06)
 
 from methods import GP_RBF, SVIGP_RBF, SparseGP_RBF, SparseGP_RBF_NL, GP_MAT32, SparseGP_MAT32, GP_MAT52, SparseGP_MAT52
 ##########################################################################
@@ -95,7 +97,8 @@ def arl_dem_figure(fig_num, dem_file, trajectory, pred_mean, kf_trajectory, fram
     ########################
     # Load Terrain DEM
     ########################
-    plydata = PlyData.read(open(dem_file))
+    import os
+    plydata = PlyData.read(open(os.path.expanduser(dem_file)))
 
     vertex = plydata['vertex'].data
 
@@ -220,7 +223,8 @@ def arl_trajectories_figure(fig_num, dem_file, reference_trajectory, kf_trajecto
     ########################
     # Load Terrain DEM
     ########################
-    plydata = PlyData.read(open(dem_file))
+    import os
+    plydata = PlyData.read(open(os.path.expanduser(dem_file)))
 
     vertex = plydata['vertex'].data
 
@@ -376,7 +380,7 @@ navigation_position.readData(path_navigation_position_file, cov=False)
 ###################
 ## PREDICTION    ##
 ###################
-path = '/home/javi/exoter/development/data/20141024_planetary_lab/20141027-2034/'
+path = '~/npi/data/20141024_planetary_lab/20141027-2034/'
 #######################################
 joints_position_file = path + 'joints_position.0.data'
 
@@ -444,13 +448,13 @@ odometry_velocity = odometry_velocity.drop(odometry_velocity[fabs(odometry_veloc
 ## RE-SAMPLE   ##
 #################
 resampling_time = '1s'
-reference_velocity = reference_velocity.resample(resampling_time)
-odometry_velocity = odometry_velocity.resample(resampling_time)
-imu_orient = imu_orient.resample(resampling_time)
-imu_acc = imu_acc.resample(resampling_time)
-imu_gyro = imu_gyro.resample(resampling_time)
-joints_position = joints_position.resample(resampling_time)
-joints_speed = joints_speed.resample(resampling_time)
+reference_velocity = reference_velocity.resample(resampling_time).mean()
+odometry_velocity = odometry_velocity.resample(resampling_time).mean()
+imu_orient = imu_orient.resample(resampling_time).mean()
+imu_acc = imu_acc.resample(resampling_time).mean()
+imu_gyro = imu_gyro.resample(resampling_time).mean()
+joints_position = joints_position.resample(resampling_time).mean()
+joints_speed = joints_speed.resample(resampling_time).mean()
 
 #Compute the error in odometry
 odometry_velocity['error_x'] = pandas.Series (fabs(odometry_velocity.x - reference_velocity.x))
@@ -525,9 +529,9 @@ m = data.open_object(path_gpy_gaussian_process_model_file)
 #################
 ## RE-SAMPLE   ##
 #################
-reference = reference.resample(resampling_time)
-odometry = odometry.resample(resampling_time)
-orb_slam2 = orb_slam2.resample(resampling_time, fill_method='pad')
+reference = reference.resample(resampling_time).mean()
+odometry = odometry.resample(resampling_time).mean()
+orb_slam2 = orb_slam2.resample(resampling_time).pad()
 
 ##########################################################################
 #rotate and translate the reference trajectory wrt the world frame
@@ -573,11 +577,8 @@ kf_orb_slam2 = pandas.read_csv(path_keyframes_position_file, sep=" ", parse_date
     names=['time', 'x', 'y', 'z', 'cov_xx', 'cov_xy', 'cov_xz', 'cov_yx', 'cov_yy', 'cov_yz',
         'cov_zx', 'cov_zy', 'cov_zz'], header=None)
 
-estimation = orb_slam2.resample('1s', fill_method='pad')
-ground_truth = reference.resample('1s', fill_method='pad')
-
-estimation = estimation[['x', 'y', 'z']].copy()
-ground_truth = ground_truth[['x', 'y', 'z']].copy()
+estimation = orb_slam2.resample('1s').pad()
+ground_truth = reference.resample('1s').pad()
 ##########################################################################
 
 rmse = RMSE()
