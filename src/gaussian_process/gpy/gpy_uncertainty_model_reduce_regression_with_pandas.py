@@ -4,7 +4,7 @@
 
 #######################
 
-path = '/home/javi/exoter/development/data/20140000_gaussian_processes/merged_bis/'
+path = '~/npi/data/20140000_gaussian_processes/merged_bis/'
 #######################################
 joints_position_file = path + 'joints_position.0.data'
 
@@ -39,9 +39,10 @@ from methods import GP_RBF, SVIGP_RBF, SparseGP_RBF, SparseGP_RBF_NL, GP_MAT32, 
 
 import pandas as pandas
 import datetime
+#matplotlib.style.use('ggplot') in matplotlib >= 1.5.1
 pandas.set_option('display.mpl_style', 'default') # Make the graphs a bit prettier
 def dateparse (time_in_microsecs):
-    return datetime.datetime.fromtimestamp(float(time_in_microsecs * 1e-06))
+    return datetime.datetime.fromtimestamp(float(time_in_microsecs) * 1e-06)
 
 def crosscorr(datax, datay, lag=0):
     """ Lag-N cross correlation. 
