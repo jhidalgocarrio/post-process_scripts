@@ -13,11 +13,11 @@ import os
 ############################################
 
 def save_object(obj, filename, mode='wb'):
-    with open(filename, mode) as output:
+    with open(os.path.expanduser(filename), mode) as output:
         pickle.dump(obj, output, pickle.HIGHEST_PROTOCOL)
 
 def open_object(filename):
-    with open(filename, 'rb') as input:
+    with open(os.path.expanduser(filename), 'rb') as input:
         return pickle.load(input)
 
 def func(x):
