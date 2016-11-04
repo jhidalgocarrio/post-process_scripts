@@ -8,7 +8,8 @@ import numpy as np
 from pylab import *
 from matplotlib import pyplot as plt
 import pandas as pandas
-pandas.set_option('display.mpl_style', 'default') # Make the graphs a bit prettier
+matplotlib.style.use('ggplot') #in matplotlib >= 1.5.1
+#pandas.set_option('display.mpl_style', 'default') # Make the graphs a bit prettier
 
 class Figures(object):
     __metaclass__ = abc.ABCMeta
@@ -24,7 +25,7 @@ class ExoTerFigures(Figures):
         #######################################
         # TEST DATA
         #######################################
-        fig_time = dataset.test_odometry_velocity.resample(test_sampling_time).index.to_datetime()[dataset.testing_mask]
+        fig_time = dataset.test_odometry_velocity.resample(test_sampling_time).mean().index.to_datetime()[dataset.testing_mask]
         #######################################
 
         matplotlib.rcParams.update({'font.size': 15, 'font.weight': 'bold'})

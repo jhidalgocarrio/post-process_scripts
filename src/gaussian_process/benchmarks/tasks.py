@@ -14,7 +14,7 @@ import pandas as pandas
 import datetime
 
 def dateparse (time_in_microsecs):
-        return datetime.datetime.fromtimestamp(float(time_in_microsecs * 1e-06))
+        return datetime.datetime.fromtimestamp(float(time_in_microsecs) * 1e-06)
 
 class RegressionTask(object):
     __metaclass__ = abc.ABCMeta
@@ -46,7 +46,7 @@ class ExoTerOdometryResiduals(RegressionTask):
     #######################################
     # TRAINING DATA
     #######################################
-    url_train = '/home/javi/exoter/development/data/20140000_gaussian_processes/merged_bis/'
+    url_train = '~/npi/data/20140000_gaussian_processes/merged_bis/'
     #######################################
     train_joints_position_file = url_train + 'joints_position.0.data'
 
@@ -67,7 +67,7 @@ class ExoTerOdometryResiduals(RegressionTask):
     #######################################
     # TEST DATA
     #######################################
-    url_test = '/home/javi/exoter/development/data/20141024_planetary_lab/20141027-2034/'
+    url_test = '~/npi/data/20141024_planetary_lab/20141027-2034/'
     #######################################
     test_joints_position_file = url_test + 'joints_position.0.data'
 
@@ -93,7 +93,7 @@ class ExoTerOdometryResiduals(RegressionTask):
 
     test_navigation_position_file = url_test + 'pose_world_to_navigation_position.0.data'
     #######################################
-    esa_arl_dem_file = '/home/javi/exoter/development/esa_terrain_lab/DEMclean.ply'
+    esa_arl_dem_file = '~/npi/documentation/esa_terrain_lab/DEMclean.ply'
     #######################################
 
     def load_data(self):
@@ -229,7 +229,7 @@ class ExoTerOdometryResiduals(RegressionTask):
         ########################
         # Load Terrain DEM
         ########################
-        plydata = PlyData.read(open(self.esa_arl_dem_file))
+        plydata = PlyData.read(open(os.path.expanduser(self.esa_arl_dem_file)))
 
         vertex = plydata['vertex'].data
 
@@ -250,13 +250,13 @@ class ExoTerOdometryResiduals(RegressionTask):
         #################
         ## RE-SAMPLE
         #################
-        reference_velocity = self.train_reference_velocity.resample(resampling_time)
-        odometry_velocity = self.train_odometry_velocity.resample(resampling_time)
-        imu_orient = self.train_imu_orient.resample(resampling_time)
-        imu_acc = self.train_imu_acc.resample(resampling_time)
-        imu_gyro = self.train_imu_gyro.resample(resampling_time)
-        joints_position = self.train_joints_position.resample(resampling_time)
-        joints_speed = self.train_joints_speed.resample(resampling_time)
+        reference_velocity = self.train_reference_velocity.resample(resampling_time).mean()
+        odometry_velocity = self.train_odometry_velocity.resample(resampling_time).mean()
+        imu_orient = self.train_imu_orient.resample(resampling_time).mean()
+        imu_acc = self.train_imu_acc.resample(resampling_time).mean()
+        imu_gyro = self.train_imu_gyro.resample(resampling_time).mean()
+        joints_position = self.train_joints_position.resample(resampling_time).mean()
+        joints_speed = self.train_joints_speed.resample(resampling_time).mean()
 
         #Compute the error in odometry
         odometry_velocity['error_x'] = pandas.Series (fabs(odometry_velocity.x - reference_velocity.x))
@@ -342,13 +342,13 @@ class ExoTerOdometryResiduals(RegressionTask):
         #################
         ## RE-SAMPLE
         #################
-        reference_velocity = self.test_reference_velocity.resample(resampling_time)
-        odometry_velocity = self.test_odometry_velocity.resample(resampling_time)
-        imu_orient = self.test_imu_orient.resample(resampling_time)
-        imu_acc = self.test_imu_acc.resample(resampling_time)
-        imu_gyro = self.test_imu_gyro.resample(resampling_time)
-        joints_position = self.test_joints_position.resample(resampling_time)
-        joints_speed = self.test_joints_speed.resample(resampling_time)
+        reference_velocity = self.test_reference_velocity.resample(resampling_time).mean()
+        odometry_velocity = self.test_odometry_velocity.resample(resampling_time).mean()
+        imu_orient = self.test_imu_orient.resample(resampling_time).mean()
+        imu_acc = self.test_imu_acc.resample(resampling_time).mean()
+        imu_gyro = self.test_imu_gyro.resample(resampling_time).mean()
+        joints_position = self.test_joints_position.resample(resampling_time).mean()
+        joints_speed = self.test_joints_speed.resample(resampling_time).mean()
 
         #Compute the error
         odometry_velocity['error_x'] = pandas.Series (fabs(odometry_velocity.x - reference_velocity.x))
@@ -452,7 +452,7 @@ class ExoTerOdometryResiduals(RegressionTask):
         #################
         # RE-SAMPLE
         #################
-        reference = self.test_reference.resample(test_sampling_time)
+        reference = self.test_reference.resample(test_sampling_time).mean()
 
         #################
         # RE-SHAPE (optional)
