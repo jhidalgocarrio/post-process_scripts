@@ -6,6 +6,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import quaternion as quat
 import pickle
+import os
 
 ############################################
 ## HELPER METHOD FOR SAVING AND OPENING   ##
@@ -79,7 +80,7 @@ class ThreeData:
 
     def readData(self,filename, cov=False):
 	
-        for row in csv.reader(open(filename, 'r'), delimiter=' ', quotechar='|'):
+        for row in csv.reader(open(os.path.expanduser(filename), 'r'), delimiter=' ', quotechar='|'):
             #print row
             self.atime.append(float(row[0])/1000000.00) #absolute time
             self.data.append(np.array([float(row[1]), float(row[2]), float(row[3])]))
@@ -261,7 +262,7 @@ class QuaternionData:
 
     def readData(self,filename, angle_axis=False, cov=False):
 	
-        for row in csv.reader(open(filename, 'r'), delimiter=' ', quotechar='|'):
+        for row in csv.reader(open(os.path.expanduser(filename), 'r'), delimiter=' ', quotechar='|'):
             #print row
             self.atime.append(float(row[0])/1000000.00) #absolute time
             if False != angle_axis:
@@ -403,7 +404,7 @@ class OneData:
         return 'hello world'
 
     def readData(self,filename, cov=False):
-        for row in csv.reader(open(filename, 'r'), delimiter=' ', quotechar='|'):
+        for row in csv.reader(open(os.path.expanduser(filename), 'r'), delimiter=' ', quotechar='|'):
             #print row
             self.time.append(float(row[0])/1000000)
             self.data.append(np.array([float(row[1])]))
