@@ -39,6 +39,7 @@ path_gpy_gaussian_process_model_file = '~/npi/scripts/data/gaussian_processes/Sp
 import sys
 sys.path.insert(0, './src/core')
 sys.path.insert(0, './src/gaussian_process/benchmarks')
+import os
 import csv
 from pylab import *
 import numpy as np
@@ -333,26 +334,26 @@ def arl_trajectories_figure(fig_num, dem_file, reference_trajectory, kf_trajecto
 # READ THE VALUES IN PANDAS
 ##########################################################################
 #ExoTeR Odometry
-odometry = pandas.read_csv(path_odometry_file, sep=" ", parse_dates=True,
+odometry = pandas.read_csv(os.path.expanduser(path_odometry_file), sep=" ", parse_dates=True,
     date_parser=dateparse , index_col='time',
     names=['time', 'x', 'y', 'z', 'cov_xx', 'cov_xy', 'cov_xz', 'cov_yx', 'cov_yy', 'cov_yz',
         'cov_zx', 'cov_zy', 'cov_zz'], header=None)
 
 
 #Reference Position
-reference = pandas.read_csv(path_reference_file, sep=" ", parse_dates=True,
+reference = pandas.read_csv(os.path.expanduser(path_reference_file), sep=" ", parse_dates=True,
     date_parser=dateparse , index_col='time',
     names=['time', 'x', 'y', 'z', 'cov_xx', 'cov_xy', 'cov_xz', 'cov_yx', 'cov_yy', 'cov_yz',
         'cov_zx', 'cov_zy', 'cov_zz'], header=None)
 
 #ExoTeR Delta Odometry
-delta_reference = pandas.read_csv(path_delta_reference_file, sep=" ", parse_dates=True,
+delta_reference = pandas.read_csv(os.path.expanduser(path_delta_reference_file), sep=" ", parse_dates=True,
     date_parser=dateparse , index_col='time',
     names=['time', 'x', 'y', 'z', 'cov_xx', 'cov_xy', 'cov_xz', 'cov_yx', 'cov_yy', 'cov_yz',
         'cov_zx', 'cov_zy', 'cov_zz'], header=None)
 
 #ORB_SLAM2 Position
-orb_slam2 = pandas.read_csv(path_orb_slam2_position_file, sep=" ", parse_dates=True,
+orb_slam2 = pandas.read_csv(os.path.expanduser(path_orb_slam2_position_file), sep=" ", parse_dates=True,
     date_parser=dateparse , index_col='time',
     names=['time', 'x', 'y', 'z', 'cov_xx', 'cov_xy', 'cov_xz', 'cov_yx', 'cov_yy', 'cov_yz',
         'cov_zx', 'cov_zy', 'cov_zz'], header=None)
@@ -360,18 +361,18 @@ orb_slam2 = pandas.read_csv(path_orb_slam2_position_file, sep=" ", parse_dates=T
 #orb_slam2 = orb_slam2[['x', 'y', 'z']].copy()
 
 # KeyFrames Trajectory
-keyframes = pandas.read_csv(path_keyframes_trajectory_file, sep=" ", parse_dates=False,
+keyframes = pandas.read_csv(os.path.expanduser(path_keyframes_trajectory_file), sep=" ", parse_dates=False,
     names=['x', 'y', 'z', 'heading'], header=None)
 
 # Images Frames Trajectory
-imageframes = pandas.read_csv(path_allframes_trajectory_file, sep=" ", parse_dates=False,
+imageframes = pandas.read_csv(os.path.expanduser(path_allframes_trajectory_file), sep=" ", parse_dates=False,
     names=['x', 'y', 'z', 'heading'], header=None)
 
 #World to Navigation Pose
 navigation_orient = data.QuaternionData()
-navigation_orient.readData(path_navigation_orientation_file, cov=False)
+navigation_orient.readData(os.path.expanduser(path_navigation_orientation_file), cov=False)
 navigation_position = data.ThreeData()
-navigation_position.readData(path_navigation_position_file, cov=False)
+navigation_position.readData(os.path.expanduser(path_navigation_position_file), cov=False)
 
 ##########################################################################
 # CREATE THE GP DATASET
@@ -400,41 +401,41 @@ pose_imu_acceleration_file =  path + 'pose_imu_acceleration.0.data'
 ##########################################################################
 
 # Reference Robot Velocity
-reference_velocity = pandas.read_csv(pose_ref_velocity_file, sep=" ", parse_dates=True,
+reference_velocity = pandas.read_csv(os.path.expanduser(pose_ref_velocity_file), sep=" ", parse_dates=True,
     date_parser=dateparse , index_col='time',
     names=['time', 'x', 'y', 'z', 'cov_xx', 'cov_xy', 'cov_xz', 'cov_yx', 'cov_yy', 'cov_yz',
         'cov_zx', 'cov_zy', 'cov_zz'], header=None)
 
 # Odometry Robot Velocity
-odometry_velocity = pandas.read_csv(pose_odo_velocity_file, sep=" ", parse_dates=True,
+odometry_velocity = pandas.read_csv(os.path.expanduser(pose_odo_velocity_file), sep=" ", parse_dates=True,
     date_parser=dateparse , index_col='time',
     names=['time', 'x', 'y', 'z', 'cov_xx', 'cov_xy', 'cov_xz', 'cov_yx', 'cov_yy', 'cov_yz',
         'cov_zx', 'cov_zy', 'cov_zz'], header=None)
 
 # IMU orientation (in quaternion form)
 data_orient = data.QuaternionData()
-data_orient.readData(pose_imu_orientation_file, cov=True)
+data_orient.readData(os.path.expanduser(pose_imu_orientation_file), cov=True)
 time = [dateparse(x*1e06) for x in data_orient.atime]
 euler = np.column_stack((data_orient.getEuler(2), data_orient.getEuler(1), data_orient.getEuler(0)))
 imu_orient = pandas.DataFrame(data=euler, columns=['x', 'y', 'z'], index=time)
 
 # IMU acceleration
-imu_acc = pandas.read_csv(pose_imu_acceleration_file, sep=" ", parse_dates=True,
+imu_acc = pandas.read_csv(os.path.expanduser(pose_imu_acceleration_file), sep=" ", parse_dates=True,
     date_parser=dateparse , index_col='time',
     names=['time', 'x', 'y', 'z'], header=None)
 
 # IMU Angular Velocity
-imu_gyro = pandas.read_csv(pose_imu_angular_velocity_file, sep=" ", parse_dates=True,
+imu_gyro = pandas.read_csv(os.path.expanduser(pose_imu_angular_velocity_file), sep=" ", parse_dates=True,
     date_parser=dateparse , index_col='time',
     names=['time', 'x', 'y', 'z'], header=None)
 
 # Robot Joints Position and Speed
 names = ["time", "left_passive", "fl_mimic", "fl_walking", "fl_steer", "fl_drive", "fl_contact", "fl_translation", "fl_slipx", "fl_slipy", "fl_slipz", "ml_mimic", "ml_walking", "ml_drive", "ml_contact", "ml_translation", "ml_slipx", "ml_slipy", "ml_slipz", "rear_passive", "rl_mimic", "rl_walking", "rl_steer", "rl_drive", "rl_contact", "rl_translation", "rl_slipx", "rl_slipy", "rl_slipz", "rr_mimic", "rr_walking", "rr_steer", "rr_drive", "rr_contact", "rr_translation", "rr_slipx", "rr_slipy", "rr_slipz", "right_passive", "fr_mimic", "fr_walking", "fr_steer", "fr_drive", "fr_contact", "fr_translation", "fr_slipx", "fr_slipy", "fr_slipz", "mr_mimic", "mr_walking", "mr_drive", "mr_contact", "mr_translation", "mr_slipx", "mr_slipy", "mr_slipz"]
 
-joints_position = pandas.read_csv(joints_position_file, sep=" ", parse_dates=True,
+joints_position = pandas.read_csv(os.path.expanduser(joints_position_file), sep=" ", parse_dates=True,
     date_parser=dateparse , index_col='time', names=names, header=None)
 
-joints_speed = pandas.read_csv(joints_speed_file, sep=" ", parse_dates=True,
+joints_speed = pandas.read_csv(os.path.expanduser(joints_speed_file), sep=" ", parse_dates=True,
     date_parser=dateparse , index_col='time', names=names, header=None)
 
 ##########################################################################
@@ -572,7 +573,7 @@ arl_dem_figure(2, esa_arl_dem_file, reference_position, pred_mean, keyframes_pos
 from evaluation import RMSE, MAE, MAPE
 
 #ORB_SLAM2 Keyframes Position
-kf_orb_slam2 = pandas.read_csv(path_keyframes_position_file, sep=" ", parse_dates=True,
+kf_orb_slam2 = pandas.read_csv(os.path.expanduser(path_keyframes_position_file), sep=" ", parse_dates=True,
     date_parser=dateparse , index_col='time',
     names=['time', 'x', 'y', 'z', 'cov_xx', 'cov_xy', 'cov_xz', 'cov_yx', 'cov_yy', 'cov_yz',
         'cov_zx', 'cov_zy', 'cov_zz'], header=None)
