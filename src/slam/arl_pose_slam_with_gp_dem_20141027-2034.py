@@ -1,4 +1,4 @@
-path='/home/javi/exoter/development/data/20141024_planetary_lab/20141027-2034_sam_localization/'
+path='~/npi/data/20141024_planetary_lab/20141027-2034_sam_localization/'
 #######################################
 path_odometry_file = path + 'pose_odo_position.0.data'
 
@@ -16,14 +16,16 @@ path_sam_odometry_file = path + 'delta_pose_sam_odo_position.0.data'
 
 path_sam_position_file = path + 'pose_sam_position.0.data'
 #######################################
-esa_arl_dem_file = '/home/javi/exoter/development/esa_terrain_lab/DEMclean.ply'
+esa_arl_dem_file = '~/npi/documentation/esa_terrain_lab/DEMclean.ply'
 #######################################
 
 
+import os
 import sys
 sys.path.insert(0, './src/core')
 import csv
-from pylab import *
+from matplotlib.mlab import griddata
+
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.patches import Ellipse
@@ -77,7 +79,7 @@ gp_odometry_velocity.covSymmetry()
 gp_odometry_velocity.eigenValues()
 
 # Terrain DEM
-plydata = PlyData.read(open(esa_arl_dem_file))
+plydata = PlyData.read(os.path.expanduser(esa_arl_dem_file))
 
 vertex = plydata['vertex'].data
 
@@ -92,7 +94,7 @@ yi = np.linspace(min(py), max(py), npts)
 zi = griddata(px, py, pz, xi, yi, interp='linear')
 
 #Position comparison X-Y plane
-matplotlib.rcParams.update({'font.size': 30, 'font.weight': 'bold'})
+plt.rcParams.update({'font.size': 30, 'font.weight': 'bold'})
 fig = plt.figure(2)
 ax = fig.add_subplot(111)
 
@@ -110,7 +112,7 @@ plt.show(block=False)
 ############
 ### PLOT ###
 ############
-matplotlib.rcParams.update({'font.size': 30, 'font.weight': 'bold'})
+plt.rcParams.update({'font.size': 30, 'font.weight': 'bold'})
 fig = plt.figure(1)
 ax = fig.add_subplot(111)
 
@@ -199,6 +201,6 @@ plt.ylabel(r'Y [$m$]', fontsize=35, fontweight='bold')
 #plt.axis('equal')
 plt.grid(True)
 ax.legend(loc=1, prop={'size':30})
-plt.show(block=False)
+plt.show(block=True)
 
 
