@@ -46,7 +46,7 @@ class ExoTerOdometryResiduals(RegressionTask):
     #######################################
     # TRAINING DATA
     #######################################
-    url_train = '~/npi/data/20140000_gaussian_processes/merged_bis/'
+    url_train = '~/npi/data/20141024_gaussian_processes/merged_bis/'
     #######################################
     train_joints_position_file = url_train + 'joints_position.0.data'
 

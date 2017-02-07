@@ -4,7 +4,7 @@
 
 #######################
 
-path = '~/npi/data/20140000_gaussian_processes/merged_bis/'
+path = '~/npi/data/20141024_gaussian_processes/merged_bis/'
 #######################################
 joints_position_file = path + 'joints_position.0.data'
 

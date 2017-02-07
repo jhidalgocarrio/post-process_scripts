@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-path = '/home/javi/exoter/development/data/20140000_gaussian_processes/merged/'
+path = '/home/javi/exoter/development/data/20141024_gaussian_processes/merged/'
 #######################################
 joints_position_file = path + 'joints_position.0.data'
 
