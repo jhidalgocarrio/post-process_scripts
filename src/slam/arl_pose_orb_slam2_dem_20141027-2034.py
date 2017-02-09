@@ -5,7 +5,8 @@
 #path='~/npi/data/20141024_planetary_lab/20141027-2034_orb_slam2_gp_adaptive_first_test/'
 #path='~/npi/data/20141024_planetary_lab/20141027-2034_orb_slam2_2.5fps/'
 #path='~/npi/data/20141024_planetary_lab/20141027-2034_orb_slam2_0.5fps/'
-path='~/npi/data/20141024_planetary_lab/20141027-2034_orb_slam2_0.5fps_wo_relocalization/'
+#path='~/npi/data/20141024_planetary_lab/20141027-2034_orb_slam2_0.5fps_wo_relocalization/'
+path='~/npi/data/20141024_planetary_lab/20141027-2034_orb_slam2_quadratic_adaptivity/'
 #######################################
 path_odometry_file = path + 'pose_odo_position.0.data'
 
@@ -150,9 +151,8 @@ def arl_dem_figure(fig_num, dem_file, trajectory, pred_mean, kf_trajectory, fram
 
 
     #color bar of the covarianve
-    #cbaxes = fig.add_axes([0.8, 0.1, 0.03, 0.8]) 
-    #h_cbar = plt.colorbar(lc)#, orientation='horizontal')
-    #h_cbar.ax.set_ylabel(r' residual[$m/s$] ')
+    h_cbar = plt.colorbar(lc)#, orientation='horizontal')
+    h_cbar.ax.set_ylabel(r' residual[$m/s$] ')
 
     # Color bar of the dem
     cbar = plt.colorbar()  # draw colorbar
@@ -218,7 +218,8 @@ def arl_dem_figure(fig_num, dem_file, trajectory, pred_mean, kf_trajectory, fram
     plt.ylabel(r'Y [$m$]', fontsize=15, fontweight='bold')
     #plt.axis('equal')
     plt.grid(True)
-    plt.show(block=False)
+    fig.savefig("adaptive_slam_dem.png", dpi=fig.dpi)
+    plt.show(block=True)
 
 def arl_trajectories_figure(fig_num, dem_file, reference_trajectory, kf_trajectory, frames_trajectory, odo_trajectory):
     ########################
