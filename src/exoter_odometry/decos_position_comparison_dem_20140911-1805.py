@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-path ='/home/javi/exoter/development/data/20140911_decos_field/20140911-1805_odometry_comparison_bis/'
+path ='~/npi/data/20140911_decos_field/20140911-1805_odometry_comparison_bis/'
 #######################################
 path_odometry_file = path + 'pose_odo_position.reaction_forces.0.data'
 
@@ -12,7 +12,7 @@ pose_odo_orient_file = path + "pose_odo_orientation.reaction_forces.0.data"
 
 pose_ref_orient_file = path + "pose_ref_orientation.0.data"
 #######################################
-decos_dem_file = '/home/javi/exoter/development/decos_terrain/decos_selected_testing_area_2_point_cloud.ply'
+decos_dem_file = '~/npi/documentation/decos_terrain/decos_selected_testing_area_2_point_cloud.ply'
 #######################################
 
 
@@ -76,7 +76,8 @@ odometry_orient.eigenValues()
 ##########
 
 # Terrain DEM
-plydata = PlyData.read(open(decos_dem_file))
+import os
+plydata = PlyData.read(open(os.path.expanduser(decos_dem_file)))
 
 vertex = plydata['vertex'].data
 
@@ -111,6 +112,7 @@ misalignment = quat.quaternion(np.array([1.0,0.0,0.0,0.0]))
 matplotlib.rcParams.update({'font.size': 30, 'font.weight': 'bold'})
 fig = plt.figure(1)
 ax = fig.add_subplot(111)
+fig.autofmt_xdate()
 
 # Display the DEM
 plt.rc('text', usetex=False)# activate latex text rendering
@@ -172,20 +174,23 @@ ax.annotate(r'End', xy=(xposition[len(xposition)-1], yposition[len(yposition)-1]
 
 plt.xlabel(r'X [$m$]', fontsize=35, fontweight='bold')
 plt.ylabel(r'Y [$m$]', fontsize=35, fontweight='bold')
-ax.legend(loc=1, prop={'size':30})
+leg = ax.legend(loc=1, prop={'size':30}, fancybox=True)
+leg.get_frame().set_alpha(0.5)
 ax.set_axis_bgcolor('gray')
-plt.axis('equal')
+#plt.axis('equal')
 plt.grid(True)
-plt.show(block=False)
+plt.show(block=True)
 
-savefig('figures/odometry_pose_decos_terrain_20140911-1805.png')
+#savefig('figures/odometry_pose_decos_terrain_20140911-1805.png')
 
 #################################################
 # Take the misalignment between both orientations
 #################################################
 misalignment = ~odometry_orient.data[1000] * reference_orient.data[1000] #~ is invert operator
 
-#3D Plotting values
+#################################################
+# 3D PLOT
+#################################################
 from mpl_toolkits.mplot3d import Axes3D
 from mpl_toolkits.mplot3d import proj3d
 fig = plt.figure()
@@ -247,6 +252,6 @@ def update_position(e):
     fig.canvas.draw()
 
 fig.canvas.mpl_connect('button_release_event', update_position)
-plt.show(block=False)
+plt.show(block=True)
 
 
