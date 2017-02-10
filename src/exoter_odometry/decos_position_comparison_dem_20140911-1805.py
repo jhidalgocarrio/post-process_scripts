@@ -119,7 +119,7 @@ plt.rc('text', usetex=False)# activate latex text rendering
 CS = plt.contour(xi, yi, zi, 25, linewidths=0.5, colors='k')
 CS = plt.contourf(xi, yi, zi, 25, cmap=plt.cm.gray, vmax=abs(zi).max(), vmin=-abs(zi).max())
 cbar = plt.colorbar()  # draw colorbar
-cbar.ax.set_ylabel('terrain elevation')
+cbar.ax.set_ylabel('terrain elevation[$m$]')
 # plot data points.
 plt.xlim(min(px), max(xi))
 plt.ylim(min(py), max(yi))
