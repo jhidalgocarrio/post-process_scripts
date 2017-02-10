@@ -12,7 +12,7 @@ pose_odo_orient_file = path + "pose_odo_orientation.reaction_forces.0.data"
 
 pose_ref_orient_file = path + "pose_ref_orientation.0.data"
 #######################################
-decos_dem_file = '~/npi/documentation/decos_terrain/decos_selected_testing_area_2_point_cloud.ply'
+decos_dem_file ='~/npi/documentation/decos_terrain/decos_selected_testing_zoom_area_point_cloud.ply'
 #######################################
 
 
@@ -95,7 +95,7 @@ zi = griddata(px, py, pz, xi, yi, interp='linear')
 #################################################
 # Misalignment to the map                       #
 #################################################
-map_posi_align = [2.00, 8.00, 0.00]
+map_posi_align = [2.00, 9.00, 0.00]
 map_orient_align = quat.quaternion.fromAngleAxis(-20.0 * np.pi/180.0, [0.0, 0.0,1.0])
 
 #################################################
