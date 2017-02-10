@@ -4,7 +4,7 @@
 from __future__ import print_function
 from evaluation import RMSE, MAE, MAPE
 from methods import GP_RBF, SVIGP_RBF, SparseGP_LINEAR, SparseGP_RBF, SparseGP_RBF_NL, SparseGP_RBF_RBF, GP_MAT32, SparseGP_MAT32_NL, SparseGP_MAT32, GP_MAT52, SparseGP_MAT52, SparseGP_MAT52_NL
-from tasks import ExoTerOdometryResiduals
+from tasks import ExoTerOdometryARLResiduals, ExoTerOdometryDecosResiduals
 from outputs import ScreenOutput, CSVOutput, H5Output
 from figures import ExoTerFigures
 import numpy as np
@@ -27,7 +27,7 @@ config = {
           'evaluations':[RMSE, MAE, MAPE],
           'methods':[SparseGP_RBF_NL], #'methods':[GP_RBF, GP_MAT32, GP_MAT52],
           'normalization': True,
-          'tasks':[ExoTerOdometryResiduals],
+          'tasks':[ExoTerOdometryDecosResiduals],
           'train_sampling_time':['1s'],
           'test_sampling_time':['1s'],
           'outputs': [ScreenOutput()],
@@ -92,9 +92,9 @@ if __name__=='__main__':
                         figure = ExoTerFigures()
                         figure.output(fig_num, dataset, m, pred_test_mean, 0, train_time, test_time)
                         fig_num = fig_num + 1
-                        dataset.arl_dem_figure(fig_num, m.name, pred_test_mean, pred_test_var, train_time, test_time)
+                        dataset.dem_figure(fig_num, m.name, pred_test_mean, pred_test_var, train_time, test_time)
                         fig_num = fig_num + 1
-                        dataset.arl_dem_figure(fig_num, m.name, test[1], None, train_time, test_time, True)
+                        dataset.dem_figure(fig_num, m.name, test[1], None, train_time, test_time, True)
                         fig_num = fig_num + 1
                         print(bcolors.BOLD + '[OK]'+ bcolors.ENDC)
 
