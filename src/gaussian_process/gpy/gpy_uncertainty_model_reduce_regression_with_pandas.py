@@ -4,7 +4,8 @@
 
 #######################
 
-path = '~/npi/data/20141024_gaussian_processes/merged_bis/'
+#path = '~/npi/data/20141024_gaussian_processes/merged_bis/'
+path = '~/npi/data/20140911_gaussian_processes/merged/'
 #######################################
 joints_position_file = path + 'joints_position.0.data'
 
@@ -125,6 +126,11 @@ odometry_velocity['error_x'] = pandas.Series (fabs(odometry_velocity.x - referen
 odometry_velocity['error_y'] = pandas.Series (fabs(odometry_velocity.y - reference_velocity.y))
 odometry_velocity['error_z'] = pandas.Series (fabs(odometry_velocity.z - reference_velocity.z))
 
+#Compute the error
+reference_velocity['error_x'] = pandas.Series (fabs(reference_velocity.x - odometry_velocity.x))
+reference_velocity['error_y'] = pandas.Series (fabs(reference_velocity.y - odometry_velocity.y))
+reference_velocity['error_z'] = pandas.Series (fabs(reference_velocity.z - odometry_velocity.z))
+
 ##########################################################################
 # PLOT
 ##########################################################################
@@ -160,14 +166,15 @@ lines = ax.get_lines() + ax2.get_lines()
 ax.legend(lines, [line.get_label() for line in lines], loc='upper center')
 
 plt.grid(True)
-plt.show(block=False)
+plt.show(block=True)
 
 ##########################################################################
 # ELIMINATE NULL VALUES
 ##########################################################################
-training_mask = pandas.notnull(odometry_velocity.error_x) & pandas.notnull(odometry_velocity.error_y) & pandas.notnull(odometry_velocity.error_z)
-
+training_mask = pandas.notnull(reference_velocity.error_x) & pandas.notnull(reference_velocity.error_y) & pandas.notnull(reference_velocity.error_z)
 reference_velocity = reference_velocity[training_mask]
+
+training_mask = pandas.notnull(odometry_velocity.error_x) & pandas.notnull(odometry_velocity.error_y) & pandas.notnull(odometry_velocity.error_z)
 odometry_velocity = odometry_velocity[training_mask]
 imu_orient = imu_orient[training_mask]
 imu_acc = imu_acc[training_mask]
@@ -264,7 +271,8 @@ plt.plot(X[:,0],Y[:,0],'kx',mew=1.5)
 ###################
 ## PREDICTION    ##
 ###################
-path = '~/npi/data/20141024_planetary_lab/20141027-2034/'
+#path = '~/npi/data/20141024_planetary_lab/20141027-2034/'
+path = '~/npi/data/20140911_decos_field/20140911-1805/'
 #######################################
 joints_position_file = path + 'joints_position.0.data'
 
@@ -430,9 +438,46 @@ Xp_gyro =  np.column_stack((
 Xp = np.column_stack((Xp_orientation, Xp_joints_position, Xp_joints_speed,
     Xp_acc, Xp_gyro))
 
-###################
+##########################
+# FILTER THE TRUTH ERROR
+##########################
+from scipy.signal import butter, lfilter, freqz
+
+def butter_lowpass(cutoff, fs, order=5):
+    nyq = 0.5 * fs
+    normal_cutoff = cutoff / nyq
+    b, a = butter(order, normal_cutoff, btype='low', analog=False)
+    return b, a
+
+def butter_lowpass_filter(data, cutoff, fs, order=5):
+    b, a = butter_lowpass(cutoff, fs, order=order)
+    y = lfilter(b, a, data)
+    return y
+
+order = 6 #filter order
+fs = 1.0 # sample rate, Hz
+cutoff = 0.05  # desired cutoff frequency of the filter, Hz
+
+# Get the filter coefficients so we can check its frequency response.
+b, a = butter_lowpass(cutoff, fs, order)
+
+# Plot the frequency response.
+w, h = freqz(b, a, worN=8000)
+plt.subplot(1, 1, 1)
+plt.plot(0.5*fs*w/np.pi, np.abs(h), 'b')
+plt.plot(cutoff, 0.5*np.sqrt(2), 'ko')
+plt.axvline(cutoff, color='k')
+plt.xlim(0, 0.5*fs)
+plt.title("Lowpass Filter Frequency Response")
+plt.xlabel('Frequency [Hz]')
+plt.grid()
+plt.show(block=True)
+
+error = butter_lowpass_filter(odometry_velocity.error_x, cutoff, fs, order)
+
+##########################
 matplotlib.rcParams.update({'font.size': 15, 'font.weight': 'bold'})
-fig = plt.figure(1)
+fig = plt.figure(2)
 ax = fig.add_subplot(111)
 
 ax.plot(reference_velocity.index.to_datetime(), reference_velocity.x,
@@ -474,7 +519,7 @@ plt.xlabel(r'Time [$s$]', fontsize=35, fontweight='bold')
 plt.ylabel(r'X [$m/s$]', fontsize=35, fontweight='bold')
 plt.grid(True)
 ax.legend(loc=1, prop={'size':15})
-plt.show(block=False)
+plt.show(block=True)
 
 ####################################################################################################################################################################################
 # SAVE WORKSPACE
