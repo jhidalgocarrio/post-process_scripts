@@ -7,6 +7,7 @@ from pylab import *
 import quaternion as quat
 import datadisplay as data
 from plyfile import PlyData, PlyElement
+from scipy.signal import butter, lfilter, freqz
 import abc
 import os
 import numpy as np
@@ -37,7 +38,16 @@ class RegressionTask(object):
         """Return the test data: training data and labels"""
         return None
 
+    def butter_lowpass(self, cutoff, fs, order=5):
+        nyq = 0.5 * fs
+        normal_cutoff = cutoff / nyq
+        b, a = butter(order, normal_cutoff, btype='low', analog=False)
+        return b, a
 
+    def butter_lowpass_filter(self, data, cutoff, fs, order=5, axis=-1):
+        b, a = self.butter_lowpass(cutoff, fs, order=order)
+        y = lfilter(b, a, data, axis)
+        return y
 
 class ExoTerOdometryARLResiduals(RegressionTask):
 
@@ -448,7 +458,9 @@ class ExoTerOdometryARLResiduals(RegressionTask):
 
         return self.test
 
-    def dem_figure(self, fig_num, method_name, pred_mean, pred_var, train_sampling_time, test_sampling_time, ground_truth=False):
+    def dem_figure(self, fig_num, method_name, pred_mean, pred_var,
+            train_sampling_time, test_sampling_time, ground_truth=False,
+            cutoff=0.2):
         #################
         # RE-SAMPLE
         #################
@@ -472,6 +484,16 @@ class ExoTerOdometryARLResiduals(RegressionTask):
         ########################################################
         position = np.column_stack((reference.x.values, reference.y.values,  reference.z.values ))
         position[:] = [self.test_navigation_orient.data[0].rot(x) +  self.test_navigation_position.data[0] for x in position]
+
+        ###################
+        ### IIR FILTER  ###
+        ###################
+        order = 8
+        fs = 1.0/float(test_sampling_time[0]) # sample rate, Hz
+
+        if ground_truth:
+            print('Filtering at  '+ str(cutoff))
+            pred_mean[:,0] = self.butter_lowpass_filter(pred_mean[:,0], cutoff, fs, order)
 
         ############
         ### PLOT ###
@@ -999,7 +1021,9 @@ class ExoTerOdometryDecosResiduals(RegressionTask):
 
         return self.test
 
-    def dem_figure(self, fig_num, method_name, pred_mean, pred_var, train_sampling_time, test_sampling_time, ground_truth=False):
+    def dem_figure(self, fig_num, method_name, pred_mean, pred_var,
+            train_sampling_time, test_sampling_time, ground_truth=False,
+            cutoff=0.05):
         #################
         # RE-SAMPLE
         #################
@@ -1032,6 +1056,16 @@ class ExoTerOdometryDecosResiduals(RegressionTask):
         position[:] = [(map_orient_align * x * map_orient_align.conj())[1:4] for x in position ]
         position[:] = [ x + map_posi_align for x in position ]
 
+        ###################
+        ### IIR FILTER  ###
+        ###################
+        order = 8
+        fs = 1.0/float(test_sampling_time[0]) # sample rate, Hz
+
+        if ground_truth:
+            print('Filtering at  '+ str(cutoff))
+            pred_mean[:,0] = self.butter_lowpass_filter(pred_mean[:,0], cutoff, fs, order)
+
         ############
         ### PLOT ###
         ############
@@ -1063,7 +1097,7 @@ class ExoTerOdometryDecosResiduals(RegressionTask):
         cmap = plt.get_cmap('Reds')
 
         #cmap = lscm.from_list('temp', colors)
-        norm = plt.Normalize(0.00, 0.06)
+        norm = plt.Normalize(0.00, 0.025)
         #norm = plt.Normalize(min(sd), max(sd))
         lc = LineCollection(segments, cmap=cmap, norm=norm)
         lc.set_array(sd)

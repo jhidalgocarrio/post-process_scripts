@@ -32,7 +32,8 @@ class Figures(object):
         return y
 
 class ExoTerFigures(Figures):
-    def output(self, fig_num, dataset, method, prediction_mean, prediction_var, train_sampling_time, test_sampling_time):
+    def output(self, fig_num, dataset, method, prediction_mean, prediction_var,
+            train_sampling_time, test_sampling_time, cutoff=0.2):
 
         #######################################
         # TEST DATA
@@ -44,8 +45,7 @@ class ExoTerFigures(Figures):
         ### IIR FILTER  ###
         ###################
         order = 8
-        fs = float(test_sampling_time[0]) # sample rate, Hz
-        cutoff = 0.1  # desired cutoff frequency of the filter, Hz
+        fs = 1.0/float(test_sampling_time[0]) # sample rate, Hz
 
         matplotlib.rcParams.update({'font.size': 15, 'font.weight': 'bold'})
         fig = plt.figure(fig_num, figsize=(28, 16), dpi=120, facecolor='w', edgecolor='k')
