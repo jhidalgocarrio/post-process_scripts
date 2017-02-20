@@ -27,7 +27,7 @@ config = {
           'evaluations':[RMSE, MAE, MAPE],
           'methods':[SparseGP_RBF_NL], #'methods':[GP_RBF, GP_MAT32, GP_MAT52],
           'normalization': True,
-          'tasks':[ExoTerOdometryDecosResiduals],
+          'tasks':[ExoTerOdometryARLResiduals, ExoTerOdometryDecosResiduals],
           'train_sampling_time':['1s'],
           'test_sampling_time':['1s'],
           'outputs': [ScreenOutput()],
@@ -106,7 +106,7 @@ if __name__=='__main__':
                         str_norm = "normalized"
                     else:
                         str_norm = "unnormalized"
-                    filename = outpath + '/'+ m.name + '_xyz_velocities_train_at_' + train_time + '_' + str_norm+'.data'
+                    filename = outpath + '/'+ m.name+'_xyz_velocities_train_at_'+ train_time + '_' +str_norm+'_'+dataset.name+'.data'
                     m.save_model(filename)
                     print(bcolors.BOLD + '[OK]'+ bcolors.ENDC)
 
