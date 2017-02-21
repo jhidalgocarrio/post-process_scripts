@@ -272,7 +272,8 @@ plt.plot(X[:,0],Y[:,0],'kx',mew=1.5)
 ## PREDICTION    ##
 ###################
 #path = '~/npi/data/20141024_planetary_lab/20141027-2034/'
-path = '~/npi/data/20140911_decos_field/20140911-1805/'
+#path = '~/npi/data/20140911_decos_field/20140911-1805/'
+path = '~/npi/data/20150515_planetary_lab/20150515-1752/'
 #######################################
 joints_position_file = path + 'joints_position.0.data'
 
@@ -360,10 +361,12 @@ reference_velocity['error_z'] = pandas.Series (fabs(reference_velocity.z - odome
 ##########################################################################
 # ELIMINATE NULL VALUES
 ##########################################################################
-test_mask = pandas.notnull(odometry_velocity.error_x) & pandas.notnull(odometry_velocity.error_y) & pandas.notnull(odometry_velocity.error_z)
+test_mask = pandas.notnull(reference_velocity.error_x) & pandas.notnull(reference_velocity.error_y) & pandas.notnull(reference_velocity.error_z)
 
 # Equalize the length of data
 reference_velocity = reference_velocity[0:test_mask.shape[0]]
+
+test_mask = pandas.notnull(odometry_velocity.error_x) & pandas.notnull(odometry_velocity.error_y) & pandas.notnull(odometry_velocity.error_z)
 odometry_velocity = odometry_velocity[0:test_mask.shape[0]]
 imu_orient = imu_orient[0:test_mask.shape[0]]
 imu_acc = imu_acc[0:test_mask.shape[0]]
@@ -372,7 +375,11 @@ joints_position = joints_position[0:test_mask.shape[0]]
 joints_speed = joints_speed[0:test_mask.shape[0]]
 
 # Sync index with odometry
+test_mask = pandas.notnull(reference_velocity.error_x) & pandas.notnull(reference_velocity.error_y) & pandas.notnull(reference_velocity.error_z)
 reference_velocity.index = test_mask.index
+
+# Sync index with odometry
+test_mask = pandas.notnull(odometry_velocity.error_x) & pandas.notnull(odometry_velocity.error_y) & pandas.notnull(odometry_velocity.error_z)
 odometry_velocity.index = test_mask.index
 imu_orient.index = test_mask.index
 imu_acc.index = test_mask.index
@@ -381,7 +388,9 @@ joints_position.index = test_mask.index
 joints_speed.index = test_mask.index
 
 # Apply the mask
+test_mask = pandas.notnull(reference_velocity.error_x) & pandas.notnull(reference_velocity.error_y) & pandas.notnull(reference_velocity.error_z)
 reference_velocity = reference_velocity[test_mask]
+test_mask = pandas.notnull(odometry_velocity.error_x) & pandas.notnull(odometry_velocity.error_y) & pandas.notnull(odometry_velocity.error_z)
 odometry_velocity = odometry_velocity[test_mask]
 imu_orient = imu_orient[test_mask]
 imu_acc = imu_acc[test_mask]
