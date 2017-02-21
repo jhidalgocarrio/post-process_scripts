@@ -77,7 +77,8 @@ class ExoTerOdometryARLResiduals(RegressionTask):
     #######################################
     # TEST DATA
     #######################################
-    url_test = '~/npi/data/20141024_planetary_lab/20141027-2034/'
+    #url_test = '~/npi/data/20141024_planetary_lab/20141027-2034/'
+    url_test = '~/npi/data/20150515_planetary_lab/20150515-1752/'
     #######################################
     test_joints_position_file = url_test + 'joints_position.0.data'
 
@@ -364,37 +365,43 @@ class ExoTerOdometryARLResiduals(RegressionTask):
         odometry_velocity['error_x'] = pandas.Series (fabs(odometry_velocity.x - reference_velocity.x))
         odometry_velocity['error_y'] = pandas.Series (fabs(odometry_velocity.y - reference_velocity.y))
         odometry_velocity['error_z'] = pandas.Series (fabs(odometry_velocity.z - reference_velocity.z))
+
+        #Compute the error
+        reference_velocity['error_x'] = pandas.Series (fabs(reference_velocity.x - odometry_velocity.x))
+        reference_velocity['error_y'] = pandas.Series (fabs(reference_velocity.y - odometry_velocity.y))
+        reference_velocity['error_z'] = pandas.Series (fabs(reference_velocity.z - odometry_velocity.z))
         ##########################################################################
         # ELIMINATE NULL VALUES
         ##########################################################################
-        self.testing_mask = pandas.notnull(odometry_velocity.error_x) & pandas.notnull(odometry_velocity.error_y) & pandas.notnull(odometry_velocity.error_z)
+        self.ref_testing_mask = pandas.notnull(reference_velocity.error_x) & pandas.notnull(reference_velocity.error_y) & pandas.notnull(reference_velocity.error_z)
+        self.odo_testing_mask = pandas.notnull(odometry_velocity.error_x) & pandas.notnull(odometry_velocity.error_y) & pandas.notnull(odometry_velocity.error_z)
 
         # Equalize the length of data -- comment in case you do not need to re shape -- 
-        reference_velocity = reference_velocity[0:self.testing_mask.shape[0]]
-        odometry_velocity = odometry_velocity[0:self.testing_mask.shape[0]]
-        imu_orient = imu_orient[0:self.testing_mask.shape[0]]
-        imu_acc = imu_acc[0:self.testing_mask.shape[0]]
-        imu_gyro = imu_gyro[0:self.testing_mask.shape[0]]
-        joints_position = joints_position[0:self.testing_mask.shape[0]]
-        joints_speed = joints_speed[0:self.testing_mask.shape[0]]
+        reference_velocity = reference_velocity[0:self.ref_testing_mask.shape[0]]
+        odometry_velocity = odometry_velocity[0:self.odo_testing_mask.shape[0]]
+        imu_orient = imu_orient[0:self.odo_testing_mask.shape[0]]
+        imu_acc = imu_acc[0:self.odo_testing_mask.shape[0]]
+        imu_gyro = imu_gyro[0:self.odo_testing_mask.shape[0]]
+        joints_position = joints_position[0:self.odo_testing_mask.shape[0]]
+        joints_speed = joints_speed[0:self.odo_testing_mask.shape[0]]
 
         # Sync index with odometry
-        reference_velocity.index = self.testing_mask.index
-        odometry_velocity.index = self.testing_mask.index
-        imu_orient.index = self.testing_mask.index
-        imu_acc.index = self.testing_mask.index
-        imu_gyro.index = self.testing_mask.index
-        joints_position.index = self.testing_mask.index
-        joints_speed.index = self.testing_mask.index
+        reference_velocity.index = self.ref_testing_mask.index
+        odometry_velocity.index = self.odo_testing_mask.index
+        imu_orient.index = self.odo_testing_mask.index
+        imu_acc.index = self.odo_testing_mask.index
+        imu_gyro.index = self.odo_testing_mask.index
+        joints_position.index = self.odo_testing_mask.index
+        joints_speed.index = self.odo_testing_mask.index
 
         # Apply the mask
-        reference_velocity = reference_velocity[self.testing_mask]
-        odometry_velocity = odometry_velocity[self.testing_mask]
-        imu_orient = imu_orient[self.testing_mask]
-        imu_acc = imu_acc[self.testing_mask]
-        imu_gyro = imu_gyro[self.testing_mask]
-        joints_position = joints_position[self.testing_mask]
-        joints_speed = joints_speed[self.testing_mask]
+        reference_velocity = reference_velocity[self.ref_testing_mask]
+        odometry_velocity = odometry_velocity[self.odo_testing_mask]
+        imu_orient = imu_orient[self.odo_testing_mask]
+        imu_acc = imu_acc[self.odo_testing_mask]
+        imu_gyro = imu_gyro[self.odo_testing_mask]
+        joints_position = joints_position[self.odo_testing_mask]
+        joints_speed = joints_speed[self.odo_testing_mask]
         # -- end of comment in case reshapes is not needed 
 
         ##########################################################################
@@ -471,13 +478,13 @@ class ExoTerOdometryARLResiduals(RegressionTask):
         #################
 
         ## Equalize the length of data
-        reference = reference[0:self.testing_mask.shape[0]]
+        reference = reference[0:self.ref_testing_mask.shape[0]]
 
         ## Sync index with odometry
-        reference.index = self.testing_mask.index
+        reference.index = self.ref_testing_mask.index
 
         ## Apply the mask
-        reference = reference[self.testing_mask]
+        reference = reference[self.ref_testing_mask]
 
         ########################################################
         #rotate and translate the trajectory wrt the world frame
@@ -927,37 +934,44 @@ class ExoTerOdometryDecosResiduals(RegressionTask):
         odometry_velocity['error_x'] = pandas.Series (fabs(odometry_velocity.x - reference_velocity.x))
         odometry_velocity['error_y'] = pandas.Series (fabs(odometry_velocity.y - reference_velocity.y))
         odometry_velocity['error_z'] = pandas.Series (fabs(odometry_velocity.z - reference_velocity.z))
+
+        #Compute the error
+        reference_velocity['error_x'] = pandas.Series (fabs(reference_velocity.x - odometry_velocity.x))
+        reference_velocity['error_y'] = pandas.Series (fabs(reference_velocity.y - odometry_velocity.y))
+        reference_velocity['error_z'] = pandas.Series (fabs(reference_velocity.z - odometry_velocity.z))
+
         ##########################################################################
         # ELIMINATE NULL VALUES
         ##########################################################################
-        self.testing_mask = pandas.notnull(odometry_velocity.error_x) & pandas.notnull(odometry_velocity.error_y) & pandas.notnull(odometry_velocity.error_z)
+        self.odo_testing_mask = pandas.notnull(odometry_velocity.error_x) & pandas.notnull(odometry_velocity.error_y) & pandas.notnull(odometry_velocity.error_z)
+        self.ref_testing_mask = pandas.notnull(reference_velocity.error_x) & pandas.notnull(reference_velocity.error_y) & pandas.notnull(reference_velocity.error_z)
 
         # Equalize the length of data -- comment in case you do not need to re shape -- 
-        reference_velocity = reference_velocity[0:self.testing_mask.shape[0]]
-        odometry_velocity = odometry_velocity[0:self.testing_mask.shape[0]]
-        imu_orient = imu_orient[0:self.testing_mask.shape[0]]
-        imu_acc = imu_acc[0:self.testing_mask.shape[0]]
-        imu_gyro = imu_gyro[0:self.testing_mask.shape[0]]
-        joints_position = joints_position[0:self.testing_mask.shape[0]]
-        joints_speed = joints_speed[0:self.testing_mask.shape[0]]
+        reference_velocity = reference_velocity[0:self.ref_testing_mask.shape[0]]
+        odometry_velocity = odometry_velocity[0:self.odo_testing_mask.shape[0]]
+        imu_orient = imu_orient[0:self.odo_testing_mask.shape[0]]
+        imu_acc = imu_acc[0:self.odo_testing_mask.shape[0]]
+        imu_gyro = imu_gyro[0:self.odo_testing_mask.shape[0]]
+        joints_position = joints_position[0:self.odo_testing_mask.shape[0]]
+        joints_speed = joints_speed[0:self.odo_testing_mask.shape[0]]
 
         # Sync index with odometry
-        reference_velocity.index = self.testing_mask.index
-        odometry_velocity.index = self.testing_mask.index
-        imu_orient.index = self.testing_mask.index
-        imu_acc.index = self.testing_mask.index
-        imu_gyro.index = self.testing_mask.index
-        joints_position.index = self.testing_mask.index
-        joints_speed.index = self.testing_mask.index
+        reference_velocity.index = self.ref_testing_mask.index
+        odometry_velocity.index = self.odo_testing_mask.index
+        imu_orient.index = self.odo_testing_mask.index
+        imu_acc.index = self.odo_testing_mask.index
+        imu_gyro.index = self.odo_testing_mask.index
+        joints_position.index = self.odo_testing_mask.index
+        joints_speed.index = self.odo_testing_mask.index
 
         # Apply the mask
-        reference_velocity = reference_velocity[self.testing_mask]
-        odometry_velocity = odometry_velocity[self.testing_mask]
-        imu_orient = imu_orient[self.testing_mask]
-        imu_acc = imu_acc[self.testing_mask]
-        imu_gyro = imu_gyro[self.testing_mask]
-        joints_position = joints_position[self.testing_mask]
-        joints_speed = joints_speed[self.testing_mask]
+        reference_velocity = reference_velocity[self.ref_testing_mask]
+        odometry_velocity = odometry_velocity[self.odo_testing_mask]
+        imu_orient = imu_orient[self.odo_testing_mask]
+        imu_acc = imu_acc[self.odo_testing_mask]
+        imu_gyro = imu_gyro[self.odo_testing_mask]
+        joints_position = joints_position[self.odo_testing_mask]
+        joints_speed = joints_speed[self.odo_testing_mask]
         # -- end of comment in case reshapes is not needed 
 
         ##########################################################################
@@ -1034,13 +1048,13 @@ class ExoTerOdometryDecosResiduals(RegressionTask):
         #################
 
         ## Equalize the length of data
-        reference = reference[0:self.testing_mask.shape[0]]
+        reference = reference[0:self.ref_testing_mask.shape[0]]
 
         ## Sync index with odometry
-        reference.index = self.testing_mask.index
+        reference.index = self.ref_testing_mask.index
 
         ## Apply the mask
-        reference = reference[self.testing_mask]
+        reference = reference[self.ref_testing_mask]
 
         #################################################
         # Misalignment to the map                       #

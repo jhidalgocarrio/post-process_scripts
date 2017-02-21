@@ -38,7 +38,7 @@ class ExoTerFigures(Figures):
         #######################################
         # TEST DATA
         #######################################
-        fig_time = dataset.test_odometry_velocity.resample(test_sampling_time).mean().index.to_datetime()[dataset.testing_mask]
+        fig_time = dataset.test_odometry_velocity.resample(test_sampling_time).mean().index.to_datetime()[dataset.odo_testing_mask]
         #######################################
 
         ###################
