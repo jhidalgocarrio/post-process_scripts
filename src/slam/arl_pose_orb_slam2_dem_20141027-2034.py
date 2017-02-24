@@ -6,7 +6,7 @@
 #path='~/npi/data/20141024_planetary_lab/20141027-2034_orb_slam2_2.5fps/'
 #path='~/npi/data/20141024_planetary_lab/20141027-2034_orb_slam2_0.5fps/'
 #path='~/npi/data/20141024_planetary_lab/20141027-2034_orb_slam2_0.5fps_wo_relocalization/'
-path='~/npi/data/20141024_planetary_lab/20141027-2034_orb_slam2_quadratic_adaptivity/'
+path='~/npi/data/20141024_planetary_lab/20141027-2034_orb_slam2_quadratic_adaptivity_five/'
 #######################################
 path_odometry_file = path + 'pose_odo_position.0.data'
 
@@ -32,8 +32,7 @@ path_navigation_position_file = path + 'pose_world_to_navigation_position.0.data
 esa_arl_dem_file = '~/npi/documentation/esa_terrain_lab/DEMclean.ply'
 #######################################
 #path_gpy_gaussian_process_model_file = '~/npi/dev/bundles/exoter/data/gaussian_processes/SparseGP_RBF_xyz_velocities_train_at_500ms_normalized.data'
-#path_gpy_gaussian_process_model_file = '~/npi/dev/bundles/exoter/data/gaussian_processes/SparseGP_RBF_NL_xyz_velocities_train_at_1s_normalized.data'
-path_gpy_gaussian_process_model_file = '~/npi/scripts/data/gaussian_processes/SparseGP_RBF_NL_xyz_velocities_train_at_1s_normalized.data'
+path_gpy_gaussian_process_model_file = '~/npi/dev/bundles/exoter/data/gaussian_processes/SparseGP_RBF_NL_xyz_velocities_train_at_1s_normalized_exoter_odometry_arl_residuals.data'
 #path_gpy_gaussian_process_model_file = '~/npi/dev/bundles/exoter/data/gaussian_processes/GP_RBF_xyz_velocities_train_at_1s_normalized.data'
 #######################################
 
@@ -219,7 +218,7 @@ def arl_dem_figure(fig_num, dem_file, trajectory, pred_mean, kf_trajectory, fram
     #plt.axis('equal')
     plt.grid(True)
     fig.savefig("adaptive_slam_dem.png", dpi=fig.dpi)
-    plt.show(block=True)
+    plt.show(block=False)
 
 def arl_trajectories_figure(fig_num, dem_file, reference_trajectory, kf_trajectory, frames_trajectory, odo_trajectory):
     ########################
@@ -586,6 +585,7 @@ ground_truth = reference.resample('1s').pad()
 rmse = RMSE()
 eval_rmse = rmse.evaluate(estimation, ground_truth)
 la.norm(eval_rmse) #0.145m with adaptation # 0.163m original #1.827m 0.5fps w/relocalization # 0.204 m w/o relocalization
+print("RMSE: " + str(la.norm(eval_rmse[0:3])))
 ##########################################################################
 final_estimation = np.array([estimation.x[estimation.shape[0]-1], estimation.y[estimation.shape[0]-1], estimation.z[estimation.shape[0]-1]])
 final_groundtruth = np.array([ground_truth.x[ground_truth.shape[0]-1], ground_truth.y[ground_truth.shape[0]-1], ground_truth.z[ground_truth.shape[0]-1]])
@@ -593,12 +593,16 @@ final_groundtruth = np.array([ground_truth.x[ground_truth.shape[0]-1], ground_tr
 final_error = final_estimation - final_groundtruth
 
 la.norm(final_error) #0.264m #0.264m original #0.52m 0.5fps
+print("Final error: " + str(la.norm(final_error)))
 
 ##########################################################################
 max_error = np.max(estimation - ground_truth)
 la.norm(max_error) #0.468m adaptation 0.4553m original #4.620m 0.5fps w/relocalization #0.729m w/o relocalization
+print("Maximum error: " + str(la.norm(max_error[0:3])))
 ##########################################################################
 # Number of Keyframes and frames
 ##########################################################################
 number_keyframes = keyframes.shape[0] # 135 (adaptation) 181(original) 82(0.5fps w/relocalization)  150(0.5fps w/o relocalization)keyframes 
 number_frames = imageframes.shape[0] # 484 (adaptation) 2582 (original) 343+169 (0.5fps w/relocalization) 500 (0.5fps w/o relocalization) images frames
+print("#Keyframes: " + str(number_keyframes))
+print("#Frames: " + str(number_frames))
