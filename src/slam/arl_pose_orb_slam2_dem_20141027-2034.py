@@ -6,7 +6,7 @@
 #path='~/npi/data/20141024_planetary_lab/20141027-2034_orb_slam2_2.5fps/'
 #path='~/npi/data/20141024_planetary_lab/20141027-2034_orb_slam2_0.5fps/'
 #path='~/npi/data/20141024_planetary_lab/20141027-2034_orb_slam2_0.5fps_wo_relocalization/'
-path='~/npi/data/20141024_planetary_lab/20141027-2034_orb_slam2_quadratic_adaptivity_five/'
+path='~/npi/data/20141024_planetary_lab/20141027-2034_orb_slam2_quadratic_adaptivity_one/'
 #######################################
 path_odometry_file = path + 'pose_odo_position.0.data'
 
@@ -334,7 +334,7 @@ def arl_trajectories_figure(fig_num, dem_file, reference_trajectory, kf_trajecto
     plt.grid(True)
     plt.show(block=True)
 
-def adaptive_matches_figure(fig_num, info, pred_mean):
+def adaptive_matches_figure(fig_num, info):
     ########################
     # Plot matches 
     ########################
@@ -357,7 +357,30 @@ def adaptive_matches_figure(fig_num, info, pred_mean):
     plt.legend(loc=1, prop={'size':15})
     plt.show(block=True)
 
-def odometry_error_bar(fig_num, info,  color_bar='Reds'):
+def adaptive_frame_figure(fig_num, info):
+    ########################
+    # Plot matches 
+    ########################
+    matplotlib.rcParams.update({'font.size': 15, 'font.weight': 'bold'})
+    fig, ax = plt.subplots()
+
+    x = info.index.to_datetime()
+    y = info.desired_fps
+    ax.plot(x, y, linestyle='--', lw=2, alpha=1.0, color=[1.0, 0, 0.0])
+
+    d = scipy.zeros(len(x))
+    ax.fill_between(x, y, 0, color='blue')
+
+    ax.set_ylabel(r'Image fps [$Hz$]', fontsize=25, fontweight='bold', color='k')
+    ax.tick_params('y', colors='k')
+
+    ax.set_xlabel(r'Time', fontsize=25, fontweight='bold')
+    ax.tick_params('x', colors='k')
+    plt.grid(True)
+    plt.legend(loc=1, prop={'size':15})
+    plt.show(block=True)
+
+def odometry_error_bar(fig_num, info, pred_mean,  color_bar='Reds'):
     ########################
     # Plot Bar 
     ########################
@@ -530,7 +553,7 @@ imu_acc = imu_acc.resample(resampling_time).mean()
 imu_gyro = imu_gyro.resample(resampling_time).mean()
 joints_position = joints_position.resample(resampling_time).mean()
 joints_speed = joints_speed.resample(resampling_time).mean()
-info = info.resample(resampling_time).mean()
+#info = info.resample(resampling_time).mean()
 
 #Compute the error in odometry
 odometry_velocity['error_x'] = pandas.Series (fabs(odometry_velocity.x - reference_velocity.x))
@@ -643,8 +666,9 @@ imframes_position[:] = [navigation_orient.data[0].rot(x) +  navigation_position.
 arl_trajectories_figure(1, esa_arl_dem_file, reference_position, keyframes_position, imframes_position, odometry_position)
 arl_dem_figure(2, esa_arl_dem_file, reference_position, pred_mean, keyframes_position, imframes_position)
 ##########################################################################
-adaptive_matches_figure(3, info, pred_mean)
-odometry_error_bar(4, info)
+adaptive_matches_figure(3, info)
+adaptive_frame_figure(4, info)
+odometry_error_bar(5, info, pred_mean)
 ##########################################################################
 # Compute RMSE, FINAL ERROR AND MAXIMUM ERROR
 ##########################################################################
