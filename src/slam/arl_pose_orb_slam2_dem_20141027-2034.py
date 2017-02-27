@@ -28,6 +28,8 @@ path_navigation_orientation_file = path + 'pose_world_to_navigation_orientation.
 
 path_navigation_position_file = path + 'pose_world_to_navigation_position.0.data'
 
+path_task_info_adaptive_slam_file = path + 'task_info_adaptive_slam.0.data'
+
 #######################################
 esa_arl_dem_file = '~/npi/documentation/esa_terrain_lab/DEMclean.ply'
 #######################################
@@ -117,6 +119,7 @@ def arl_dem_figure(fig_num, dem_file, trajectory, pred_mean, kf_trajectory, fram
     matplotlib.rcParams.update({'font.size': 15, 'font.weight': 'bold'})
     fig = plt.figure(fig_num, figsize=(28, 16), dpi=120, facecolor='w', edgecolor='k')
     ax = fig.add_subplot(111)
+    #fig, ax = plt.subplots()
 
     # Display the DEM
     plt.rc('text', usetex=False)# activate latex text rendering
@@ -144,18 +147,18 @@ def arl_dem_figure(fig_num, dem_file, trajectory, pred_mean, kf_trajectory, fram
     norm = plt.Normalize(0.00, 0.0634491701615)
     lc = LineCollection(segments, cmap=cmap, norm=norm)
     lc.set_array(sd)
-    lc.set_linewidth(20)
+    lc.set_linewidth(25)
     lc.set_alpha(0.8)
     plt.gca().add_collection(lc)
 
 
     #color bar of the covarianve
-    h_cbar = plt.colorbar(lc)#, orientation='horizontal')
-    h_cbar.ax.set_ylabel(r' residual[$m/s$] ')
+    #h_cbar = plt.colorbar(lc)#, orientation='horizontal')
+    #h_cbar.ax.set_ylabel(r' residual[$m/s$] ')
 
     # Color bar of the dem
-    cbar = plt.colorbar()  # draw colorbar
-    cbar.ax.set_ylabel(r' terrain elevation[$m$] ')
+    #cbar = plt.colorbar()  # draw colorbar
+    #cbar.ax.set_ylabel(r' terrain elevation[$m$] ')
 
     # Plot all the image frames
     fr_x = frames_trajectory[:,0]
@@ -203,13 +206,14 @@ def arl_dem_figure(fig_num, dem_file, trajectory, pred_mean, kf_trajectory, fram
     ax.arrow(x[0], y[0], x[130]-x[0], y[130]-y[0], width=0.02, head_width=0.07,
             head_length=0.1, fc='k', ec='k', zorder=104)
 
-    ax.annotate(r'End', xy=(x[x.shape[0]-1], y[y.shape[0]-1]), xycoords='data',
+    # End sign
+    ax.annotate(r'End', xy=(fr_x[fr_x.shape[0]-1], fr_y[fr_y.shape[0]-1]), xycoords='data',
                             xytext=(-5, 5), textcoords='offset points', fontsize=12,
                             horizontalalignment='left',
                             verticalalignment='bottom',
                             zorder=101
                             )
-    ax.scatter(x[x.shape[0]-1], y[y.shape[0]-1], marker='o', facecolor='k', s=40, alpha=1.0, zorder=103)
+    ax.scatter(fr_x[fr_x.shape[0]-1], fr_y[fr_y.shape[0]-1], marker='o', facecolor='k', s=40, alpha=1.0, zorder=103)
 
     ax.add_artist(ab)
 
@@ -218,7 +222,7 @@ def arl_dem_figure(fig_num, dem_file, trajectory, pred_mean, kf_trajectory, fram
     #plt.axis('equal')
     plt.grid(True)
     fig.savefig("adaptive_slam_dem.png", dpi=fig.dpi)
-    plt.show(block=False)
+    plt.show(block=True)
 
 def arl_trajectories_figure(fig_num, dem_file, reference_trajectory, kf_trajectory, frames_trajectory, odo_trajectory):
     ########################
@@ -328,7 +332,68 @@ def arl_trajectories_figure(fig_num, dem_file, reference_trajectory, kf_trajecto
     plt.ylabel(r'Y [$m$]', fontsize=15, fontweight='bold')
     ax.legend(loc=1, prop={'size':15})
     plt.grid(True)
-    plt.show(block=False)
+    plt.show(block=True)
+
+def adaptive_matches_figure(fig_num, info, pred_mean):
+    ########################
+    # Plot matches 
+    ########################
+    matplotlib.rcParams.update({'font.size': 15, 'font.weight': 'bold'})
+    fig, ax = plt.subplots()
+
+    x = info.index.to_datetime()
+    y = info.inliers_matches_ratio_th
+    ax.plot(x, y, linestyle='--', lw=2, alpha=1.0, color=[1.0, 0, 0.0])
+
+    d = scipy.zeros(len(x))
+    ax.fill_between(x, y, 0, color='blue')
+
+    ax.set_ylabel(r'Inliers Ratio[$0.0 - 0.7 $]', fontsize=25, fontweight='bold', color='k')
+    ax.tick_params('y', colors='k')
+
+    ax.set_xlabel(r'Time', fontsize=25, fontweight='bold')
+    ax.tick_params('x', colors='k')
+    plt.grid(True)
+    plt.legend(loc=1, prop={'size':15})
+    plt.show(block=True)
+
+def odometry_error_bar(fig_num, info,  color_bar='Reds'):
+    ########################
+    # Plot Bar 
+    ########################
+    matplotlib.rcParams.update({'font.size': 15, 'font.weight': 'bold'})
+    fig, ax = plt.subplots()
+
+    x = info.index.to_pydatetime()
+    x[:] = [(i-x[0]).total_seconds() for i in x]
+    y = info.inliers_matches_ratio_th
+
+    # Display Odometry error information
+    from numpy import linalg as la
+    y  = np.ones(len(x))
+    sd = la.norm(pred_mean, axis=1)
+    points = np.array([x, y]).T.reshape(-1, 1, 2)
+    segments = np.concatenate([points[:-1], points[1:]], axis=1)
+
+    from matplotlib.collections import LineCollection
+    from matplotlib.colors import ListedColormap, BoundaryNorm
+    from matplotlib.colors import LinearSegmentedColormap as lscm
+
+    cmap = plt.get_cmap(color_bar)
+
+    norm = plt.Normalize(0.00, 0.0634491701615)
+    lc = LineCollection(segments, cmap=cmap, norm=norm)
+    lc.set_array(sd)
+    lc.set_linewidth(100)
+    lc.set_alpha(0.8)
+    plt.gca().add_collection(lc)
+
+    ax.tick_params('y', colors='k')
+    ax.set_xlabel(r'Time [$s$]', fontsize=25, fontweight='bold')
+    ax.tick_params('x', colors='k')
+    ax.set_xlim([0.5, 1.5])
+    ax.set_ylim([x[0], x[len(x)-1]])
+    plt.show(block=True)
 
 ##########################################################################
 # READ THE VALUES IN PANDAS
@@ -367,6 +432,15 @@ keyframes = pandas.read_csv(os.path.expanduser(path_keyframes_trajectory_file), 
 # Images Frames Trajectory
 imageframes = pandas.read_csv(os.path.expanduser(path_allframes_trajectory_file), sep=" ", parse_dates=False,
     names=['x', 'y', 'z', 'heading'], header=None)
+
+# Information task
+info = pandas.read_csv(os.path.expanduser(path_task_info_adaptive_slam_file), sep=" ", parse_dates=True,
+    date_parser=dateparse , index_col='time',
+    names=['time', 'relocalization', 'loops', 'icounts', 'desired_fps',
+        'actual_fps', 'inliers_matches_ratio_th', 'map_matches_ratio_th',
+        'inliers_matches_th', 'map_matches_ratio_cu',
+        'inliers_matches_cu', 'frame_gp_residual', 'kf_gp_residual',
+        'kf_gp_threshold', 'distance_traversed'], header=None)
 
 #World to Navigation Pose
 navigation_orient = data.QuaternionData()
@@ -456,6 +530,7 @@ imu_acc = imu_acc.resample(resampling_time).mean()
 imu_gyro = imu_gyro.resample(resampling_time).mean()
 joints_position = joints_position.resample(resampling_time).mean()
 joints_speed = joints_speed.resample(resampling_time).mean()
+info = info.resample(resampling_time).mean()
 
 #Compute the error in odometry
 odometry_velocity['error_x'] = pandas.Series (fabs(odometry_velocity.x - reference_velocity.x))
@@ -567,6 +642,9 @@ imframes_position[:] = [navigation_orient.data[0].rot(x) +  navigation_position.
 ##########################################################################
 arl_trajectories_figure(1, esa_arl_dem_file, reference_position, keyframes_position, imframes_position, odometry_position)
 arl_dem_figure(2, esa_arl_dem_file, reference_position, pred_mean, keyframes_position, imframes_position)
+##########################################################################
+adaptive_matches_figure(3, info, pred_mean)
+odometry_error_bar(4, info)
 ##########################################################################
 # Compute RMSE, FINAL ERROR AND MAXIMUM ERROR
 ##########################################################################
