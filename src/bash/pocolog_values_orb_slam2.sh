@@ -7,6 +7,9 @@ NUM_ARGUMENTS=2
 if [ $# -ge $NUM_ARGUMENTS ]; then
     echo Running the pocolog commands for the directory: ${args[0]} for *.${args[1]}.log files
 
+    pocolog ${args[0]}/orb_slam2.${args[1]}.log -s /orb_slam2.task_info_out > task_info_adaptive_slam.${args[1]}.data
+    echo 'SLAM Task information... [DONE]'
+
     pocolog ${args[0]}/orb_slam2.${args[1]}.log -s /orb_slam2.keyframe_pose_samples_out --field time,position,cov_position > pose_keyframe_orb_slam2_position.${args[1]}.data
     pocolog ${args[0]}/orb_slam2.${args[1]}.log -s /orb_slam2.keyframe_pose_samples_out --field time,orientation,cov_orientation > pose_keyframe_orb_slam2_orientation.${args[1]}.data
     pocolog ${args[0]}/orb_slam2.${args[1]}.log -s /orb_slam2.pose_samples_out --field time,position,cov_position > pose_orb_slam2_position.${args[1]}.data
