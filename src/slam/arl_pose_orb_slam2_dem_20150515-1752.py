@@ -1,13 +1,9 @@
 #! /usr/bin/env python
-# by javi 2016-09-06 15:15:16
+# -*- coding:utf-8 -*-
+# by javi 2017-02-28 14:05:29
 
 #######################################
-#path='~/npi/data/20141024_planetary_lab/20141027-2034_orb_slam2_gp_adaptive_first_test/'
-#path='~/npi/data/20141024_planetary_lab/20141027-2034_orb_slam2_2.5fps/'
-#path='~/npi/data/20141024_planetary_lab/20141027-2034_orb_slam2_0.5fps/'
-#path='~/npi/data/20141024_planetary_lab/20141027-2034_orb_slam2_0.5fps_wo_relocalization/'
-#path='~/npi/data/20141024_planetary_lab/20141027-2034_orb_slam2_quadratic_adaptivity_one/'
-path='~/npi/data/20141024_planetary_lab/20141027-2034_orb_slam2_quadratic_adaptivity_one/'
+path='~/npi/data/20150515_planetary_lab/20150515-1752_orb_slam2_quadratic_adaptivity_five/'
 #######################################
 path_odometry_file = path + 'pose_odo_position.0.data'
 
@@ -34,9 +30,7 @@ path_task_info_adaptive_slam_file = path + 'task_info_adaptive_slam.0.data'
 #######################################
 esa_arl_dem_file = '~/npi/documentation/esa_terrain_lab/DEMclean.ply'
 #######################################
-#path_gpy_gaussian_process_model_file = '~/npi/dev/bundles/exoter/data/gaussian_processes/SparseGP_RBF_xyz_velocities_train_at_500ms_normalized.data'
-path_gpy_gaussian_process_model_file = '~/npi/dev/bundles/exoter/data/gaussian_processes/SparseGP_RBF_NL_xyz_velocities_train_at_1s_normalized_exoter_odometry_arl_residuals_20141027-2034.data'
-#path_gpy_gaussian_process_model_file = '~/npi/dev/bundles/exoter/data/gaussian_processes/GP_RBF_xyz_velocities_train_at_1s_normalized.data'
+path_gpy_gaussian_process_model_file = '~/npi/dev/bundles/exoter/data/gaussian_processes/SparseGP_RBF_NL_xyz_velocities_train_at_1s_normalized_exoter_odometry_arl_residuals_20150515-1752.data'
 #######################################
 
 import sys
@@ -479,7 +473,7 @@ navigation_position.readData(os.path.expanduser(path_navigation_position_file), 
 ###################
 ## PREDICTION    ##
 ###################
-path = '~/npi/data/20141024_planetary_lab/20141027-2034/'
+path = '~/npi/data/20150515_planetary_lab/20150515-1752/'
 #######################################
 joints_position_file = path + 'joints_position.0.data'
 
