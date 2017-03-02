@@ -46,14 +46,14 @@ ax.plot(residual_1, quadratic_frame(eq_constant, residual_1, image_frame_max),
         linestyle='--', lw=2, alpha=1.0, color=[0, 0, 0.0])
 
 ax.scatter(residual_2, quadratic_frame(eq_constant, residual_2, image_frame_max),
-        marker='o', color=[0.0,0.0,1.0], s=100, alpha=0.5, label='Quadratic adaptivity')
+        marker='o', color=[0.0,0.0,1.0], s=100, alpha=0.5, label='Quadratic')
 
 # Exponential
 ax.plot(residual_1, exponential_frame(eq_constant, residual_1, image_frame_max),
         linestyle='--', lw=2, alpha=1.0, color=[0, 0, 0.0])
 
 ax.scatter(residual_2, exponential_frame(eq_constant, residual_2, image_frame_max),
-        marker='*', color=[0.0,1.0,0.0], s=100, alpha=0.5, label='Exponential adaptivity')
+        marker='*', color=[0.0,1.0,0.0], s=100, alpha=0.5, label='Exponential')
 
 # Linear
 eq_constant = (image_frame_min - image_frame_max) / (gp_max_boundary - gp_min_boundary);
@@ -61,12 +61,12 @@ ax.plot(residual_1, linear_frame(eq_constant, residual_1, image_frame_max),
         linestyle='--', lw=2, alpha=1.0, color=[0.0, 0, 0.0])
 
 ax.scatter(residual_2, linear_frame(eq_constant, residual_2, image_frame_max),
-        marker='D', color=[1.0,0.0,0.0], s=100, alpha=0.5, label='Linear adaptivity')
+        marker='D', color=[1.0,0.0,0.0], s=100, alpha=0.5, label='Linear')
 
 ax.set_xlim(gp_min_boundary, gp_max_boundary)
 ax.set_ylim(image_frame_min, image_frame_max+0.02)
 
-plt.xlabel(r'Odometry residual error [$m/s$]', fontsize=25, fontweight='bold')
+plt.xlabel(r'Odometry error [$m/s$]', fontsize=25, fontweight='bold')
 plt.ylabel(r'Images frame period [$s$]', fontsize=25, fontweight='bold')
 plt.grid(True)
 ax.legend(loc=1, prop={'size':15})
@@ -74,8 +74,8 @@ plt.show(block=True)
 fig.savefig("function_plot_frame_adaptive_slam.png", dpi=fig.dpi)
 
 # Matches ratio
-matches_ratio_min = 0.30
-matches_ratio_max = 0.75
+matches_ratio_min = 0.00 #0.3
+matches_ratio_max = 1.00 #0.75
 
 ################################
 # Residual vs image frame period
@@ -94,14 +94,14 @@ ax.plot(residual_1, quadratic_frame(eq_constant, residual_1, matches_ratio_min),
         linestyle='--', lw=2, alpha=1.0, color=[0, 0, 0.0])
 
 ax.scatter(residual_2, quadratic_frame(eq_constant, residual_2, matches_ratio_min),
-        marker='o', color=[0.0,0.0,1.0], s=100, alpha=0.5, label='Quadratic adaptivity')
+        marker='o', color=[0.0,0.0,1.0], s=100, alpha=0.5, label='Quadratic')
 
 # Exponential
 ax.plot(residual_1, exponential_ratio(eq_constant, residual_1, matches_ratio_min),
         linestyle='--', lw=2, alpha=1.0, color=[0, 0, 0.0])
 
 ax.scatter(residual_2, exponential_ratio(eq_constant, residual_2, matches_ratio_min),
-        marker='*', color=[0.0,1.0,0.0], s=100, alpha=0.5, label='Exponential adaptivity')
+        marker='*', color=[0.0,1.0,0.0], s=100, alpha=0.5, label='Exponential')
 
 # Linear
 eq_constant = (matches_ratio_max - matches_ratio_min) / (gp_max_boundary - gp_min_boundary);
@@ -109,15 +109,15 @@ ax.plot(residual_1, linear_frame(eq_constant, residual_1, matches_ratio_min),
         linestyle='--', lw=2, alpha=1.0, color=[0.0, 0, 0.0])
 
 ax.scatter(residual_2, linear_frame(eq_constant, residual_2, matches_ratio_min),
-        marker='D', color=[1.0,0.0,0.0], s=100, alpha=0.5, label='Linear adaptivity')
+        marker='D', color=[1.0,0.0,0.0], s=100, alpha=0.5, label='Linear')
 
 ax.set_xlim(gp_min_boundary, gp_max_boundary)
 ax.set_ylim(matches_ratio_min, matches_ratio_max)
 
-plt.xlabel(r'Odometry residual error [$m/s$]', fontsize=25, fontweight='bold')
-plt.ylabel(r'Features matches ratio [$\#$]', fontsize=25, fontweight='bold')
+plt.xlabel(r'Odometry error [$m/s$]', fontsize=25, fontweight='bold')
+plt.ylabel(r'Features matches ratio', fontsize=25, fontweight='bold')
 plt.grid(True)
-ax.legend(loc=1, prop={'size':15})
+ax.legend(loc=2, prop={'size':15})
 plt.show(block=True)
 fig.savefig("function_plot_ratio_adaptive_slam.png", dpi=fig.dpi)
 
