@@ -545,11 +545,11 @@ class ExoTerOdometryARLResiduals(RegressionTask):
         #color bar of the covarianve
         #cbaxes = fig.add_axes([0.8, 0.1, 0.03, 0.8]) 
         h_cbar = plt.colorbar(lc)#, orientation='horizontal')
-        h_cbar.ax.set_ylabel(r' residual[$m/s$]')
+        h_cbar.ax.set_ylabel(r' residual[$m/s$] ', fontsize=25, fontweight='bold')
 
         # Color bar of the dem
         cbar = plt.colorbar()  # draw colorbar
-        cbar.ax.set_ylabel(r' terrain elevation[$m$]')
+        cbar.ax.set_ylabel(r' terrain elevation[$m$]', fontsize=25, fontweight='bold')
 
         #Q = ax.plot(x, y, marker='o', linestyle='-', color=[0.3,0.2,0.4], alpha=0.5, lw=40)
 
@@ -1089,8 +1089,8 @@ class ExoTerOdometryDecosResiduals(RegressionTask):
 
         # Display the DEM
         plt.rc('text', usetex=False)# activate latex text rendering
-        CS = plt.contour(self.dem_xi, self.dem_yi, self.dem_zi, 15, linewidths=0.5, colors='k')
-        CS = plt.contourf(self.dem_xi, self.dem_yi, self.dem_zi, 15, cmap=plt.cm.gray, vmax=abs(self.dem_zi).max(), vmin=-abs(self.dem_zi).max())
+        CS = plt.contour(self.dem_xi, self.dem_yi, self.dem_zi, 20, linewidths=0.5, colors='k')
+        CS = plt.contourf(self.dem_xi, self.dem_yi, self.dem_zi, 20, cmap=plt.cm.gray, vmax=abs(self.dem_zi).max(), vmin=-abs(self.dem_zi).max())
 
         # plot data points.
         plt.xlim(min(self.dem_px), max(self.dem_xi))
@@ -1123,11 +1123,11 @@ class ExoTerOdometryDecosResiduals(RegressionTask):
         #color bar of the covarianve
         #cbaxes = fig.add_axes([0.8, 0.1, 0.03, 0.8]) 
         h_cbar = plt.colorbar(lc)#, orientation='horizontal')
-        h_cbar.ax.set_ylabel(r' residual[$m/s$]')
+        h_cbar.ax.set_ylabel(r' residual[$m/s$] ', fontsize=25, fontweight='bold')
 
         # Color bar of the dem
         cbar = plt.colorbar()  # draw colorbar
-        cbar.ax.set_ylabel(r' terrain elevation[$m$]')
+        cbar.ax.set_ylabel(r' terrain elevation[$m$]', fontsize=25, fontweight='bold')
 
         #Q = ax.plot(x, y, marker='o', linestyle='-', color=[0.3,0.2,0.4], alpha=0.5, lw=40)
 

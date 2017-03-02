@@ -51,16 +51,18 @@ class ExoTerFigures(Figures):
         fig = plt.figure(fig_num, figsize=(28, 16), dpi=120, facecolor='w', edgecolor='k')
         ax = fig.add_subplot(111)
 
-        ax.plot(dataset.test_reference_velocity.index.to_datetime(), dataset.test_reference_velocity.x,
+        ref_velocity = dataset.test_reference_velocity.resample(test_sampling_time).mean()[dataset.ref_testing_mask]
+        ref_time = dataset.test_reference_velocity.resample(test_sampling_time).mean().index.to_datetime()[dataset.ref_testing_mask]
+        ax.plot(ref_time, ref_velocity.x,
                 marker='o', linestyle='-', lw=1, alpha=0.3,
                 color=[1.0, 0, 0],
                 label='Reference velocity')
 
-        ax.scatter(dataset.test_reference_velocity.index.to_datetime(), dataset.test_reference_velocity.x,
-                marker='D', color=[1.0,0.0,0.0], s=20, alpha=0.2)
+        #ax.scatter(dataset.test_reference_velocity.index.to_datetime(), dataset.test_reference_velocity.x,
+        #        marker='D', color=[1.0,0.0,0.0], s=20, alpha=0.2)
 
         ax.plot(dataset.test_odometry_velocity.index.to_datetime(), dataset.test_odometry_velocity.x,
-                marker='x', linestyle='-', lw=1, alpha=0.2,
+                marker='D', linestyle='-', lw=1, alpha=0.2,
                 color=[0, 0, 1.0],
                 label='Odometry velocity')
 
@@ -70,12 +72,12 @@ class ExoTerFigures(Figures):
         ax.plot(fig_time, residual_test,
                 marker='x', linestyle='-', lw=4, alpha=1.0,
                 color=[0, 0, 0],
-                label='Error')
+                label='Odometry error')
 
         ax.plot(fig_time, prediction_mean[:,0],
                 marker='x', linestyle='-', lw=4, alpha=1.0,
                 color=[1.0, 1.0, 0],
-                label='Prediction')
+                label='GP prediction')
 
         #sigma = prediction_mean[:,0] + 3.0 * prediction_var[:,0]
         #ax.plot(dataset.test_odometry_velocity.index.to_datetime(), sigma,
@@ -87,12 +89,13 @@ class ExoTerFigures(Figures):
         #        marker='', linestyle='--', lw=2,
         #        color=[1.0, 0.7, 0.0])
 
-        plt.xlabel(r'Time [$s$]', fontsize=35, fontweight='bold')
-        plt.ylabel(r'X [$m/s$]', fontsize=35, fontweight='bold')
+        plt.xlabel(r'Time', fontsize=35, fontweight='bold')
+        plt.ylabel(r'Velocity [$m/s$]', fontsize=35, fontweight='bold')
         plt.grid(True)
+        ax.set_ylim([-0.10, 0.10])
         ax.legend(loc=1, prop={'size':15})
         title_str = dataset.name+"_" + method.name + "_train_at_"+train_sampling_time+"_test_at_"+test_sampling_time
-        plt.title(title_str)
+        #plt.title(title_str)
         #plt.show(block=False)
         fig.savefig(title_str+".png", dpi=fig.dpi)
         return None
