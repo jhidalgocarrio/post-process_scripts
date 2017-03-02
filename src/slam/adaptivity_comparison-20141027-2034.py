@@ -189,7 +189,7 @@ info_ten = pandas.read_csv(os.path.expanduser(path_task_info_adaptive_slam_file)
         'kf_gp_threshold', 'distance_traversed'], header=None)
 
 ##########################################################################
-path_gpy_gaussian_process_model_file = '~/npi/dev/bundles/exoter/data/gaussian_processes/SparseGP_RBF_NL_xyz_velocities_train_at_1s_normalized_exoter_odometry_arl_residuals.data'
+path_gpy_gaussian_process_model_file = '~/npi/dev/bundles/exoter/data/gaussian_processes/SparseGP_RBF_NL_xyz_velocities_train_at_1s_normalized_exoter_odometry_arl_residuals_20141027-2034.data'
 ##########################################################################
 path = '~/npi/data/20141024_planetary_lab/20141027-2034/'
 #######################################
