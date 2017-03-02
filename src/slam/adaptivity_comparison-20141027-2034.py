@@ -63,7 +63,6 @@ def adaptive_matches_comparison_figure(fig_num, info_one, info_two, info_five,
     lc.set_alpha(0.8)
     h_cbar = plt.colorbar(lc)#, orientation='horizontal')
     h_cbar.ax.set_ylabel(r' residual[$m/s$] ', fontsize=25, fontweight='bold', color='k')
-    h_cbar.ax.tick_params('y', colors='k')
 
     ########################
     #One fill
@@ -128,10 +127,10 @@ def adaptive_matches_comparison_figure(fig_num, info_one, info_two, info_five,
     ax.plot(x, y, linestyle='-', lw=2, alpha=1.0, color=[0.0, 0.0, 0.0])
 
     ax.set_ylabel(r'Inliers Matches Ratio[$0.0 - 0.75$]', fontsize=25, fontweight='bold', color='k')
-    ax.tick_params('y', colors='k')
+    #ax.tick_params('y', colors='k')
 
     ax.set_xlabel(r'Time', fontsize=25, fontweight='bold')
-    ax.tick_params('x', colors='k')
+    #ax.tick_params('x', colors='k')
     plt.grid(True)
     plt.legend(handles=[scatter_one, scatter_two, scatter_five, scatter_ten],
             loc=2, prop={'size':15})

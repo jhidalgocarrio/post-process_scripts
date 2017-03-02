@@ -3,7 +3,7 @@
 # by javi 2017-02-28 14:05:29
 
 #######################################
-path='~/npi/data/20150515_planetary_lab/20150515-1752_orb_slam2_quadratic_adaptivity_five/'
+path='~/npi/data/20150515_planetary_lab/20150515-1752_orb_slam2/'
 #######################################
 path_odometry_file = path + 'pose_odo_position.0.data'
 
@@ -548,7 +548,6 @@ imu_acc = imu_acc.resample(resampling_time).mean()
 imu_gyro = imu_gyro.resample(resampling_time).mean()
 joints_position = joints_position.resample(resampling_time).mean()
 joints_speed = joints_speed.resample(resampling_time).mean()
-#info = info.resample(resampling_time).mean()
 
 #Compute the error in odometry
 odometry_velocity['error_x'] = pandas.Series (fabs(odometry_velocity.x - reference_velocity.x))

@@ -7,7 +7,7 @@
 #path='~/npi/data/20141024_planetary_lab/20141027-2034_orb_slam2_0.5fps/'
 #path='~/npi/data/20141024_planetary_lab/20141027-2034_orb_slam2_0.5fps_wo_relocalization/'
 #path='~/npi/data/20141024_planetary_lab/20141027-2034_orb_slam2_quadratic_adaptivity_one/'
-path='~/npi/data/20141024_planetary_lab/20141027-2034_orb_slam2_quadratic_adaptivity_one/'
+path='~/npi/data/20141024_planetary_lab/20141027-2034_orb_slam2_quadratic_adaptivity_50/'
 #######################################
 path_odometry_file = path + 'pose_odo_position.0.data'
 
@@ -222,7 +222,7 @@ def arl_dem_figure(fig_num, dem_file, trajectory, pred_mean, kf_trajectory, fram
     plt.ylabel(r'Y [$m$]', fontsize=15, fontweight='bold')
     #plt.axis('equal')
     plt.grid(True)
-    fig.savefig("adaptive_slam_dem.png", dpi=fig.dpi)
+    fig.savefig("arl_adaptive_slam_dem-20141027-2034.png", dpi=fig.dpi)
     plt.show(block=True)
 
 def arl_trajectories_figure(fig_num, dem_file, reference_trajectory, kf_trajectory, frames_trajectory, odo_trajectory):
@@ -333,6 +333,7 @@ def arl_trajectories_figure(fig_num, dem_file, reference_trajectory, kf_trajecto
     plt.ylabel(r'Y [$m$]', fontsize=15, fontweight='bold')
     ax.legend(loc=1, prop={'size':15})
     plt.grid(True)
+    fig.savefig("arl_trajectories_figure-20141027-2034.png", dpi=fig.dpi)
     plt.show(block=True)
 
 def adaptive_matches_figure(fig_num, info):
