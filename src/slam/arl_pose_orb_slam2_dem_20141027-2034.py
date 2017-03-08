@@ -555,7 +555,6 @@ imu_acc = imu_acc.resample(resampling_time).mean()
 imu_gyro = imu_gyro.resample(resampling_time).mean()
 joints_position = joints_position.resample(resampling_time).mean()
 joints_speed = joints_speed.resample(resampling_time).mean()
-#info = info.resample(resampling_time).mean()
 
 #Compute the error in odometry
 odometry_velocity['error_x'] = pandas.Series (fabs(odometry_velocity.x - reference_velocity.x))
@@ -670,6 +669,8 @@ arl_dem_figure(2, esa_arl_dem_file, reference_position, pred_mean, keyframes_pos
 ##########################################################################
 adaptive_matches_figure(3, info)
 adaptive_frame_figure(4, info)
+
+info = info.resample(resampling_time).mean()
 odometry_error_bar(5, info, pred_mean)
 ##########################################################################
 # Compute RMSE, FINAL ERROR AND MAXIMUM ERROR
