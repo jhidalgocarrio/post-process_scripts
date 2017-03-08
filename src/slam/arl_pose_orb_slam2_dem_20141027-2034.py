@@ -7,7 +7,7 @@
 #path='~/npi/data/20141024_planetary_lab/20141027-2034_orb_slam2_0.5fps/'
 #path='~/npi/data/20141024_planetary_lab/20141027-2034_orb_slam2_0.5fps_wo_relocalization/'
 #path='~/npi/data/20141024_planetary_lab/20141027-2034_orb_slam2_quadratic_adaptivity_one/'
-path='~/npi/data/20141024_planetary_lab/20141027-2034_orb_slam2_quadratic_adaptivity_50/'
+path='~/npi/data/20141024_planetary_lab/20141027-2034_orb_slam2_quadratic_adaptivity_10/'
 #######################################
 path_odometry_file = path + 'pose_odo_position.0.data'
 
@@ -170,8 +170,8 @@ def arl_dem_figure(fig_num, dem_file, trajectory, pred_mean, kf_trajectory, fram
     # Plot the key frames
     kf_x = kf_trajectory[:,0]
     kf_y = kf_trajectory[:,1]
-    ax.scatter(kf_x, kf_y, marker='s', facecolor=[0.2,1.0,0.0], edgecolor='b',
-            label='keyframes', s=20, alpha=1.0, zorder=100)
+    ax.scatter(kf_x, kf_y, marker='D', facecolor=[0.2,1.0,0.0], edgecolor='b',
+            label='keyframes', s=40, alpha=1.0, zorder=100)
 
     import os
     from matplotlib.cbook import get_sample_data
@@ -710,3 +710,4 @@ number_keyframes = keyframes.shape[0] # 135 (adaptation) 181(original) 82(0.5fps
 number_frames = imageframes.shape[0] # 484 (adaptation) 2582 (original) 343+169 (0.5fps w/relocalization) 500 (0.5fps w/o relocalization) images frames
 print("#Keyframes: " + str(number_keyframes))
 print("#Frames: " + str(number_frames))
+print("#Loops: " + str(max(info.loops)))
