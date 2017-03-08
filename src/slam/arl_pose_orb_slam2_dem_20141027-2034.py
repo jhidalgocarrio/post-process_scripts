@@ -7,7 +7,7 @@
 #path='~/npi/data/20141024_planetary_lab/20141027-2034_orb_slam2_0.5fps/'
 #path='~/npi/data/20141024_planetary_lab/20141027-2034_orb_slam2_0.5fps_wo_relocalization/'
 #path='~/npi/data/20141024_planetary_lab/20141027-2034_orb_slam2_quadratic_adaptivity_one/'
-path='~/npi/data/20141024_planetary_lab/20141027-2034_orb_slam2_quadratic_adaptivity_10/'
+path='~/npi/data/20141024_planetary_lab/20141027-2034_orb_slam2_quadratic_adaptivity_50/'
 #######################################
 path_odometry_file = path + 'pose_odo_position.0.data'
 
@@ -148,7 +148,7 @@ def arl_dem_figure(fig_num, dem_file, trajectory, pred_mean, kf_trajectory, fram
     norm = plt.Normalize(0.00, 0.0634491701615)
     lc = LineCollection(segments, cmap=cmap, norm=norm)
     lc.set_array(sd)
-    lc.set_linewidth(25)
+    lc.set_linewidth(40)
     lc.set_alpha(0.8)
     plt.gca().add_collection(lc)
 
@@ -182,7 +182,7 @@ def arl_dem_figure(fig_num, dem_file, trajectory, pred_mean, kf_trajectory, fram
     fn = get_sample_data(os.getcwd()+"/data/img/exoter.png", asfileobj=False)
     exoter = image.imread(fn)
     exoter = ndimage.rotate(exoter, 180)
-    imexoter = OffsetImage(exoter, zoom=0.3)
+    imexoter = OffsetImage(exoter, zoom=0.5)
 
 
     ab = AnnotationBbox(imexoter, xy=(x[0], y[0]),
@@ -296,7 +296,7 @@ def arl_trajectories_figure(fig_num, dem_file, reference_trajectory, kf_trajecto
     fn = get_sample_data(os.getcwd()+"/data/img/exoter.png", asfileobj=False)
     exoter = image.imread(fn)
     exoter = ndimage.rotate(exoter, 180)
-    imexoter = OffsetImage(exoter, zoom=0.3)
+    imexoter = OffsetImage(exoter, zoom=0.5)
 
 
     ab = AnnotationBbox(imexoter, xy=(x[0], y[0]),

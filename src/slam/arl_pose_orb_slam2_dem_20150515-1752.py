@@ -3,7 +3,7 @@
 # by javi 2017-02-28 14:05:29
 
 #######################################
-path='~/npi/data/20150515_planetary_lab/20150515-1752_orb_slam2/'
+path='~/npi/data/20150515_planetary_lab/20150515-1752_orb_slam2_quadratic_adaptivity_100/'
 #######################################
 path_odometry_file = path + 'pose_odo_position.0.data'
 
@@ -127,8 +127,8 @@ def arl_dem_figure(fig_num, dem_file, trajectory, pred_mean, kf_trajectory, fram
 
     # Display Ground Truth trajectory
     from numpy import linalg as la
-    x = trajectory[:,0]
-    y = trajectory[:,1]
+    x = trajectory[1:trajectory.shape[0]-1,0]
+    y = trajectory[1:trajectory.shape[0]-1,1]
     sd = la.norm(pred_mean, axis=1)
     points = np.array([x, y]).T.reshape(-1, 1, 2)
     segments = np.concatenate([points[:-1], points[1:]], axis=1)
@@ -142,7 +142,7 @@ def arl_dem_figure(fig_num, dem_file, trajectory, pred_mean, kf_trajectory, fram
     norm = plt.Normalize(0.00, 0.0634491701615)
     lc = LineCollection(segments, cmap=cmap, norm=norm)
     lc.set_array(sd)
-    lc.set_linewidth(25)
+    lc.set_linewidth(40)
     lc.set_alpha(0.8)
     plt.gca().add_collection(lc)
 
@@ -164,8 +164,8 @@ def arl_dem_figure(fig_num, dem_file, trajectory, pred_mean, kf_trajectory, fram
     # Plot the key frames
     kf_x = kf_trajectory[:,0]
     kf_y = kf_trajectory[:,1]
-    ax.scatter(kf_x, kf_y, marker='s', facecolor=[0.2,1.0,0.0], edgecolor='b',
-            label='keyframes', s=20, alpha=1.0, zorder=100)
+    ax.scatter(kf_x, kf_y, marker='D', facecolor=[0.2,1.0,0.0], edgecolor='b',
+            label='keyframes', s=40, alpha=1.0, zorder=100)
 
     import os
     from matplotlib.cbook import get_sample_data
@@ -175,8 +175,8 @@ def arl_dem_figure(fig_num, dem_file, trajectory, pred_mean, kf_trajectory, fram
     from matplotlib.offsetbox import OffsetImage, AnnotationBbox
     fn = get_sample_data(os.getcwd()+"/data/img/exoter.png", asfileobj=False)
     exoter = image.imread(fn)
-    exoter = ndimage.rotate(exoter, 180)
-    imexoter = OffsetImage(exoter, zoom=0.3)
+    exoter = ndimage.rotate(exoter, 100)
+    imexoter = OffsetImage(exoter, zoom=0.5)
 
 
     ab = AnnotationBbox(imexoter, xy=(x[0], y[0]),
@@ -185,8 +185,8 @@ def arl_dem_figure(fig_num, dem_file, trajectory, pred_mean, kf_trajectory, fram
                     boxcoords="offset points",
                     frameon=False)
 
-    ax.annotate(r'ExoTeR', xy=(x[0], y[0]), xycoords='data',
-                            xytext=(-20, 30), textcoords='offset points', fontsize=12,
+    ax.annotate(r'ExoTeR', xy=(x[1], y[1]), xycoords='data',
+                            xytext=(-20, 30), textcoords='offset points', fontsize=12, zorder=101,
                             #arrowprops=dict(arrowstyle="->", connectionstyle="arc3,rad=.2", lw=2.0)
                             )
 
@@ -198,8 +198,8 @@ def arl_dem_figure(fig_num, dem_file, trajectory, pred_mean, kf_trajectory, fram
                             )
     ax.scatter(x[0], y[0], marker='o', facecolor='k', s=40, alpha=1.0, zorder=103)
 
-    ax.arrow(x[0], y[0], x[130]-x[0], y[130]-y[0], width=0.02, head_width=0.07,
-            head_length=0.1, fc='k', ec='k', zorder=104)
+    ax.arrow(x[0], y[0], x[64]-x[0], y[64]-y[0], width=0.01, head_width=0.05,
+            head_length=0.05, fc='k', ec='k', zorder=104)
 
     # End sign
     ax.annotate(r'End', xy=(fr_x[fr_x.shape[0]-1], fr_y[fr_y.shape[0]-1]), xycoords='data',
@@ -216,7 +216,7 @@ def arl_dem_figure(fig_num, dem_file, trajectory, pred_mean, kf_trajectory, fram
     plt.ylabel(r'Y [$m$]', fontsize=15, fontweight='bold')
     #plt.axis('equal')
     plt.grid(True)
-    fig.savefig("adaptive_slam_dem.png", dpi=fig.dpi)
+    fig.savefig("arl_adaptive_slam_dem-20150515-1752.png", dpi=fig.dpi)
     plt.show(block=True)
 
 def arl_trajectories_figure(fig_num, dem_file, reference_trajectory, kf_trajectory, frames_trajectory, odo_trajectory):
@@ -242,6 +242,7 @@ def arl_trajectories_figure(fig_num, dem_file, reference_trajectory, kf_trajecto
     matplotlib.rcParams.update({'font.size': 15, 'font.weight': 'bold'})
     fig = plt.figure(fig_num, figsize=(28, 16), dpi=120, facecolor='w', edgecolor='k')
     ax = fig.add_subplot(111)
+    #fig, ax = plt.subplots()
 
     # Display the DEM
     plt.rc('text', usetex=False)# activate latex text rendering
@@ -258,14 +259,14 @@ def arl_trajectories_figure(fig_num, dem_file, reference_trajectory, kf_trajecto
 
     # Display Ground Truth trajectory
     from numpy import linalg as la
-    x = reference_trajectory[:,0][0::10]
-    y = reference_trajectory[:,1][0::10]
+    x = reference_trajectory[1:reference_trajectory.shape[0]-1,0][0::5]
+    y = reference_trajectory[1:reference_trajectory.shape[0]-1,1][0::5]
     ax.plot(x, y, marker='D', linestyle='-', lw=2, alpha=0.3, color=[1.0, 1.0, 0.0],
             label='ground truth', zorder=80)
 
     # Plot all the image frames
-    fr_x = frames_trajectory[:,0][0::10]
-    fr_y = frames_trajectory[:,1][0::10]
+    fr_x = frames_trajectory[:,0][0::5]
+    fr_y = frames_trajectory[:,1][0::5]
     ax.plot(fr_x, fr_y, marker='s', linestyle='-', lw=2, alpha=0.3, color=[0.0, 0.3, 1.0],
             label='slam', zorder=99)
 
@@ -276,8 +277,8 @@ def arl_trajectories_figure(fig_num, dem_file, reference_trajectory, kf_trajecto
             label='keyframes', s=20, alpha=1.0, zorder=100)
 
     # Pure odometry trajectory
-    odo_x = odo_trajectory[:,0][0::10]
-    odo_y = odo_trajectory[:,1][0::10]
+    odo_x = odo_trajectory[:,0][0::5]
+    odo_y = odo_trajectory[:,1][0::5]
     ax.plot(odo_x, odo_y, marker='h', linestyle='-', lw=2, alpha=0.3, color=[1.0, 0, 0],
             label='odometry', zorder=70)
 
@@ -289,8 +290,8 @@ def arl_trajectories_figure(fig_num, dem_file, reference_trajectory, kf_trajecto
     from matplotlib.offsetbox import OffsetImage, AnnotationBbox
     fn = get_sample_data(os.getcwd()+"/data/img/exoter.png", asfileobj=False)
     exoter = image.imread(fn)
-    exoter = ndimage.rotate(exoter, 180)
-    imexoter = OffsetImage(exoter, zoom=0.3)
+    exoter = ndimage.rotate(exoter, 100)
+    imexoter = OffsetImage(exoter, zoom=0.5)
 
 
     ab = AnnotationBbox(imexoter, xy=(x[0], y[0]),
@@ -299,7 +300,7 @@ def arl_trajectories_figure(fig_num, dem_file, reference_trajectory, kf_trajecto
                     boxcoords="offset points",
                     frameon=False)
 
-    ax.annotate(r'ExoTeR', xy=(x[0], y[0]), xycoords='data',
+    ax.annotate(r'ExoTeR', xy=(x[1], y[1]), xycoords='data',
                             xytext=(-20, 30), textcoords='offset points', fontsize=12,
                             )
     ax.annotate(r'Start', xy=(x[0], y[0]), xycoords='data',
@@ -311,7 +312,7 @@ def arl_trajectories_figure(fig_num, dem_file, reference_trajectory, kf_trajecto
     ax.scatter(x[0], y[0], marker='o', facecolor='k', s=40, alpha=1.0, zorder=103)
 
     ax.arrow(x[0], y[0], x[13]-x[0], y[13]-y[0], width=0.01, head_width=0.05,
-            head_length=0.2, fc='k', ec='k', zorder=104)
+            head_length=0.05, fc='k', ec='k', zorder=104)
 
     ax.annotate(r'End', xy=(x[x.shape[0]-1], y[y.shape[0]-1]), xycoords='data',
                             xytext=(-5, 5), textcoords='offset points', fontsize=12,
@@ -327,6 +328,7 @@ def arl_trajectories_figure(fig_num, dem_file, reference_trajectory, kf_trajecto
     plt.ylabel(r'Y [$m$]', fontsize=15, fontweight='bold')
     ax.legend(loc=1, prop={'size':15})
     plt.grid(True)
+    fig.savefig("arl_trajectories_figure-20150515-1752.png", dpi=fig.dpi)
     plt.show(block=True)
 
 def adaptive_matches_figure(fig_num, info):
@@ -662,6 +664,8 @@ arl_dem_figure(2, esa_arl_dem_file, reference_position, pred_mean, keyframes_pos
 ##########################################################################
 adaptive_matches_figure(3, info)
 adaptive_frame_figure(4, info)
+
+info = info.resample(resampling_time).mean()
 odometry_error_bar(5, info, pred_mean)
 ##########################################################################
 # Compute RMSE, FINAL ERROR AND MAXIMUM ERROR
@@ -702,3 +706,4 @@ number_keyframes = keyframes.shape[0] # 135 (adaptation) 181(original) 82(0.5fps
 number_frames = imageframes.shape[0] # 484 (adaptation) 2582 (original) 343+169 (0.5fps w/relocalization) 500 (0.5fps w/o relocalization) images frames
 print("#Keyframes: " + str(number_keyframes))
 print("#Frames: " + str(number_frames))
+print("#Loops: " + str(max(info.loops)))
