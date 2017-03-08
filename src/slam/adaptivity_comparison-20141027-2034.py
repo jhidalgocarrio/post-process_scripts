@@ -29,8 +29,8 @@ from methods import GP_RBF, SVIGP_RBF, SparseGP_RBF, SparseGP_RBF_NL, GP_MAT32, 
 ##########################################################################
 # PLOTTING FUNCTION
 ##########################################################################
-def adaptive_matches_comparison_figure(fig_num, info_one, info_two, info_five,
-        info_ten, pred_mean, color_bar='Reds'):
+def adaptive_matches_comparison_figure(fig_num, info_ten, info_twentyfive, info_fifty,
+        info_hundred, pred_mean, color_bar='Reds'):
     ########################
     # Plot matches
     ########################
@@ -40,9 +40,9 @@ def adaptive_matches_comparison_figure(fig_num, info_one, info_two, info_five,
     ########################
     # Odometry prediction 
     ########################
-    x = info_one.index.to_pydatetime()
+    x = info_ten.index.to_pydatetime()
     x[:] = [(i-x[0]).total_seconds() for i in x]
-    y = info_one.inliers_matches_ratio_th
+    y = info_ten.inliers_matches_ratio_th
 
     from numpy import linalg as la
     y  = np.ones(len(x))
@@ -65,65 +65,65 @@ def adaptive_matches_comparison_figure(fig_num, info_one, info_two, info_five,
     h_cbar.ax.set_ylabel(r' residual[$m/s$] ', fontsize=25, fontweight='bold', color='k')
 
     ########################
-    #One fill
-    x = info_one.index.to_datetime()
-    y = info_one.inliers_matches_ratio_th
+    #Ten fill
+    x = info_ten.index.to_datetime()
+    y = info_ten.inliers_matches_ratio_th
     d = scipy.zeros(len(x))
     ax.fill_between(x, y, 0, color='lightblue')
 
     #Scatters
     scatter_one = ax.scatter(x[0], y[0], marker='s', facecolor='lightblue',
-            edgecolor='k', label='1%', s=20, alpha=1.0, zorder=100)
+            edgecolor='k', label='10%', s=20, alpha=1.0, zorder=100)
 
-    #Two fill
-    x = info_two.index.to_datetime()
-    y = info_two.inliers_matches_ratio_th
+    #Twenty five fill
+    x = info_twentyfive.index.to_datetime()
+    y = info_twentyfive.inliers_matches_ratio_th
     d = scipy.zeros(len(x))
     ax.fill_between(x, y, 0, color='lightsteelblue')
 
     #Scatters
     scatter_two = ax.scatter(x[0], y[0], marker='s', facecolor='lightsteelblue',
-            edgecolor='k', label='2%', s=20, alpha=1.0, zorder=100)
+            edgecolor='k', label='25%', s=20, alpha=1.0, zorder=100)
 
-    #Five fill
-    x = info_five.index.to_datetime()
-    y = info_five.inliers_matches_ratio_th
+    #Fifty fill
+    x = info_fifty.index.to_datetime()
+    y = info_fifty.inliers_matches_ratio_th
     d = scipy.zeros(len(x))
     ax.fill_between(x, y, 0, color='steelblue')
 
     #Scatters
     scatter_five = ax.scatter(x[0], y[0], marker='s', facecolor='steelblue',
-            edgecolor='k', label='5%', s=20, alpha=1.0, zorder=100)
+            edgecolor='k', label='50%', s=20, alpha=1.0, zorder=100)
 
-    #Ten fill
-    x = info_ten.index.to_datetime()
-    y = info_ten.inliers_matches_ratio_th
+    #Hundred fill
+    x = info_hundred.index.to_datetime()
+    y = info_hundred.inliers_matches_ratio_th
     d = scipy.zeros(len(x))
     ax.fill_between(x, y, 0, color='blue')
 
     #Scatters
     scatter_ten = ax.scatter(x[0], y[0], marker='s', facecolor='blue',
-            edgecolor='k', label='10%', s=20, alpha=1.0, zorder=100)
+            edgecolor='k', label='100%', s=20, alpha=1.0, zorder=100)
 
     ########################
+    #Hundred line
+    x = info_hundred.index.to_datetime()
+    y = info_hundred.inliers_matches_ratio_th
+    ax.plot(x, y, linestyle='-', lw=2, alpha=1.0, color=[1.0, 1.0, 1.0])
+
+    #Fifty line
+    x = info_fifty.index.to_datetime()
+    y = info_fifty.inliers_matches_ratio_th
+    ax.plot(x, y, linestyle='-', lw=2, alpha=1.0, color=[1.0, 1.0, 1.0])
+
+    #Twenty line
+    x = info_twentyfive.index.to_datetime()
+    y = info_twentyfive.inliers_matches_ratio_th
+    ax.plot(x, y, linestyle='-', lw=2, alpha=1.0, color=[1.0, 1.0, 1.0])
+
     #Ten line
     x = info_ten.index.to_datetime()
     y = info_ten.inliers_matches_ratio_th
-    ax.plot(x, y, linestyle='-', lw=2, alpha=1.0, color=[1.0, 1.0, 1.0])
-
-    #Five line
-    x = info_five.index.to_datetime()
-    y = info_five.inliers_matches_ratio_th
-    ax.plot(x, y, linestyle='-', lw=2, alpha=1.0, color=[1.0, 1.0, 1.0])
-
-    #Two line
-    x = info_two.index.to_datetime()
-    y = info_two.inliers_matches_ratio_th
-    ax.plot(x, y, linestyle='-', lw=2, alpha=1.0, color=[1.0, 1.0, 1.0])
-
-    #One line
-    x = info_one.index.to_datetime()
-    y = info_one.inliers_matches_ratio_th
     ax.plot(x, y, linestyle='-', lw=2, alpha=1.0, color=[0.0, 0.0, 0.0])
 
     ax.set_ylabel(r'Inliers Matches Ratio[$0.0 - 0.75$]', fontsize=25, fontweight='bold', color='k')
@@ -139,47 +139,47 @@ def adaptive_matches_comparison_figure(fig_num, info_one, info_two, info_five,
 ##########################################################################
 # Comparing information from different adaptivity thresholds
 ##########################################################################
-path='~/npi/data/20141024_planetary_lab/20141027-2034_orb_slam2_quadratic_adaptivity_one/'
-path_task_info_adaptive_slam_file = path + 'task_info_adaptive_slam.0.data'
-
-# Information task
-info_one = pandas.read_csv(os.path.expanduser(path_task_info_adaptive_slam_file), sep=" ", parse_dates=True,
-    date_parser=dateparse , index_col='time',
-    names=['time', 'relocalization', 'loops', 'icounts', 'desired_fps',
-        'actual_fps', 'inliers_matches_ratio_th', 'map_matches_ratio_th',
-        'inliers_matches_th', 'map_matches_ratio_cu',
-        'inliers_matches_cu', 'frame_gp_residual', 'kf_gp_residual',
-        'kf_gp_threshold', 'distance_traversed'], header=None)
-
-path='~/npi/data/20141024_planetary_lab/20141027-2034_orb_slam2_quadratic_adaptivity_two/'
-path_task_info_adaptive_slam_file = path + 'task_info_adaptive_slam.0.data'
-
-# Information task
-info_two = pandas.read_csv(os.path.expanduser(path_task_info_adaptive_slam_file), sep=" ", parse_dates=True,
-    date_parser=dateparse , index_col='time',
-    names=['time', 'relocalization', 'loops', 'icounts', 'desired_fps',
-        'actual_fps', 'inliers_matches_ratio_th', 'map_matches_ratio_th',
-        'inliers_matches_th', 'map_matches_ratio_cu',
-        'inliers_matches_cu', 'frame_gp_residual', 'kf_gp_residual',
-        'kf_gp_threshold', 'distance_traversed'], header=None)
-
-path='~/npi/data/20141024_planetary_lab/20141027-2034_orb_slam2_quadratic_adaptivity_five/'
-path_task_info_adaptive_slam_file = path + 'task_info_adaptive_slam.0.data'
-
-# Information task
-info_five = pandas.read_csv(os.path.expanduser(path_task_info_adaptive_slam_file), sep=" ", parse_dates=True,
-    date_parser=dateparse , index_col='time',
-    names=['time', 'relocalization', 'loops', 'icounts', 'desired_fps',
-        'actual_fps', 'inliers_matches_ratio_th', 'map_matches_ratio_th',
-        'inliers_matches_th', 'map_matches_ratio_cu',
-        'inliers_matches_cu', 'frame_gp_residual', 'kf_gp_residual',
-        'kf_gp_threshold', 'distance_traversed'], header=None)
-
-path='~/npi/data/20141024_planetary_lab/20141027-2034_orb_slam2_quadratic_adaptivity_ten/'
+path='~/npi/data/20141024_planetary_lab/20141027-2034_orb_slam2_quadratic_adaptivity_10/'
 path_task_info_adaptive_slam_file = path + 'task_info_adaptive_slam.0.data'
 
 # Information task
 info_ten = pandas.read_csv(os.path.expanduser(path_task_info_adaptive_slam_file), sep=" ", parse_dates=True,
+    date_parser=dateparse , index_col='time',
+    names=['time', 'relocalization', 'loops', 'icounts', 'desired_fps',
+        'actual_fps', 'inliers_matches_ratio_th', 'map_matches_ratio_th',
+        'inliers_matches_th', 'map_matches_ratio_cu',
+        'inliers_matches_cu', 'frame_gp_residual', 'kf_gp_residual',
+        'kf_gp_threshold', 'distance_traversed'], header=None)
+
+path='~/npi/data/20141024_planetary_lab/20141027-2034_orb_slam2_quadratic_adaptivity_25/'
+path_task_info_adaptive_slam_file = path + 'task_info_adaptive_slam.0.data'
+
+# Information task
+info_twentyfive = pandas.read_csv(os.path.expanduser(path_task_info_adaptive_slam_file), sep=" ", parse_dates=True,
+    date_parser=dateparse , index_col='time',
+    names=['time', 'relocalization', 'loops', 'icounts', 'desired_fps',
+        'actual_fps', 'inliers_matches_ratio_th', 'map_matches_ratio_th',
+        'inliers_matches_th', 'map_matches_ratio_cu',
+        'inliers_matches_cu', 'frame_gp_residual', 'kf_gp_residual',
+        'kf_gp_threshold', 'distance_traversed'], header=None)
+
+path='~/npi/data/20141024_planetary_lab/20141027-2034_orb_slam2_quadratic_adaptivity_50/'
+path_task_info_adaptive_slam_file = path + 'task_info_adaptive_slam.0.data'
+
+# Information task
+info_fifty = pandas.read_csv(os.path.expanduser(path_task_info_adaptive_slam_file), sep=" ", parse_dates=True,
+    date_parser=dateparse , index_col='time',
+    names=['time', 'relocalization', 'loops', 'icounts', 'desired_fps',
+        'actual_fps', 'inliers_matches_ratio_th', 'map_matches_ratio_th',
+        'inliers_matches_th', 'map_matches_ratio_cu',
+        'inliers_matches_cu', 'frame_gp_residual', 'kf_gp_residual',
+        'kf_gp_threshold', 'distance_traversed'], header=None)
+
+path='~/npi/data/20141024_planetary_lab/20141027-2034_orb_slam2_quadratic_adaptivity_100/'
+path_task_info_adaptive_slam_file = path + 'task_info_adaptive_slam.0.data'
+
+# Information task
+info_hundred = pandas.read_csv(os.path.expanduser(path_task_info_adaptive_slam_file), sep=" ", parse_dates=True,
     date_parser=dateparse , index_col='time',
     names=['time', 'relocalization', 'loops', 'icounts', 'desired_fps',
         'actual_fps', 'inliers_matches_ratio_th', 'map_matches_ratio_th',
@@ -340,5 +340,5 @@ m = data.open_object(path_gpy_gaussian_process_model_file)
 ##########################################################################
 # PLOT
 ##########################################################################
-adaptive_matches_comparison_figure(1, info_one, info_two, info_five, info_ten, pred_mean)
+adaptive_matches_comparison_figure(1, info_ten, info_twentyfive, info_fifty, info_hundred, pred_mean)
 
