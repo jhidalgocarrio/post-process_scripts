@@ -7,7 +7,7 @@
 #path='~/npi/data/20141024_planetary_lab/20141027-2034_orb_slam2_0.5fps/'
 #path='~/npi/data/20141024_planetary_lab/20141027-2034_orb_slam2_0.5fps_wo_relocalization/'
 #path='~/npi/data/20141024_planetary_lab/20141027-2034_orb_slam2_quadratic_adaptivity_one/'
-path='~/npi/data/20141024_planetary_lab/20141027-2034_orb_slam2_quadratic_adaptivity_50/'
+path='~/npi/data/20141024_planetary_lab/20141027-2034_orb_slam2_quadratic_adaptivity_10/'
 #######################################
 path_odometry_file = path + 'pose_odo_position.0.data'
 
@@ -155,11 +155,11 @@ def arl_dem_figure(fig_num, dem_file, trajectory, pred_mean, kf_trajectory, fram
 
     #color bar of the covarianve
     #h_cbar = plt.colorbar(lc)#, orientation='horizontal')
-    #h_cbar.ax.set_ylabel(r' residual[$m/s$] ')
+    #h_cbar.ax.set_ylabel(r' odometry error[$m/s$]',  fontsize=25, fontweight='bold')
 
     # Color bar of the dem
     #cbar = plt.colorbar()  # draw colorbar
-    #cbar.ax.set_ylabel(r' terrain elevation[$m$] ')
+    #cbar.ax.set_ylabel(r' terrain elevation[$m$]', fontsize=25, fontweight='bold')
 
     # Plot all the image frames
     fr_x = frames_trajectory[:,0]

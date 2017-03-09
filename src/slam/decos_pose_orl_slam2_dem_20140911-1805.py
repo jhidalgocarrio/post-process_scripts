@@ -3,7 +3,7 @@
 # by javi 2017-03-01 19:09:14
 
 #######################################
-path='~/npi/data/20140911_decos_field/20140911-1805_orb_slam2/'
+path='~/npi/data/20140911_decos_field/20140911-1805_orb_slam2_quadratic_adaptivity_25/'
 #######################################
 path_odometry_file = path + 'pose_odo_position.0.data'
 
@@ -34,7 +34,7 @@ path_task_info_adaptive_slam_file = path + 'task_info_adaptive_slam.0.data'
 #######################################
 decos_dem_file ='~/npi/documentation/decos_terrain/decos_selected_testing_zoom_area_point_cloud.ply'
 #######################################
-path_gpy_gaussian_process_model_file = '~/npi/dev/bundles/exoter/data/gaussian_processes/SparseGP_RBF_NL_xyz_velocities_train_at_1s_normalized_exoter_odometry_decos_residuals.data'
+path_gpy_gaussian_process_model_file = '~/npi/dev/bundles/exoter/data/gaussian_processes/SparseGP_RBF_NL_xyz_velocities_train_at_1s_normalized_exoter_odometry_decos_residuals_20140911-1805.data'
 #######################################
 
 import sys
@@ -154,7 +154,7 @@ def decos_dem_figure(fig_num, dem_file, trajectory, pred_mean, kf_trajectory,
 
     cmap = plt.get_cmap(color_bar)
 
-    norm = plt.Normalize(0.00, 0.025)
+    norm = plt.Normalize(0.00, 0.10)
     lc = LineCollection(segments, cmap=cmap, norm=norm)
     lc.set_array(sd)
     lc.set_linewidth(25)
@@ -164,11 +164,11 @@ def decos_dem_figure(fig_num, dem_file, trajectory, pred_mean, kf_trajectory,
 
     #color bar of the covarianve
     #h_cbar = plt.colorbar(lc)#, orientation='horizontal')
-    #h_cbar.ax.set_ylabel(r' residual[$m/s$] ')
+    #h_cbar.ax.set_ylabel(r' odometry error[$m/s$]',  fontsize=25, fontweight='bold')
 
     # Color bar of the dem
     #cbar = plt.colorbar()  # draw colorbar
-    #cbar.ax.set_ylabel(r' terrain elevation[$m$] ')
+    #cbar.ax.set_ylabel(r' terrain elevation[$m$]', fontsize=25, fontweight='bold')
 
     # Plot all the image frames
     fr = np.column_stack((frames_trajectory[:,0][0::10], frames_trajectory[:,1][0::10], frames_trajectory[:,2][0::10]))
@@ -715,7 +715,7 @@ imframes_position[:] = [navigation_orient.data[0].rot(x) +  navigation_position.
 #################################################
 # Take the misalignment between odo/slam and gt
 #################################################
-misalignment = quat.quaternion.fromAngleAxis(5.0 * np.pi/180.0, [0.0, 0.0,1.0])
+misalignment = quat.quaternion.fromAngleAxis(0.0 * np.pi/180.0, [0.0, 0.0,1.0])
 
 ##########################################################################
 decos_trajectories_figure(1, decos_dem_file, reference_position, keyframes_position, imframes_position, odometry_position, misalignment)
