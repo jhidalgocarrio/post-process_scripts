@@ -239,7 +239,7 @@ def decos_dem_figure(fig_num, dem_file, trajectory, pred_mean, kf_trajectory,
     plt.ylabel(r'Y [$m$]', fontsize=15, fontweight='bold')
     #plt.axis('equal')
     plt.grid(True)
-    fig.savefig("decos_adaptive_slam_dem-20140911-1805.png", dpi=fig.dpi)
+    fig.savefig("decos_adaptive_slam_dem_20140911-1805.png", dpi=fig.dpi)
     plt.show(block=True)
 
 def decos_trajectories_figure(fig_num, dem_file, reference_trajectory,
@@ -376,7 +376,7 @@ def decos_trajectories_figure(fig_num, dem_file, reference_trajectory,
     plt.ylabel(r'Y [$m$]', fontsize=15, fontweight='bold')
     ax.legend(loc=1, prop={'size':15})
     plt.grid(True)
-    fig.savefig("decos_trajectories_figure-20140911-1805.png", dpi=fig.dpi)
+    fig.savefig("decos_trajectories_figure_20140911-1805.png", dpi=fig.dpi)
     plt.show(block=True)
 
 def adaptive_matches_figure(fig_num, info):

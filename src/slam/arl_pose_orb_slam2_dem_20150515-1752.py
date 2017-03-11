@@ -216,7 +216,7 @@ def arl_dem_figure(fig_num, dem_file, trajectory, pred_mean, kf_trajectory, fram
     plt.ylabel(r'Y [$m$]', fontsize=15, fontweight='bold')
     #plt.axis('equal')
     plt.grid(True)
-    fig.savefig("arl_adaptive_slam_dem-20150515-1752.png", dpi=fig.dpi)
+    fig.savefig("arl_adaptive_slam_dem_20150515-1752.png", dpi=fig.dpi)
     plt.show(block=True)
 
 def arl_trajectories_figure(fig_num, dem_file, reference_trajectory, kf_trajectory, frames_trajectory, odo_trajectory):
@@ -328,7 +328,7 @@ def arl_trajectories_figure(fig_num, dem_file, reference_trajectory, kf_trajecto
     plt.ylabel(r'Y [$m$]', fontsize=15, fontweight='bold')
     ax.legend(loc=1, prop={'size':15})
     plt.grid(True)
-    fig.savefig("arl_trajectories_figure-20150515-1752.png", dpi=fig.dpi)
+    fig.savefig("arl_trajectories_figure_20150515-1752.png", dpi=fig.dpi)
     plt.show(block=True)
 
 def adaptive_matches_figure(fig_num, info):
