@@ -149,11 +149,11 @@ def arl_dem_figure(fig_num, dem_file, trajectory, pred_mean, kf_trajectory, fram
 
     #color bar of the covarianve
     #h_cbar = plt.colorbar(lc)#, orientation='horizontal')
-    #h_cbar.ax.set_ylabel(r' residual[$m/s$] ')
+    #h_cbar.ax.set_ylabel(r' odometry error[$m/s$]',  fontsize=25, fontweight='bold')
 
     # Color bar of the dem
     #cbar = plt.colorbar()  # draw colorbar
-    #cbar.ax.set_ylabel(r' terrain elevation[$m$] ')
+    #cbar.ax.set_ylabel(r' terrain elevation[$m$]', fontsize=25, fontweight='bold')
 
     # Plot all the image frames
     fr_x = frames_trajectory[:,0]
@@ -255,7 +255,7 @@ def arl_trajectories_figure(fig_num, dem_file, reference_trajectory, kf_trajecto
 
     # Color bar of the dem
     cbar = plt.colorbar()  # draw colorbar
-    cbar.ax.set_ylabel(r' terrain elevation[$m$] ')
+    cbar.ax.set_ylabel(r' terrain elevation[$m$] ',  fontsize=25, fontweight='bold')
 
     # Display Ground Truth trajectory
     from numpy import linalg as la

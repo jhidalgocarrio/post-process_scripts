@@ -260,7 +260,7 @@ def arl_trajectories_figure(fig_num, dem_file, reference_trajectory, kf_trajecto
 
     # Color bar of the dem
     cbar = plt.colorbar()  # draw colorbar
-    cbar.ax.set_ylabel(r' terrain elevation[$m$] ')
+    cbar.ax.set_ylabel(r' terrain elevation[$m$] ',  fontsize=25, fontweight='bold')
 
     # Display Ground Truth trajectory
     from numpy import linalg as la
