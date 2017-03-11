@@ -72,7 +72,7 @@ def adaptive_matches_comparison_figure(fig_num, info_ten, info_twentyfive, info_
     ax.fill_between(x, y, 0, color='lightblue')
 
     #Scatters
-    scatter_one = ax.scatter(x[0], y[0], marker='s', facecolor='lightblue',
+    scatter_ten = ax.scatter(x[0], y[0], marker='s', facecolor='lightblue',
             edgecolor='k', label='10%', s=20, alpha=1.0, zorder=100)
 
     #Twenty five fill
@@ -82,7 +82,7 @@ def adaptive_matches_comparison_figure(fig_num, info_ten, info_twentyfive, info_
     ax.fill_between(x, y, 0, color='lightsteelblue')
 
     #Scatters
-    scatter_two = ax.scatter(x[0], y[0], marker='s', facecolor='lightsteelblue',
+    scatter_twentyfive = ax.scatter(x[0], y[0], marker='s', facecolor='lightsteelblue',
             edgecolor='k', label='25%', s=20, alpha=1.0, zorder=100)
 
     #Fifty fill
@@ -92,7 +92,7 @@ def adaptive_matches_comparison_figure(fig_num, info_ten, info_twentyfive, info_
     ax.fill_between(x, y, 0, color='steelblue')
 
     #Scatters
-    scatter_five = ax.scatter(x[0], y[0], marker='s', facecolor='steelblue',
+    scatter_fifty = ax.scatter(x[0], y[0], marker='s', facecolor='steelblue',
             edgecolor='k', label='50%', s=20, alpha=1.0, zorder=100)
 
     #Hundred fill
@@ -102,24 +102,24 @@ def adaptive_matches_comparison_figure(fig_num, info_ten, info_twentyfive, info_
     ax.fill_between(x, y, 0, color='blue')
 
     #Scatters
-    scatter_ten = ax.scatter(x[0], y[0], marker='s', facecolor='blue',
+    scatter_hundred = ax.scatter(x[0], y[0], marker='s', facecolor='blue',
             edgecolor='k', label='100%', s=20, alpha=1.0, zorder=100)
 
     ########################
     #Hundred line
     x = info_hundred.index.to_datetime()
     y = info_hundred.inliers_matches_ratio_th
-    ax.plot(x, y, linestyle='-', lw=2, alpha=1.0, color=[1.0, 1.0, 1.0])
+    ax.plot(x, y, linestyle='-', lw=2, alpha=1.0, color=[0.0, 0.0, 0.0])
 
     #Fifty line
     x = info_fifty.index.to_datetime()
     y = info_fifty.inliers_matches_ratio_th
-    ax.plot(x, y, linestyle='-', lw=2, alpha=1.0, color=[1.0, 1.0, 1.0])
+    ax.plot(x, y, linestyle='-', lw=2, alpha=1.0, color=[0.0, 0.0, 0.0])
 
     #Twenty line
     x = info_twentyfive.index.to_datetime()
     y = info_twentyfive.inliers_matches_ratio_th
-    ax.plot(x, y, linestyle='-', lw=2, alpha=1.0, color=[1.0, 1.0, 1.0])
+    ax.plot(x, y, linestyle='-', lw=2, alpha=1.0, color=[0.0, 0.0, 0.0])
 
     #Ten line
     x = info_ten.index.to_datetime()
@@ -132,7 +132,115 @@ def adaptive_matches_comparison_figure(fig_num, info_ten, info_twentyfive, info_
     ax.set_xlabel(r'Time', fontsize=25, fontweight='bold')
     #ax.tick_params('x', colors='k')
     plt.grid(True)
-    plt.legend(handles=[scatter_one, scatter_two, scatter_five, scatter_ten],
+    plt.legend(handles=[scatter_ten, scatter_twentyfive, scatter_fifty, scatter_hundred],
+            loc=2, prop={'size':15})
+    plt.show(block=True)
+
+def adaptive_frames_comparison_figure(fig_num, info_ten, info_twentyfive, info_fifty,
+        info_hundred, pred_mean, color_bar='Reds'):
+
+    ########################
+    # Plot matches
+    ########################
+    matplotlib.rcParams.update({'font.size': 15, 'font.weight': 'bold'})
+    fig, ax = plt.subplots()
+
+    ########################
+    # Odometry prediction 
+    ########################
+    x = info_ten.index.to_pydatetime()
+    x[:] = [(i-x[0]).total_seconds() for i in x]
+    y = info_ten.desired_fps
+
+    from numpy import linalg as la
+    y  = np.ones(len(x))
+    sd = la.norm(pred_mean, axis=1)
+    points = np.array([x, y]).T.reshape(-1, 1, 2)
+    segments = np.concatenate([points[:-1], points[1:]], axis=1)
+
+    from matplotlib.collections import LineCollection
+    from matplotlib.colors import ListedColormap, BoundaryNorm
+    from matplotlib.colors import LinearSegmentedColormap as lscm
+
+    cmap = plt.get_cmap(color_bar)
+
+    norm = plt.Normalize(0.00, 0.0634491701615)
+    lc = LineCollection(segments, cmap=cmap, norm=norm)
+    lc.set_array(sd)
+    lc.set_linewidth(100)
+    lc.set_alpha(0.8)
+    h_cbar = plt.colorbar(lc)#, orientation='horizontal')
+    h_cbar.ax.set_ylabel(r'threshold - odometry error [%]', fontsize=25, fontweight='bold', color='k')
+
+    ########################
+    #Ten fill
+    x = info_ten.index.to_datetime()
+    y = info_ten.desired_fps
+    d = scipy.zeros(len(x))
+    ax.fill_between(x, y, 0, color='lightgreen')
+
+    #Scatters
+    scatter_ten = ax.scatter(x[0], y[0], marker='s', facecolor='lightgreen',
+            edgecolor='k', label='10%', s=20, alpha=1.0, zorder=100)
+
+    #Twenty five fill
+    x = info_twentyfive.index.to_datetime()
+    y = info_twentyfive.desired_fps
+    d = scipy.zeros(len(x))
+    ax.fill_between(x, y, 0, color='mediumseagreen')
+
+    #Scatters
+    scatter_twentyfive = ax.scatter(x[0], y[0], marker='s', facecolor='mediumseagreen',
+            edgecolor='k', label='25%', s=20, alpha=1.0, zorder=100)
+
+    #Fifty fill
+    x = info_fifty.index.to_datetime()
+    y = info_fifty.desired_fps
+    d = scipy.zeros(len(x))
+    ax.fill_between(x, y, 0, color='forestgreen')
+
+    #Scatters
+    scatter_fifty = ax.scatter(x[0], y[0], marker='s', facecolor='forestgreen',
+            edgecolor='k', label='50%', s=20, alpha=1.0, zorder=100)
+
+    #Hundred fill
+    x = info_hundred.index.to_datetime()
+    y = info_hundred.desired_fps
+    d = scipy.zeros(len(x))
+    ax.fill_between(x, y, 0, color='darkgreen')
+
+    #Scatters
+    scatter_hundred = ax.scatter(x[0], y[0], marker='s', facecolor='darkgreen',
+            edgecolor='k', label='100%', s=20, alpha=1.0, zorder=100)
+
+    ########################
+    #Hundred line
+    x = info_hundred.index.to_datetime()
+    y = info_hundred.desired_fps
+    ax.plot(x, y, linestyle='-', lw=2, alpha=1.0, color=[0.0, 0.0, 0.0])
+
+    #Fifty line
+    x = info_fifty.index.to_datetime()
+    y = info_fifty.desired_fps
+    ax.plot(x, y, linestyle='-', lw=2, alpha=1.0, color=[0.0, 0.0, 0.0])
+
+    #Twenty line
+    x = info_twentyfive.index.to_datetime()
+    y = info_twentyfive.desired_fps
+    ax.plot(x, y, linestyle='-', lw=2, alpha=1.0, color=[0.0, 0.0, 0.0])
+
+    #Ten line
+    x = info_ten.index.to_datetime()
+    y = info_ten.desired_fps
+    ax.plot(x, y, linestyle='-', lw=2, alpha=1.0, color=[0.0, 0.0, 0.0])
+
+    ax.set_ylabel(r'fps [$0.5 - 2.5$]', fontsize=25, fontweight='bold', color='k')
+    #ax.tick_params('y', colors='k')
+
+    ax.set_xlabel(r'Time', fontsize=25, fontweight='bold')
+    #ax.tick_params('x', colors='k')
+    plt.grid(True)
+    plt.legend(handles=[scatter_ten, scatter_twentyfive, scatter_fifty, scatter_hundred],
             loc=2, prop={'size':15})
     plt.show(block=True)
 
@@ -341,4 +449,5 @@ m = data.open_object(path_gpy_gaussian_process_model_file)
 # PLOT
 ##########################################################################
 adaptive_matches_comparison_figure(1, info_ten, info_twentyfive, info_fifty, info_hundred, pred_mean)
+adaptive_frames_comparison_figure(1, info_ten, info_twentyfive, info_fifty, info_hundred, pred_mean)
 

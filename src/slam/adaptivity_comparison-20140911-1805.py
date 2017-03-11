@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 # -*- coding:utf-8 -*-
-# by javi 2017-02-27 15:52:50
+# by javi 2017-03-11 21:52:50
 
 import sys
 sys.path.insert(0, './src/core')
@@ -247,7 +247,7 @@ def adaptive_frames_comparison_figure(fig_num, info_ten, info_twentyfive, info_f
 ##########################################################################
 # Comparing information from different adaptivity thresholds
 ##########################################################################
-path='~/npi/data/20150515_planetary_lab/20150515-1752_orb_slam2_quadratic_adaptivity_10/'
+path='~/npi/data/20140911_decos_field/20140911-1805_orb_slam2_quadratic_adaptivity_10/'
 path_task_info_adaptive_slam_file = path + 'task_info_adaptive_slam.0.data'
 
 # Information task
@@ -259,7 +259,7 @@ info_ten = pandas.read_csv(os.path.expanduser(path_task_info_adaptive_slam_file)
         'inliers_matches_cu', 'frame_gp_residual', 'kf_gp_residual',
         'kf_gp_threshold', 'distance_traversed'], header=None)
 
-path='~/npi/data/20150515_planetary_lab/20150515-1752_orb_slam2_quadratic_adaptivity_25/'
+path='~/npi/data/20140911_decos_field/20140911-1805_orb_slam2_quadratic_adaptivity_25/'
 path_task_info_adaptive_slam_file = path + 'task_info_adaptive_slam.0.data'
 
 # Information task
@@ -271,7 +271,7 @@ info_twentyfive = pandas.read_csv(os.path.expanduser(path_task_info_adaptive_sla
         'inliers_matches_cu', 'frame_gp_residual', 'kf_gp_residual',
         'kf_gp_threshold', 'distance_traversed'], header=None)
 
-path='~/npi/data/20150515_planetary_lab/20150515-1752_orb_slam2_quadratic_adaptivity_50/'
+path='~/npi/data/20140911_decos_field/20140911-1805_orb_slam2_quadratic_adaptivity_50/'
 path_task_info_adaptive_slam_file = path + 'task_info_adaptive_slam.0.data'
 
 # Information task
@@ -283,7 +283,7 @@ info_fifty = pandas.read_csv(os.path.expanduser(path_task_info_adaptive_slam_fil
         'inliers_matches_cu', 'frame_gp_residual', 'kf_gp_residual',
         'kf_gp_threshold', 'distance_traversed'], header=None)
 
-path='~/npi/data/20150515_planetary_lab/20150515-1752_orb_slam2_quadratic_adaptivity_100/'
+path='~/npi/data/20140911_decos_field/20140911-1805_orb_slam2_quadratic_adaptivity_100/'
 path_task_info_adaptive_slam_file = path + 'task_info_adaptive_slam.0.data'
 
 # Information task
@@ -296,9 +296,9 @@ info_hundred = pandas.read_csv(os.path.expanduser(path_task_info_adaptive_slam_f
         'kf_gp_threshold', 'distance_traversed'], header=None)
 
 ##########################################################################
-path_gpy_gaussian_process_model_file = '~/npi/dev/bundles/exoter/data/gaussian_processes/SparseGP_RBF_NL_xyz_velocities_train_at_1s_normalized_exoter_odometry_arl_residuals_20150515-1752.data'
+path_gpy_gaussian_process_model_file = '~/npi/dev/bundles/exoter/data/gaussian_processes/SparseGP_RBF_NL_xyz_velocities_train_at_1s_normalized_exoter_odometry_decos_residuals_20140911-1805.data'
 ##########################################################################
-path = '~/npi/data/20150515_planetary_lab/20150515-1752/'
+path = '~/npi/data/20140911_decos_field/20140911-1805/'
 #######################################
 joints_position_file = path + 'joints_position.0.data'
 
