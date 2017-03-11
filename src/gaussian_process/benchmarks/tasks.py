@@ -77,8 +77,8 @@ class ExoTerOdometryARLResiduals(RegressionTask):
     #######################################
     # TEST DATA
     #######################################
-    #url_test = '~/npi/data/20141024_planetary_lab/20141027-2034/'
-    url_test = '~/npi/data/20150515_planetary_lab/20150515-1752/'
+    url_test = '~/npi/data/20141024_planetary_lab/20141027-2034/'
+    #url_test = '~/npi/data/20150515_planetary_lab/20150515-1752/'
     #######################################
     test_joints_position_file = url_test + 'joints_position.0.data'
 
@@ -620,6 +620,7 @@ class ExoTerOdometryDecosResiduals(RegressionTask):
     # TRAINING DATA
     #######################################
     url_train = '~/npi/data/20140911_gaussian_processes/merged/'
+    #url_train = '~/npi/data/20140911_gaussian_processes/merged_bis/'
     #######################################
     train_joints_position_file = url_train + 'joints_position.0.data'
 
@@ -660,7 +661,7 @@ class ExoTerOdometryDecosResiduals(RegressionTask):
 
     test_odometry_file = url_test + 'pose_odo_position.0.data'
 
-    test_reference_file = url_test + 'pose_ref_position.0.data'
+    test_reference_file = url_test + 'pose_ref_position.gnss.0.data'
 
     test_navigation_orientation_file = url_test + 'pose_world_to_navigation_orientation.0.data'
 
@@ -1048,19 +1049,19 @@ class ExoTerOdometryDecosResiduals(RegressionTask):
         #################
 
         ## Equalize the length of data
-        reference = reference[0:self.ref_testing_mask.shape[0]]
+        #reference = reference[0:self.ref_testing_mask.shape[0]]
 
         ## Sync index with odometry
-        reference.index = self.ref_testing_mask.index
+        #reference.index = self.ref_testing_mask.index
 
         ## Apply the mask
-        reference = reference[self.ref_testing_mask]
+        #reference = reference[self.ref_testing_mask]
 
         #################################################
         # Misalignment to the map                       #
         #################################################
         map_posi_align = [0.00, 7.00, 0.00]
-        map_orient_align = quat.quaternion.fromAngleAxis(-35.0 * np.pi/180.0, [0.0, 0.0,1.0])
+        map_orient_align = quat.quaternion.fromAngleAxis(-30.0 * np.pi/180.0, [0.0, 0.0,1.0])
 
         ########################################################
         #rotate and translate the trajectory wrt the world frame
@@ -1111,7 +1112,7 @@ class ExoTerOdometryDecosResiduals(RegressionTask):
         cmap = plt.get_cmap('Reds')
 
         #cmap = lscm.from_list('temp', colors)
-        norm = plt.Normalize(0.00, 0.025)
+        norm = plt.Normalize(0.00, 0.0634491701615)
         #norm = plt.Normalize(min(sd), max(sd))
         lc = LineCollection(segments, cmap=cmap, norm=norm)
         lc.set_array(sd)
@@ -1123,11 +1124,11 @@ class ExoTerOdometryDecosResiduals(RegressionTask):
         #color bar of the covarianve
         #cbaxes = fig.add_axes([0.8, 0.1, 0.03, 0.8]) 
         h_cbar = plt.colorbar(lc)#, orientation='horizontal')
-        h_cbar.ax.set_ylabel(r' residual[$m/s$] ', fontsize=25, fontweight='bold')
+        h_cbar.ax.set_ylabel(r' odometry error [$m/s$] ', fontsize=25, fontweight='bold')
 
         # Color bar of the dem
         cbar = plt.colorbar()  # draw colorbar
-        cbar.ax.set_ylabel(r' terrain elevation[$m$]', fontsize=25, fontweight='bold')
+        cbar.ax.set_ylabel(r' terrain elevation [$m$]', fontsize=25, fontweight='bold')
 
         #Q = ax.plot(x, y, marker='o', linestyle='-', color=[0.3,0.2,0.4], alpha=0.5, lw=40)
 
@@ -1162,8 +1163,8 @@ class ExoTerOdometryDecosResiduals(RegressionTask):
                                 )
         ax.scatter(x[0], y[0], marker='o', facecolor='k', s=100, alpha=1.0, zorder=103)
 
-        ax.arrow(x[130], y[130], x[135]-x[130], y[135]-y[130], width=0.04, head_width=0.10,
-                head_length=0.1, fc='k', ec='k', zorder=104)
+        #ax.arrow(x[130], y[130], x[135]-x[130], y[135]-y[130], width=0.04, head_width=0.10,
+        #        head_length=0.1, fc='k', ec='k', zorder=104)
 
         ax.annotate(r'End', xy=(x[x.shape[0]-1], y[y.shape[0]-1]), xycoords='data',
                                 xytext=(-5, 5), textcoords='offset points', fontsize=20,
