@@ -3,7 +3,7 @@
 # by javi 2017-03-01 19:09:14
 
 #######################################
-path='~/npi/data/20140911_decos_field/20140911-1805_orb_slam2_quadratic_adaptivity_25/'
+path='~/npi/data/20140911_decos_field/20140911-1805_orb_slam2_quadratic_adaptivity_10/'
 #######################################
 path_odometry_file = path + 'pose_odo_position.0.data'
 
@@ -154,7 +154,7 @@ def decos_dem_figure(fig_num, dem_file, trajectory, pred_mean, kf_trajectory,
 
     cmap = plt.get_cmap(color_bar)
 
-    norm = plt.Normalize(0.00, 0.10)
+    norm = plt.Normalize(0.00, 0.0634491701615)
     lc = LineCollection(segments, cmap=cmap, norm=norm)
     lc.set_array(sd)
     lc.set_linewidth(25)
@@ -730,36 +730,51 @@ odometry_error_bar(5, info, pred_mean)
 from evaluation import RMSE, MAE, MAPE
 
 #ORB_SLAM2 Keyframes Position
-kf_orb_slam2 = pandas.read_csv(os.path.expanduser(path_keyframes_position_file), sep=" ", parse_dates=True,
+orb_slam2_position = pandas.read_csv(os.path.expanduser(path_orb_slam2_position_file), sep=" ", parse_dates=True,
     date_parser=dateparse , index_col='time',
     names=['time', 'x', 'y', 'z', 'cov_xx', 'cov_xy', 'cov_xz', 'cov_yx', 'cov_yy', 'cov_yz',
         'cov_zx', 'cov_zy', 'cov_zz'], header=None)
 
-estimation = orb_slam2_position.resample('1s').pad()
-ground_truth = reference.resample('1s').pad()
+orb_slam2_position = orb_slam2_position.resample(resampling_time).pad()
+reference = reference.resample(resampling_time).pad()
+
+mask = pandas.notnull(reference.x) & pandas.notnull(reference.y) & pandas.notnull(reference.z) & pandas.notnull(orb_slam2_position.x) & pandas.notnull(orb_slam2_position.y) & pandas.notnull(orb_slam2_position.z)
+##########################################################################
+orb_slam2_position = orb_slam2_position[mask]
+reference = reference[mask]
+##########################################################################
+estimation = np.column_stack((orb_slam2_position.x.values, orb_slam2_position.y.values, orb_slam2_position.z.values))
+ground_truth = np.column_stack((reference.x.values, reference.y.values, reference.z.values))
+##########################################################################
+estimation[:] = [(misalignment * i * misalignment.conj())[1:4] for i in estimation]
+estimation = np.column_stack(np.array([estimation[:,0],estimation[:,1]]))
+ground_truth = np.column_stack(np.array([ground_truth[0:estimation.shape[0],0], ground_truth[0:estimation.shape[0],1]]))
 ##########################################################################
 
 rmse = RMSE()
 eval_rmse = rmse.evaluate(estimation, ground_truth)
-la.norm(eval_rmse) #0.145m with adaptation # 0.163m original #1.827m 0.5fps w/relocalization # 0.204 m w/o relocalization
-print("RMSE: " + str(la.norm(eval_rmse[0:3])))
+la.norm(eval_rmse)
+print("RMSE: " + str(la.norm(eval_rmse)))
 ##########################################################################
-final_estimation = np.array([estimation.x[estimation.shape[0]-1], estimation.y[estimation.shape[0]-1], estimation.z[estimation.shape[0]-1]])
-final_groundtruth = np.array([ground_truth.x[ground_truth.shape[0]-1], ground_truth.y[ground_truth.shape[0]-1], ground_truth.z[ground_truth.shape[0]-1]])
+final_estimation = np.array([orb_slam2_position.x[estimation.shape[0]-1], orb_slam2_position.y[estimation.shape[0]-1], orb_slam2_position.z[estimation.shape[0]-1]])
+final_groundtruth = np.array([reference.x[ground_truth.shape[0]-1], reference.y[ground_truth.shape[0]-1], reference.z[ground_truth.shape[0]-1]])
+##########################################################################
+final_estimation = (misalignment * final_estimation * misalignment.conj())[1:4]
+##########################################################################
 
 final_error = final_estimation - final_groundtruth
 
-la.norm(final_error) #0.264m #0.264m original #0.52m 0.5fps
-print("Final error: " + str(la.norm(final_error)))
+la.norm(final_error[0:1])
+print("Final error: " + str(la.norm(final_error[0:1])))
 
 ##########################################################################
 max_error = np.max(estimation - ground_truth)
-la.norm(max_error) #0.468m adaptation 0.4553m original #4.620m 0.5fps w/relocalization #0.729m w/o relocalization
-print("Maximum error: " + str(la.norm(max_error[0:3])))
+la.norm(max_error[0:2]) 
+print("Maximum error: " + str(la.norm(max_error[0:2])))
 ##########################################################################
 # Number of Keyframes and frames
 ##########################################################################
-number_keyframes = keyframes.shape[0] # 135 (adaptation) 181(original) 82(0.5fps w/relocalization)  150(0.5fps w/o relocalization)keyframes 
-number_frames = imageframes.shape[0] # 484 (adaptation) 2582 (original) 343+169 (0.5fps w/relocalization) 500 (0.5fps w/o relocalization) images frames
+number_keyframes = keyframes.shape[0]
+number_frames = imageframes.shape[0]
 print("#Keyframes: " + str(number_keyframes))
 print("#Frames: " + str(number_frames))
