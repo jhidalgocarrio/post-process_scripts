@@ -3,7 +3,7 @@
 # by javi 2017-03-01 19:09:14
 
 #######################################
-path='~/npi/data/20140911_decos_field/20140911-1805_orb_slam2_quadratic_adaptivity_10/'
+path='~/npi/data/20140911_decos_field/20140911-1805_orb_slam2_quadratic_adaptivity_10_bis/'
 #######################################
 path_odometry_file = path + 'pose_odo_position.0.data'
 
@@ -95,7 +95,8 @@ def add_arrow(line,position = None,direction = 'right',size=15,color = None):
 # PLOTTING FUNCTION
 ##########################################################################
 def decos_dem_figure(fig_num, dem_file, trajectory, pred_mean, kf_trajectory,
-        frames_trajectory, misalignment = quat.quaternion(np.array([1.0,0.0,0.0,0.0])),
+        frames_trajectory, mis_orient = quat.quaternion(np.array([1.0,0.0,0.0,0.0])),
+        mis_position = [0.00, 0.00, 0.00],
         color_bar='Reds'):
 
     ########################
@@ -172,7 +173,8 @@ def decos_dem_figure(fig_num, dem_file, trajectory, pred_mean, kf_trajectory,
 
     # Plot all the image frames
     fr = np.column_stack((frames_trajectory[:,0][0::10], frames_trajectory[:,1][0::10], frames_trajectory[:,2][0::10]))
-    fr[:] = [(misalignment * i * misalignment.conj())[1:4] for i in fr]
+    fr[:] = [(mis_orient * i * mis_orient.conj())[1:4] for i in fr]
+    fr[:] = [ i + mis_position for i in fr ]
     fr[:] = [(map_orient_align * i * map_orient_align.conj())[1:4] for i in fr ]
     fr[:] = [ i + map_posi_align for i in fr ]
     fr_x = fr[:,0]
@@ -182,7 +184,8 @@ def decos_dem_figure(fig_num, dem_file, trajectory, pred_mean, kf_trajectory,
 
     # Plot the key frames
     kf = np.column_stack((kf_trajectory[:,0], kf_trajectory[:,1], kf_trajectory[:,2]))
-    kf[:] = [(misalignment * i * misalignment.conj())[1:4] for i in kf]
+    kf[:] = [(mis_orient * i * mis_orient.conj())[1:4] for i in kf]
+    kf[:] = [ i + mis_position for i in kf ]
     kf[:] = [(map_orient_align * i * map_orient_align.conj())[1:4] for i in kf ]
     kf[:] = [ i + map_posi_align for i in kf ]
     kf_x = kf[:,0]
@@ -244,7 +247,8 @@ def decos_dem_figure(fig_num, dem_file, trajectory, pred_mean, kf_trajectory,
 
 def decos_trajectories_figure(fig_num, dem_file, reference_trajectory,
         kf_trajectory, frames_trajectory, odo_trajectory,
-        misalignment = quat.quaternion(np.array([1.0,0.0,0.0,0.0]))):
+        mis_orient = quat.quaternion(np.array([1.0,0.0,0.0,0.0])),
+        mis_position = [0.00, 0.00, 0.00]):
     ########################
     # Load Terrain DEM
     ########################
@@ -300,7 +304,8 @@ def decos_trajectories_figure(fig_num, dem_file, reference_trajectory,
 
     # Plot all the image frames
     fr = np.column_stack((frames_trajectory[:,0][0::10], frames_trajectory[:,1][0::10], frames_trajectory[:,2][0::10]))
-    fr[:] = [(misalignment * i * misalignment.conj())[1:4] for i in fr]
+    fr[:] = [(mis_orient * i * mis_orient.conj())[1:4] for i in fr]
+    fr[:] = [ i + mis_position for i in fr ]
     fr[:] = [(map_orient_align * i * map_orient_align.conj())[1:4] for i in fr ]
     fr[:] = [ i + map_posi_align for i in fr ]
     fr_x = fr[:,0]
@@ -310,7 +315,8 @@ def decos_trajectories_figure(fig_num, dem_file, reference_trajectory,
 
     # Plot the key frames
     kf = np.column_stack((kf_trajectory[:,0], kf_trajectory[:,1], kf_trajectory[:,2]))
-    kf[:] = [(misalignment * i * misalignment.conj())[1:4] for i in kf]
+    kf[:] = [(mis_orient * i * mis_orient.conj())[1:4] for i in kf]
+    kf[:] = [ i + mis_position for i in kf ]
     kf[:] = [(map_orient_align * i * map_orient_align.conj())[1:4] for i in kf ]
     kf[:] = [ i + map_posi_align for i in kf ]
     kf_x = kf[:,0][0::10]
@@ -320,7 +326,8 @@ def decos_trajectories_figure(fig_num, dem_file, reference_trajectory,
 
     # Pure odometry trajectory
     odo = np.column_stack((odo_trajectory[:,0], odo_trajectory[:,1], odo_trajectory[:,2]))
-    odo[:] = [(misalignment * i * misalignment.conj())[1:4] for i in odo ]
+    odo[:] = [(mis_orient * i * mis_orient.conj())[1:4] for i in odo ]
+    odo[:] = [ i + mis_position for i in odo ]
     odo[:] = [(map_orient_align * i * map_orient_align.conj())[1:4] for i in odo ]
     odo[:] = [ i + map_posi_align for i in odo ]
     odo_x = odo[:,0][0::10]
@@ -715,11 +722,12 @@ imframes_position[:] = [navigation_orient.data[0].rot(x) +  navigation_position.
 #################################################
 # Take the misalignment between odo/slam and gt
 #################################################
-misalignment = quat.quaternion.fromAngleAxis(0.0 * np.pi/180.0, [0.0, 0.0,1.0])
+mis_orient = quat.quaternion.fromAngleAxis(-6.0 * np.pi/180.0, [0.0, 0.0, 1.0])
+mis_position = [0.0, 0.0, 0.00]
 
 ##########################################################################
-decos_trajectories_figure(1, decos_dem_file, reference_position, keyframes_position, imframes_position, odometry_position, misalignment)
-decos_dem_figure(2, decos_dem_file, reference_position, pred_mean, keyframes_position, imframes_position, misalignment)
+decos_trajectories_figure(1, decos_dem_file, reference_position, keyframes_position, imframes_position, odometry_position, mis_orient, mis_position)
+decos_dem_figure(2, decos_dem_file, reference_position, pred_mean, keyframes_position, imframes_position, mis_orient, mis_position)
 ##########################################################################
 adaptive_matches_figure(3, info)
 adaptive_frame_figure(4, info)
@@ -746,7 +754,8 @@ reference = reference[mask]
 estimation = np.column_stack((orb_slam2_position.x.values, orb_slam2_position.y.values, orb_slam2_position.z.values))
 ground_truth = np.column_stack((reference.x.values, reference.y.values, reference.z.values))
 ##########################################################################
-estimation[:] = [(misalignment * i * misalignment.conj())[1:4] for i in estimation]
+estimation[:] = [(mis_orient * i * mis_orient.conj())[1:4] for i in estimation]
+estimation[:] = [ i + mis_position for i in estimation ]
 estimation = np.column_stack(np.array([estimation[:,0],estimation[:,1]]))
 ground_truth = np.column_stack(np.array([ground_truth[0:estimation.shape[0],0], ground_truth[0:estimation.shape[0],1]]))
 ##########################################################################
@@ -759,7 +768,8 @@ print("RMSE: " + str(la.norm(eval_rmse)))
 final_estimation = np.array([orb_slam2_position.x[estimation.shape[0]-1], orb_slam2_position.y[estimation.shape[0]-1], orb_slam2_position.z[estimation.shape[0]-1]])
 final_groundtruth = np.array([reference.x[ground_truth.shape[0]-1], reference.y[ground_truth.shape[0]-1], reference.z[ground_truth.shape[0]-1]])
 ##########################################################################
-final_estimation = (misalignment * final_estimation * misalignment.conj())[1:4]
+final_estimation = (mis_orient * final_estimation * mis_orient.conj())[1:4]
+final_estimation = final_estimation + mis_position
 ##########################################################################
 
 final_error = final_estimation - final_groundtruth
@@ -769,8 +779,8 @@ print("Final error: " + str(la.norm(final_error[0:1])))
 
 ##########################################################################
 max_error = np.max(estimation - ground_truth)
-la.norm(max_error[0:2]) 
-print("Maximum error: " + str(la.norm(max_error[0:2])))
+la.norm(max_error) 
+print("Maximum error: " + str(la.norm(max_error)))
 ##########################################################################
 # Number of Keyframes and frames
 ##########################################################################
@@ -778,3 +788,4 @@ number_keyframes = keyframes.shape[0]
 number_frames = imageframes.shape[0]
 print("#Keyframes: " + str(number_keyframes))
 print("#Frames: " + str(number_frames))
+print("#Loops: " + str(max(info.loops)))
