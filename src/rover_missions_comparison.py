@@ -1,3 +1,5 @@
+import sys
+sys.path.insert(0, './src/core')
 import datadisplay as data
 import csv, scipy
 import math
@@ -5,6 +7,8 @@ from pylab import *
 import numpy as np
 import matplotlib.pyplot as plt
 from math import sqrt
+
+#matplotlib.style.use('ggplot') #in matplotlib >= 1.5.1
 
 def adjust_spines(ax,spines):
     for loc, spine in ax.spines.items():
@@ -41,7 +45,7 @@ speed_loco_nominal_avg = [1.20, 10, 30, 50, 120]
 matplotlib.rcParams.update({'font.size': 25})
 fig = plt.figure(1)
 ax = fig.add_subplot(111)
-ax.set_title('Average Speed per Sol')
+ax.set_title('Average Speed per Sol', fontsize=25, fontweight='bold')
 ax.set_xlim(-1.0, 50)
 ax.set_ylim(-1.0, 130)
 ax.spines['right'].set_color('none')
@@ -108,23 +112,22 @@ plt.annotate(r''+trunc(yposition[3],1), xy=(xposition[3], yposition[3]), xycoord
                                 xytext=(-20, 10), textcoords='offset points', fontsize=22)
 
 
-plt.ylabel(r' Speed [$m/sol$]', fontsize=24)
+plt.ylabel(r' Speed [$m/sol$]', fontsize=25, fontweight='bold')
 plt.legend(prop={'size':25})
-plt.show(block=False)
 setp( ax.get_xticklabels(), visible=False)
-
-savefig('figures/speed_missions_comparison_2012.png')
+#savefig('data/speed_missions_comparison_2012.png')
+plt.show(block=True)
 
 # Data values computed at 2013
-speed_mission_avg=[1.2048192771, 5.8708414873, 7.41, 19.1780821918, 210]
-speed_loco_max_avg = [1.20, 92, 141.5, 90.0, 210]
+speed_mission_avg=[1.2048192771, 5.8708414873, 9.2, 19.1780821918, 210]
+speed_loco_max_avg = [1.20, 92, 100.0, 100.0, 210]
 speed_loco_nominal_avg = [1.20, 10, 43, 50, 210]
 
 # Plot the values
-matplotlib.rcParams.update({'font.size': 25})
+matplotlib.rcParams.update({'font.size': 25, 'font.weight': 'bold'})
 fig = plt.figure(1)
 ax = fig.add_subplot(111)
-ax.set_title('Average Speed per Sol')
+#ax.set_title('Average Speed per Sol', fontsize=25, fontweight='bold')
 ax.set_xlim(-1.0, 50)
 ax.set_ylim(-1.0, 220)
 ax.spines['right'].set_color('none')
@@ -191,11 +194,10 @@ plt.annotate(r''+trunc(yposition[3],1), xy=(xposition[3], yposition[3]), xycoord
                                 xytext=(-20, 10), textcoords='offset points', fontsize=22)
 
 
-plt.ylabel(r' Speed [$m/sol$]', fontsize=24)
-plt.legend(prop={'size':25})
-plt.show(block=False)
+plt.ylabel(r' Speed [$m/sol$]', fontsize=35,  fontweight='bold')
+plt.legend(prop={'size':35})
 setp( ax.get_xticklabels(), visible=False)
-
-savefig('figures/speed_missions_comparison_2013.png')
+#savefig('data/speed_missions_comparison_2013.png')
+plt.show(block=True)
 
 
