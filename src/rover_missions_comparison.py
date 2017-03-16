@@ -118,10 +118,10 @@ setp( ax.get_xticklabels(), visible=False)
 #savefig('data/speed_missions_comparison_2012.png')
 plt.show(block=True)
 
-# Data values computed at 2013
-speed_mission_avg=[1.2048192771, 5.8708414873, 9.2, 19.1780821918, 210]
-speed_loco_max_avg = [1.20, 92, 100.0, 100.0, 210]
-speed_loco_nominal_avg = [1.20, 10, 43, 50, 210]
+# Data values computed at 2017
+speed_mission_avg=[1.2048192771, 5.8708414873, 9.2, 19.1780821918, 200]
+speed_loco_max_avg = [1.20, 92, 100.0, 100.0, 200]
+speed_loco_nominal_avg = [1.20, 10, 43, 50, 200]
 
 # Plot the values
 matplotlib.rcParams.update({'font.size': 25, 'font.weight': 'bold'})
@@ -129,7 +129,7 @@ fig = plt.figure(1)
 ax = fig.add_subplot(111)
 #ax.set_title('Average Speed per Sol', fontsize=25, fontweight='bold')
 ax.set_xlim(-1.0, 50)
-ax.set_ylim(-1.0, 220)
+ax.set_ylim(-1.0, 210)
 ax.spines['right'].set_color('none')
 ax.spines['top'].set_color('none')
 ax.xaxis.set_ticks_position('bottom')
