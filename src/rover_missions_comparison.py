@@ -200,4 +200,59 @@ setp( ax.get_xticklabels(), visible=False)
 #savefig('data/speed_missions_comparison_2013.png')
 plt.show(block=True)
 
+##############################
+# Plot rover mass
+##############################
+matplotlib.rcParams.update({'font.size': 25, 'font.weight': 'bold'})
+fig = plt.figure(1)
+ax = fig.add_subplot(111)
+
+#Sojourner
+plt.bar(2, 1.15, 10, color="blue") #x, y and width
+
+#MER
+plt.bar(17, 18.5, 10, color="orange") #x, y and width
+
+#MSL
+plt.bar(32, 90, 10, color="yellow") #x, y and width
+
+#ExoMars
+plt.bar(47, 30, 10, color="green") #x, y and width
+
+#SFR
+plt.bar(62, 15, 10, color="firebrick") #x, y and width
+
+ax.set_xlim(-1.0, 80)
+ax.set_ylim(-1.0, 150)
+#ax.grid(True)
+
+plt.show(block=True)
+
+##############################
+# Plot mission distances
+##############################
+matplotlib.rcParams.update({'font.size': 25, 'font.weight': 'bold'})
+fig = plt.figure(1)
+ax = fig.add_subplot(111)
+
+#Sojourner
+plt.bar(2, 1, 100, color="blue") #x, y and width
+
+#MER
+plt.bar(152, 6, 100, color="orange") #x, y and width
+
+#MSL
+plt.bar(302, 190, 100, color="yellow") #x, y and width
+
+#ExoMars
+plt.bar(452, 40, 100, color="green") #x, y and width
+
+#SFR
+plt.bar(602, 220, 100, color="firebrick") #x, y and width
+
+ax.set_xlim(-1.0, 800)
+ax.set_ylim(-1.0, 250)
+#ax.grid(True)
+
+plt.show(block=True)
 
