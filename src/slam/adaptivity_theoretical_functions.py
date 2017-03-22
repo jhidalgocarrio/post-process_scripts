@@ -7,7 +7,7 @@ from pylab import *
 import numpy as np
 from matplotlib import pyplot as plt
 from math import sqrt
-matplotlib.style.use('ggplot') #in matplotlib >= 1.5.1
+#matplotlib.style.use('ggplot') #in matplotlib >= 1.5.1
 
 # Gaussian processes residual boundaries
 gp_min_boundary = 0.00
