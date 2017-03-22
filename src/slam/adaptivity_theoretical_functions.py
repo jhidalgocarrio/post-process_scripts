@@ -67,7 +67,7 @@ ax.set_xlim(gp_min_boundary, gp_max_boundary)
 ax.set_ylim(image_frame_min, image_frame_max+0.02)
 
 plt.xlabel(r'Odometry error [$m/s$]', fontsize=25, fontweight='bold')
-plt.ylabel(r'Images frame period [$s$]', fontsize=25, fontweight='bold')
+plt.ylabel(r'Visual odometry period', fontsize=25, fontweight='bold')
 plt.grid(True)
 ax.legend(loc=1, prop={'size':15})
 plt.show(block=True)
