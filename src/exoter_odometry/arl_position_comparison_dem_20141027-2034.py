@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-path = '/home/javi/exoter/development/data/20141024_planetary_lab/20141027-2034_odometry_comparison/'
+path = '~/npi/data/20141024_planetary_lab/20141027-2034_odometry_comparison/'
 
 #######################################
 threed_odometry_file = path + 'pose_odo_position.reaction_forces.0.data'
@@ -15,11 +15,12 @@ navigation_orientation_file = path + 'pose_world_to_navigation_orientation.0.dat
 
 navigation_position_file = path + 'pose_world_to_navigation_position.0.data'
 #######################################
-esa_arl_dem_file = '/home/javi/exoter/development/esa_terrain_lab/DEMclean.ply'
+esa_arl_dem_file = '~/npi/documentation/esa_terrain_lab/DEMclean.ply'
 #######################################
 
 import sys
 sys.path.insert(0, './src/core')
+import os
 import csv
 from pylab import *
 import numpy as np
@@ -31,6 +32,8 @@ import cov_ellipse as cov
 from plyfile import PlyData, PlyElement
 import scipy
 
+import datetime
+matplotlib.style.use('ggplot') #in matplotlib >= 1.5.1
 
 #ExoTeR Odometry
 threed_odometry = data.ThreeData()
@@ -78,14 +81,14 @@ contact_odometry.eigenValues()
 ############
 
 # Terrain DEM
-plydata = PlyData.read(open(esa_arl_dem_file))
+plydata = PlyData.read(open(os.path.expanduser(esa_arl_dem_file)))
 
 vertex = plydata['vertex'].data
 
 [px, py, pz] = (vertex[t] for t in ('x', 'y', 'z'))
 
 # define grid.
-npts=200
+npts=100
 xi = np.linspace(min(px), max(px), npts)
 yi = np.linspace(min(py), max(py), npts)
 
@@ -95,19 +98,25 @@ zi = griddata(px, py, pz, xi, yi, interp='linear')
 ############
 ### PLOT ###
 ############
-matplotlib.rcParams.update({'font.size': 30, 'font.weight': 'bold'})
-fig = plt.figure(1)
+matplotlib.rcParams.update({'font.size': 15, 'font.weight': 'bold'})
+fig = plt.figure(1, figsize=(28, 16), dpi=120, facecolor='w', edgecolor='k')
 ax = fig.add_subplot(111)
+#fig, ax = plt.subplots()
 
 # Display the DEM
 plt.rc('text', usetex=False)# activate latex text rendering
 CS = plt.contour(xi, yi, zi, 15, linewidths=0.5, colors='k')
 CS = plt.contourf(xi, yi, zi, 15, cmap=plt.cm.gray, vmax=abs(zi).max(), vmin=-abs(zi).max())
-cbar = plt.colorbar()  # draw colorbar
-cbar.ax.set_ylabel('terrain elevation')
+
 # plot data points.
 plt.xlim(min(px), max(xi))
 plt.ylim(min(py), max(yi))
+
+
+# Color bar of the dem
+cbar = plt.colorbar()  # draw colorbar
+cbar.ax.set_ylabel(r' terrain elevation [$m$]', fontsize=25, fontweight='bold')
+
 
 # Odometry trajectory
 plt.rc('text', usetex=False)# activate latex text rendering
@@ -122,7 +131,7 @@ position[:] = [navigation_orient.data[0].rot(x) +  navigation_position.data[0] f
 # Display Odometry trajectory
 x = position[:,0]
 y = position[:,1]
-ax.plot(x, y, marker='o', linestyle='-.', label="Enhanced 3D Odometry", color=[0.3,1.0,0.4], lw=2)
+ax.plot(x, y, marker='o', linestyle='-.', label="3d odometry", color=[0.3,1.0,0.4], lw=2)
 
 
 # Planar Odometry trajectory
@@ -138,7 +147,7 @@ position[:] = [navigation_orient.data[0].rot(x) +  navigation_position.data[0] f
 # Display Planar Odometry trajectory
 x = position[:,0]
 y = position[:,1]
-ax.plot(x, y, marker='x', linestyle='--', label="Planar Odometry", color=[0,0.5,1], lw=2)
+ax.plot(x, y, marker='x', linestyle='--', label="skid odometry", color=[0,0.5,1], lw=2)
 
 # Contact Odometry trajectory
 plt.rc('text', usetex=False)# activate latex text rendering
@@ -151,9 +160,9 @@ position = np.column_stack((xposition, yposition, zposition))
 position[:] = [navigation_orient.data[0].rot(x) +  navigation_position.data[0] for x in position]
 
 # Display Planar Odometry trajectory
-x = position[:,0]
-y = position[:,1]
-ax.plot(x, y, marker='^', linestyle='.-', label="Contact Point Odometry", color=[0.3,0.5,1], lw=2)
+#x = position[:,0]
+#y = position[:,1]
+#ax.plot(x, y, marker='^', linestyle='-', label="Contact Point Odometry", color=[0.3,0.5,1], lw=2)
 
 # Reference trajectory
 plt.rc('text', usetex=False)# activate latex text rendering
@@ -168,25 +177,59 @@ position[:] = [navigation_orient.data[0].rot(x) +  navigation_position.data[0] f
 # Display Reference trajectory
 x = position[:,0]
 y = position[:,1]
-ax.plot(x, y, marker='D', linestyle='--', label="Reference Trajectory", color=[0.5,0,0], alpha=0.5, lw=2)
+ax.plot(x, y, marker='D', linestyle='--', label="reference trajectory", color=[0.5,0,0], alpha=0.5, lw=2)
 
-# Start and End Labels
-ax.scatter(x[0], y[0], marker='D', color=[0,0.5,0.5], alpha=0.5, lw=20)
-ax.scatter(x[len(x)-1], y[len(y)-1], marker='D', color=[0.5,0,0.5], alpha=0.5, lw=20)
+from matplotlib.cbook import get_sample_data
+from matplotlib._png import read_png
+import matplotlib.image as image
+from scipy import ndimage
+from matplotlib.offsetbox import OffsetImage, AnnotationBbox
+fn = get_sample_data(os.getcwd()+"/data/img/exoter.png", asfileobj=False)
+exoter = image.imread(fn)
+exoter = ndimage.rotate(exoter, 180)
+imexoter = OffsetImage(exoter, zoom=0.5)
+
+
+ab = AnnotationBbox(imexoter, xy=(x[0], y[0]),
+            xybox=None,
+            xycoords='data',
+            boxcoords="offset points",
+            frameon=False)
+
+ax.annotate(r'ExoTeR', xy=(x[0], y[0]), xycoords='data',
+                    xytext=(-20, 30), textcoords='offset points', fontsize=12,
+                    #arrowprops=dict(arrowstyle="->", connectionstyle="arc3,rad=.2", lw=2.0)
+                    )
+
 ax.annotate(r'Start', xy=(x[0], y[0]), xycoords='data',
-                                xytext=(-40, -40), textcoords='offset points', fontsize=22,
-                                arrowprops=dict(arrowstyle="->", connectionstyle="arc3,rad=.2", lw=2.0))
-ax.annotate(r'End', xy=(x[len(xposition)-1], y[len(yposition)-1]), xycoords='data',
-                                xytext=(-40, +40), textcoords='offset points', fontsize=22,
-                                arrowprops=dict(arrowstyle="->", connectionstyle="arc3,rad=.2", lw=2.0))
+                    xytext=(-5, 5), textcoords='offset points', fontsize=12,
+                    horizontalalignment='left',
+                    verticalalignment='bottom',
+                    zorder=101
+                    )
+ax.scatter(x[0], y[0], marker='o', facecolor='k', s=40, alpha=1.0, zorder=103)
 
+ax.arrow(x[0], y[0], x[32]-x[0], y[32]-y[0], width=0.02, head_width=0.07,
+    head_length=0.1, fc='k', ec='k', zorder=104)
+
+# End sign
+ax.annotate(r'End', xy=(x[x.shape[0]-1], y[y.shape[0]-1]), xycoords='data',
+                    xytext=(-5, 5), textcoords='offset points', fontsize=12,
+                    horizontalalignment='left',
+                    verticalalignment='bottom',
+                    zorder=101
+                    )
+ax.scatter(x[x.shape[0]-1], y[y.shape[0]-1], marker='o', facecolor='k', s=40, alpha=1.0, zorder=103)
+
+ax.add_artist(ab)
 
 plt.xlabel(r'X [$m$]', fontsize=35, fontweight='bold')
 plt.ylabel(r'Y [$m$]', fontsize=35, fontweight='bold')
-ax.legend(loc=2, prop={'size':30})
-plt.axis('equal')
+ax.legend(loc=2, prop={'size':15})
+#plt.axis('equal')
+fig.savefig("arl_odometry_comparison_20141027-2034.png", dpi=fig.dpi)
 plt.grid(True)
-plt.show(block=False)
+plt.show(block=True)
 
 
 
