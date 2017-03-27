@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-path = '/home/javi/exoter/development/data/20141024_planetary_lab/20141025-0005_odometry_comparison/'
+path = '~/npi/data/20141024_planetary_lab/20141025-0005_odometry_comparison/'
 
 # ################## #
 # Planetary Lab Data #
@@ -268,16 +268,18 @@ refrmse.append(sqrt(((refpos[0][0:datasize[0]] - refpos[0][0:datasize[0]]) ** 2)
 refrmse.append(sqrt(((refpos[1][0:datasize[1]] - refpos[1][0:datasize[1]]) ** 2).mean()))
 refrmse.append(sqrt(((refpos[2][0:datasize[2]] - refpos[2][0:datasize[2]]) ** 2).mean()))
 
+from numpy import linalg as la
+
 # Print values
-odormse
-skidrmse
+print("3d odometry rmse:" + str(la.norm(odormse)))
+print("skid odomery rmse:" + str(la.norm(skidrmse)))
 
-odomaxe
-skidmaxe
+print("3d odometry max error:" + str(la.norm(odomaxe)))
+print("skid odomery max error:" + str(la.norm(skidmaxe)))
 
-odomediane
-skidmediane
+print("3d odometry median error:" + str(la.norm(odomediane)))
+print("skid odomery median error:" + str(la.norm(skidmediane)))
 
-odofinale
-skidfinale
+print("3d odometry final error:" + str(la.norm(odofinale)))
+print("skid odomery median error:" + str(la.norm(skidfinale)))
 
