@@ -80,7 +80,7 @@ def arl_odometry_dem_figure(fig_num, dem_file, threed_odometry_trajectory, skid_
 
     # Color bar of the dem
     cbar = plt.colorbar()  # draw colorbar
-    cbar.ax.set_ylabel(r' terrain elevation[$m$]', fontsize=25, fontweight='bold')
+    cbar.ax.set_ylabel(r' terrain elevation [$m$]', fontsize=25, fontweight='bold')
 
     # Plot 3d odometry trajectory
     x = threed_odometry_trajectory[:,0][0::5]
