@@ -142,7 +142,7 @@ plt.xlabel(r'Position in X [$m$]', fontsize=24)
 plt.ylabel(r'Position in Y [$m$]', fontsize=24)
 plt.grid(True)
 plt.legend(prop={'size':25})
-plt.show(block=False)
+plt.show(block=True)
 
 plot(odopos[0], odopos[2], color='blue')
 plot(skidpos[0], skidpos[2], color='red')
@@ -151,7 +151,7 @@ plt.xlabel(r'Position in X [$m$]', fontsize=24)
 plt.ylabel(r'Position in Z [$m$]', fontsize=24)
 plt.grid(True)
 plt.legend(prop={'size':25})
-plt.show(block=False)
+plt.show(block=True)
 
 #Plot over  time
 plot(odotime, odopos[0], color='blue',  marker='x')
@@ -161,7 +161,7 @@ plt.xlabel(r'Time  [$s$]', fontsize=24)
 plt.ylabel(r'Position in X [$m$]', fontsize=24)
 plt.grid(True)
 plt.legend(prop={'size':25})
-plt.show(block=False)
+plt.show(block=True)
 
 plot(odotime, odopos[1])
 plot(skidtime, skidpos[1], color='red')
@@ -170,24 +170,46 @@ plt.xlabel(r'Time  [$s$]', fontsize=24)
 plt.ylabel(r'Position in Y [$m$]', fontsize=24)
 plt.grid(True)
 plt.legend(prop={'size':25})
-plt.show(block=False)
+plt.show(block=True)
 
 # Plot error over time
 datasize=[]
 datasize.append(min(len(odopos[0]), len(refpos[0])))
 datasize.append(min(len(odopos[1]), len(refpos[1])))
 datasize.append(min(len(odopos[2]), len(refpos[2])))
-odoerrorx = np.absolute(odopos[0][0:datasize[0]] - refpos[0][0+3:datasize[0]+3])
-odoerrory = np.absolute(odopos[1][0:datasize[0]] - refpos[1][0+3:datasize[0]+3])
-odoerrorz = np.absolute(odopos[2][0:datasize[0]] - refpos[2][0+3:datasize[0]+3])
+odoerrorx = np.absolute(odopos[0][0:datasize[0]] - refpos[0][0:datasize[0]])
+odoerrory = np.absolute(odopos[1][0:datasize[0]] - refpos[1][0:datasize[0]])
+odoerrorz = np.absolute(odopos[2][0:datasize[0]] - refpos[2][0:datasize[0]])
 
 plot(odotime, odoerrorx, marker='o')
 plt.xlabel(r'Time  [$s$]', fontsize=24)
 plt.ylabel(r'Position Error in X [$m$]', fontsize=24)
 plt.grid(True)
 plt.legend(prop={'size':25})
-plt.show(block=False)
+plt.show(block=True)
 
+# Plot error over time
+datasize=[]
+datasize.append(min(len(skidpos[0]), len(refpos[0])))
+datasize.append(min(len(skidpos[1]), len(refpos[1])))
+datasize.append(min(len(skidpos[2]), len(refpos[2])))
+odoerrorx = np.absolute(skidpos[0][0:datasize[0]] - refpos[0][0:datasize[0]])
+odoerrory = np.absolute(skidpos[1][0:datasize[0]] - refpos[1][0:datasize[0]])
+odoerrorz = np.absolute(skidpos[2][0:datasize[0]] - refpos[2][0:datasize[0]])
+
+plot(skidtime[0:min(len(skidtime), datasize[0])], odoerrorx, marker='o')
+plt.xlabel(r'Time  [$s$]', fontsize=24)
+plt.ylabel(r'Position Error in X [$m$]', fontsize=24)
+plt.grid(True)
+plt.legend(prop={'size':25})
+plt.show(block=True)
+
+plot(skidtime[0:min(len(skidtime), datasize[0])], odoerrory, marker='o')
+plt.xlabel(r'Time  [$s$]', fontsize=24)
+plt.ylabel(r'Position Error in Y [$m$]', fontsize=24)
+plt.grid(True)
+plt.legend(prop={'size':25})
+plt.show(block=True)
 
 # RMSE for Full Odometry
 datasize=[]
