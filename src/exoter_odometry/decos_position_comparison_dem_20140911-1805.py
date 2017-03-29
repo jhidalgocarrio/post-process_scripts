@@ -90,9 +90,9 @@ def decos_odometry_dem_figure(fig_num, dem_file,
     cbar.ax.set_ylabel(r' terrain elevation [$m$]', fontsize=25, fontweight='bold')
 
     # Plot 3d odometry trajectory
-    t_odo = np.column_stack((threed_odometry_trajectory[:,0][0::20],
-        threed_odometry_trajectory[:,1][0::20],
-        threed_odometry_trajectory[:,2][0::20]))
+    t_odo = np.column_stack((threed_odometry_trajectory[:,0][0::10],
+        threed_odometry_trajectory[:,1][0::10],
+        threed_odometry_trajectory[:,2][0::10]))
     t_odo[:] = [(mis_orient * i * mis_orient.conj())[1:4] for i in t_odo]
     t_odo[:] = [ i + mis_position for i in t_odo ]
     t_odo[:] = [(map_orient_align * i * map_orient_align.conj())[1:4] for i in t_odo ]
@@ -102,9 +102,9 @@ def decos_odometry_dem_figure(fig_num, dem_file,
     ax.plot(x, y, marker='o', linestyle='-.', label="3d odometry", color=[0.3,1.0,0.4], lw=2)
 
     # Plot skid odometry
-    skid = np.column_stack((skid_odometry_trajectory[:,0][0::20],
-        skid_odometry_trajectory[:,1][0::20],
-        skid_odometry_trajectory[:,2][0::20]))
+    skid = np.column_stack((skid_odometry_trajectory[:,0][0::10],
+        skid_odometry_trajectory[:,1][0::10],
+        skid_odometry_trajectory[:,2][0::10]))
     skid[:] = [(mis_orient * i * mis_orient.conj())[1:4] for i in skid]
     skid[:] = [ i + mis_position for i in skid ]
     skid[:] = [(map_orient_align * i * map_orient_align.conj())[1:4] for i in skid ]
@@ -114,7 +114,7 @@ def decos_odometry_dem_figure(fig_num, dem_file,
     ax.plot(x, y, marker='x', linestyle='--', label="skid odometry", color=[0,0.5,1], lw=2)
 
     # Display Ground Truth trajectory
-    ref = np.column_stack((reference_trajectory[:,0][0::20], reference_trajectory[:,1][0::20], reference_trajectory[:,2][0::20]))
+    ref = np.column_stack((reference_trajectory[:,0][0::10], reference_trajectory[:,1][0::10], reference_trajectory[:,2][0::10]))
     ref[:] = [(map_orient_align * i * map_orient_align.conj())[1:4] for i in ref ]
     ref[:] = [ i + map_posi_align for i in ref ]
     x = ref[:,0]
@@ -208,16 +208,16 @@ reference_orient = data.QuaternionData()
 reference_orient.readData(pose_ref_orient_file, cov=True)
 
 ##########################################################################
-#mask = pandas.notnull(reference.x) & pandas.notnull(reference.y) & pandas.notnull(reference.z)
-#reference = reference[mask]
+mask = pandas.notnull(reference.x) & pandas.notnull(reference.y) & pandas.notnull(reference.z)
+reference = reference[mask]
 
 #################
 ## RE-SAMPLE   ##
 #################
-#resampling_time = '1s'
-#threed_odometry = threed_odometry.resample(resampling_time).mean()
-#skid_odometry = skid_odometry.resample(resampling_time).mean()
-#reference = reference.resample(resampling_time).mean()
+resampling_time = '1s'
+threed_odometry = threed_odometry.resample(resampling_time).mean()
+skid_odometry = skid_odometry.resample(resampling_time).mean()
+reference = reference.resample(resampling_time).mean()
 
 ##########################################################################
 #rotate and translate the 3d odometry trajectory wrt the world frame
