@@ -297,14 +297,17 @@ from numpy import linalg as la
 
 # Print values
 print("3d odometry rmse:" + str(la.norm(odormse)))
-print("skid odomery rmse:" + str(la.norm(skidrmse)))
+print("skid odometry rmse:" + str(la.norm(skidrmse)))
 
 print("3d odometry max error:" + str(la.norm(odomaxe)))
-print("skid odomery max error:" + str(la.norm(skidmaxe)))
+print("skid odometry max error:" + str(la.norm(skidmaxe)))
 
 print("3d odometry median error:" + str(la.norm(odomediane)))
-print("skid odomery median error:" + str(la.norm(skidmediane)))
+print("skid odometry median error:" + str(la.norm(skidmediane)))
 
 print("3d odometry final error:" + str(la.norm(odofinale)))
-print("skid odomery median error:" + str(la.norm(skidfinale)))
+print("skid odometry final error:" + str(la.norm(skidfinale)))
+
+print("3d odometry percentage error:" + str((la.norm(odomaxe)*100.0)/distance_traveled))
+print("skid odometry percentage error:" + str((la.norm(skidmaxe)*100.0)/distance_traveled))
 
