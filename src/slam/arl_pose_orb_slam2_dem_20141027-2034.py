@@ -7,7 +7,7 @@
 #path='~/npi/data/20141024_planetary_lab/20141027-2034_orb_slam2_0.5fps/'
 #path='~/npi/data/20141024_planetary_lab/20141027-2034_orb_slam2_0.5fps_wo_relocalization/'
 #path='~/npi/data/20141024_planetary_lab/20141027-2034_orb_slam2_quadratic_adaptivity_one/'
-path='~/npi/data/20141024_planetary_lab/20141027-2034_orb_slam2_quadratic_adaptivity_10/'
+path='~/npi/data/20141024_planetary_lab/20141027-2034_orb_slam2_quadratic_adaptivity_100/'
 #######################################
 path_odometry_file = path + 'pose_odo_position.0.data'
 
@@ -161,17 +161,21 @@ def arl_dem_figure(fig_num, dem_file, trajectory, pred_mean, kf_trajectory, fram
     #cbar = plt.colorbar()  # draw colorbar
     #cbar.ax.set_ylabel(r' terrain elevation[$m$]', fontsize=25, fontweight='bold')
 
-    # Plot all the image frames
+    # Plot all the image frames line
     fr_x = frames_trajectory[:,0]
     fr_y = frames_trajectory[:,1]
-    ax.plot(fr_x, fr_y, marker='s', linestyle='-', lw=2, alpha=0.3, color=[0.0, 0.3, 1.0],
-            label='slam', zorder=99)
+    ax.plot(fr_x, fr_y, linestyle='-', lw=2, alpha=0.4, color=[0.0, 0.3, 1.0],
+            label='slam', zorder=98)
+    # Plot all the image frames
+    ax.scatter(fr_x, fr_y, marker='s', facecolor=[0.0,0.3,1.0], edgecolor='b',
+            s=80, alpha=0.3, zorder=99)
+
 
     # Plot the key frames
     kf_x = kf_trajectory[:,0]
     kf_y = kf_trajectory[:,1]
     ax.scatter(kf_x, kf_y, marker='D', facecolor=[0.2,1.0,0.0], edgecolor='b',
-            label='keyframes', s=40, alpha=1.0, zorder=100)
+            label='keyframes', s=80, alpha=1.0, zorder=100)
 
     import os
     from matplotlib.cbook import get_sample_data
