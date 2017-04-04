@@ -89,11 +89,11 @@ def adaptive_matches_comparison_figure(fig_num, info_ten, info_twentyfive, info_
     x = info_fifty.index.to_datetime()
     y = info_fifty.inliers_matches_ratio_th
     d = scipy.zeros(len(x))
-    ax.fill_between(x, y, 0, color='steelblue')
+    #ax.fill_between(x, y, 0, color='steelblue')
 
     #Scatters
-    scatter_fifty = ax.scatter(x[0], y[0], marker='s', facecolor='steelblue',
-            edgecolor='k', label='50%', s=20, alpha=1.0, zorder=100)
+    #scatter_fifty = ax.scatter(x[0], y[0], marker='s', facecolor='steelblue',
+    #        edgecolor='k', label='50%', s=20, alpha=1.0, zorder=100)
 
     #Hundred fill
     x = info_hundred.index.to_datetime()
@@ -114,7 +114,7 @@ def adaptive_matches_comparison_figure(fig_num, info_ten, info_twentyfive, info_
     #Fifty line
     x = info_fifty.index.to_datetime()
     y = info_fifty.inliers_matches_ratio_th
-    ax.plot(x, y, linestyle='-', lw=2, alpha=1.0, color=[0.0, 0.0, 0.0])
+    #ax.plot(x, y, linestyle='-', lw=2, alpha=1.0, color=[0.0, 0.0, 0.0])
 
     #Twenty line
     x = info_twentyfive.index.to_datetime()
@@ -132,7 +132,8 @@ def adaptive_matches_comparison_figure(fig_num, info_ten, info_twentyfive, info_
     ax.set_xlabel(r'Time', fontsize=25, fontweight='bold')
     #ax.tick_params('x', colors='k')
     plt.grid(True)
-    plt.legend(handles=[scatter_ten, scatter_twentyfive, scatter_fifty, scatter_hundred],
+    plt.legend(handles=[scatter_ten, scatter_twentyfive, #scatter_fifty,
+        scatter_hundred],
             loc=2, prop={'size':15})
     plt.show(block=True)
 
@@ -197,11 +198,11 @@ def adaptive_frames_comparison_figure(fig_num, info_ten, info_twentyfive, info_f
     x = info_fifty.index.to_datetime()
     y = info_fifty.desired_fps
     d = scipy.zeros(len(x))
-    ax.fill_between(x, y, 0, color='forestgreen')
+    #ax.fill_between(x, y, 0, color='forestgreen')
 
     #Scatters
-    scatter_fifty = ax.scatter(x[0], y[0], marker='s', facecolor='forestgreen',
-            edgecolor='k', label='50%', s=20, alpha=1.0, zorder=100)
+    #scatter_fifty = ax.scatter(x[0], y[0], marker='s', facecolor='forestgreen',
+    #        edgecolor='k', label='50%', s=20, alpha=1.0, zorder=100)
 
     #Hundred fill
     x = info_hundred.index.to_datetime()
@@ -222,7 +223,7 @@ def adaptive_frames_comparison_figure(fig_num, info_ten, info_twentyfive, info_f
     #Fifty line
     x = info_fifty.index.to_datetime()
     y = info_fifty.desired_fps
-    ax.plot(x, y, linestyle='-', lw=2, alpha=1.0, color=[0.0, 0.0, 0.0])
+    #ax.plot(x, y, linestyle='-', lw=2, alpha=1.0, color=[0.0, 0.0, 0.0])
 
     #Twenty line
     x = info_twentyfive.index.to_datetime()
@@ -240,14 +241,15 @@ def adaptive_frames_comparison_figure(fig_num, info_ten, info_twentyfive, info_f
     ax.set_xlabel(r'Time', fontsize=25, fontweight='bold')
     #ax.tick_params('x', colors='k')
     plt.grid(True)
-    plt.legend(handles=[scatter_ten, scatter_twentyfive, scatter_fifty, scatter_hundred],
+    plt.legend(handles=[scatter_ten, scatter_twentyfive, #scatter_fifty,
+        scatter_hundred],
             loc=2, prop={'size':15})
     plt.show(block=True)
 
 ##########################################################################
 # Comparing information from different adaptivity thresholds
 ##########################################################################
-path='~/npi/data/20150515_planetary_lab/20150515-1752_orb_slam2_quadratic_adaptivity_10/'
+path='~/npi/data/20150515_planetary_lab/20150515-1752_orb_slam2_quadratic_adaptivity_10_bis/'
 path_task_info_adaptive_slam_file = path + 'task_info_adaptive_slam.0.data'
 
 # Information task
@@ -259,7 +261,7 @@ info_ten = pandas.read_csv(os.path.expanduser(path_task_info_adaptive_slam_file)
         'inliers_matches_cu', 'frame_gp_residual', 'kf_gp_residual',
         'kf_gp_threshold', 'distance_traversed'], header=None)
 
-path='~/npi/data/20150515_planetary_lab/20150515-1752_orb_slam2_quadratic_adaptivity_25/'
+path='~/npi/data/20150515_planetary_lab/20150515-1752_orb_slam2_quadratic_adaptivity_25_bis/'
 path_task_info_adaptive_slam_file = path + 'task_info_adaptive_slam.0.data'
 
 # Information task
@@ -271,7 +273,7 @@ info_twentyfive = pandas.read_csv(os.path.expanduser(path_task_info_adaptive_sla
         'inliers_matches_cu', 'frame_gp_residual', 'kf_gp_residual',
         'kf_gp_threshold', 'distance_traversed'], header=None)
 
-path='~/npi/data/20150515_planetary_lab/20150515-1752_orb_slam2_quadratic_adaptivity_50/'
+path='~/npi/data/20150515_planetary_lab/20150515-1752_orb_slam2_quadratic_adaptivity_50_bis/'
 path_task_info_adaptive_slam_file = path + 'task_info_adaptive_slam.0.data'
 
 # Information task
@@ -283,7 +285,7 @@ info_fifty = pandas.read_csv(os.path.expanduser(path_task_info_adaptive_slam_fil
         'inliers_matches_cu', 'frame_gp_residual', 'kf_gp_residual',
         'kf_gp_threshold', 'distance_traversed'], header=None)
 
-path='~/npi/data/20150515_planetary_lab/20150515-1752_orb_slam2_quadratic_adaptivity_100/'
+path='~/npi/data/20150515_planetary_lab/20150515-1752_orb_slam2_quadratic_adaptivity_100_bis/'
 path_task_info_adaptive_slam_file = path + 'task_info_adaptive_slam.0.data'
 
 # Information task
