@@ -3,7 +3,8 @@
 # by javi 2017-02-28 14:05:29
 
 #######################################
-path='~/npi/data/20150515_planetary_lab/20150515-1752_orb_slam2_quadratic_adaptivity_100_bis/'
+#path='~/npi/data/20150515_planetary_lab/20150515-1752_orb_slam2/'
+path='~/npi/data/20150515_planetary_lab/20150515-1752_orb_slam2_quadratic_adaptivity_25_bis/'
 #######################################
 path_odometry_file = path + 'pose_odo_position.0.data'
 
@@ -159,10 +160,11 @@ def arl_dem_figure(fig_num, dem_file, trajectory, pred_mean, kf_trajectory, fram
     fr_x = frames_trajectory[:,0]
     fr_y = frames_trajectory[:,1]
     ax.plot(fr_x, fr_y, linestyle='-', lw=2, alpha=0.4, color=[0.0, 0.3, 1.0],
-            label='slam', zorder=98)
+            label='slam trajectory',
+            zorder=98)
     # Plot all the image frames
     ax.scatter(fr_x, fr_y, marker='s', facecolor=[0.0,0.3,1.0], edgecolor='b',
-            s=80, alpha=0.3, zorder=99)
+            label='image frames', s=80, alpha=0.3, zorder=99)
 
 
     # Plot the key frames
@@ -218,6 +220,7 @@ def arl_dem_figure(fig_num, dem_file, trajectory, pred_mean, kf_trajectory, fram
 
     plt.xlabel(r'X [$m$]', fontsize=15, fontweight='bold')
     plt.ylabel(r'Y [$m$]', fontsize=15, fontweight='bold')
+    #ax.legend(loc=2, prop={'size':15})
     #plt.axis('equal')
     plt.grid(True)
     fig.savefig("arl_adaptive_slam_dem_20150515-1752.png", dpi=fig.dpi)
