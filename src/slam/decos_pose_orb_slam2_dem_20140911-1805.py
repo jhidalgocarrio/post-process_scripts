@@ -3,7 +3,8 @@
 # by javi 2017-03-01 19:09:14
 
 #######################################
-path='~/npi/data/20140911_decos_field/20140911-1805_orb_slam2_quadratic_adaptivity_10_bis/'
+#path='~/npi/data/20140911_decos_field/20140911-1805_orb_slam2_bis/'
+path='~/npi/data/20140911_decos_field/20140911-1805_orb_slam2_quadratic_adaptivity_100_bis/'
 #######################################
 path_odometry_file = path + 'pose_odo_position.0.data'
 
@@ -179,8 +180,13 @@ def decos_dem_figure(fig_num, dem_file, trajectory, pred_mean, kf_trajectory,
     fr[:] = [ i + map_posi_align for i in fr ]
     fr_x = fr[:,0]
     fr_y = fr[:,1]
-    ax.plot(fr_x, fr_y, marker='s', linestyle='-', lw=2, alpha=0.3, color=[0.0, 0.3, 1.0],
-            label='slam', zorder=99)
+    ax.plot(fr_x, fr_y, linestyle='-', lw=2, alpha=0.4, color=[0.0, 0.3, 1.0],
+            label='slam trajectory', zorder=99)
+
+    # Plot all the image frames
+    ax.scatter(fr_x, fr_y, marker='s', facecolor=[0.0,0.3,1.0], edgecolor='b',
+            label='image frames', s=80, alpha=0.3, zorder=99)
+
 
     # Plot the key frames
     kf = np.column_stack((kf_trajectory[:,0], kf_trajectory[:,1], kf_trajectory[:,2]))
@@ -190,8 +196,8 @@ def decos_dem_figure(fig_num, dem_file, trajectory, pred_mean, kf_trajectory,
     kf[:] = [ i + map_posi_align for i in kf ]
     kf_x = kf[:,0]
     kf_y = kf[:,1]
-    ax.scatter(kf_x, kf_y, marker='s', facecolor=[0.2,1.0,0.0], edgecolor='b',
-            label='keyframes', s=20, alpha=1.0, zorder=100)
+    ax.scatter(kf_x, kf_y, marker='D', facecolor=[0.2,1.0,0.0], edgecolor='b',
+            label='keyframes', s=80, alpha=1.0, zorder=100)
 
     import os
     from matplotlib.cbook import get_sample_data
@@ -201,28 +207,28 @@ def decos_dem_figure(fig_num, dem_file, trajectory, pred_mean, kf_trajectory,
     from matplotlib.offsetbox import OffsetImage, AnnotationBbox
     fn = get_sample_data(os.getcwd()+"/data/img/exoter.png", asfileobj=False)
     exoter = image.imread(fn)
-    exoter = ndimage.rotate(exoter, -120)
+    exoter = ndimage.rotate(exoter, -110)
     imexoter = OffsetImage(exoter, zoom=0.3)
 
 
-    ab = AnnotationBbox(imexoter, xy=(x[0], y[0]),
+    ab = AnnotationBbox(imexoter, xy=(x[2], y[2]),
                     xybox=None,
                     xycoords='data',
                     boxcoords="offset points",
                     frameon=False)
 
-    ax.annotate(r'ExoTeR', xy=(x[0], y[0]), xycoords='data',
+    ax.annotate(r'ExoTeR', xy=(x[2], y[2]), xycoords='data',
                             xytext=(-20, -35), textcoords='offset points', fontsize=16,
                             #arrowprops=dict(arrowstyle="->", connectionstyle="arc3,rad=.2", lw=2.0)
                             )
 
-    ax.annotate(r'Start', xy=(x[0], y[0]), xycoords='data',
+    ax.annotate(r'Start', xy=(x[2], y[2]), xycoords='data',
                             xytext=(-5, 5), textcoords='offset points', fontsize=16,
                             horizontalalignment='left',
                             verticalalignment='bottom',
                             zorder=101
                             )
-    ax.scatter(x[0], y[0], marker='o', facecolor='k', s=40, alpha=1.0, zorder=103)
+    ax.scatter(x[2], y[2], marker='o', facecolor='k', s=40, alpha=1.0, zorder=103)
 
     #ax.arrow(x[0], y[0], x[130]-x[0], y[130]-y[0], width=0.02, head_width=0.07,
     #        head_length=0.1, fc='k', ec='k', zorder=104)
@@ -240,6 +246,7 @@ def decos_dem_figure(fig_num, dem_file, trajectory, pred_mean, kf_trajectory,
 
     plt.xlabel(r'X [$m$]', fontsize=15, fontweight='bold')
     plt.ylabel(r'Y [$m$]', fontsize=15, fontweight='bold')
+    #ax.legend(loc=2, prop={'size':15})
     #plt.axis('equal')
     plt.grid(True)
     fig.savefig("decos_adaptive_slam_dem_20140911-1805.png", dpi=fig.dpi)
@@ -722,7 +729,7 @@ imframes_position[:] = [navigation_orient.data[0].rot(x) +  navigation_position.
 #################################################
 # Take the misalignment between odo/slam and gt
 #################################################
-mis_orient = quat.quaternion.fromAngleAxis(-6.0 * np.pi/180.0, [0.0, 0.0, 1.0])
+mis_orient = quat.quaternion.fromAngleAxis(-4.0 * np.pi/180.0, [0.0, 0.0, 1.0])
 mis_position = [0.0, 0.0, 0.00]
 
 ##########################################################################
@@ -774,8 +781,8 @@ final_estimation = final_estimation + mis_position
 
 final_error = final_estimation - final_groundtruth
 
-la.norm(final_error[0:1])
-print("Final error: " + str(la.norm(final_error[0:1])))
+la.norm(final_error[0:2])
+print("Final error: " + str(la.norm(final_error[0:2])))
 
 ##########################################################################
 max_error = np.max(estimation - ground_truth)

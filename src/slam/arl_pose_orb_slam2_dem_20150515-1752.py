@@ -3,8 +3,8 @@
 # by javi 2017-02-28 14:05:29
 
 #######################################
-#path='~/npi/data/20150515_planetary_lab/20150515-1752_orb_slam2/'
-path='~/npi/data/20150515_planetary_lab/20150515-1752_orb_slam2_quadratic_adaptivity_25_bis/'
+path='~/npi/data/20150515_planetary_lab/20150515-1752_no_adaptive_slam/'
+#path='~/npi/data/20150515_planetary_lab/20150515-1752_orb_slam2_quadratic_adaptivity_25_bis/'
 #######################################
 path_odometry_file = path + 'pose_odo_position.0.data'
 
