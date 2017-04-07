@@ -390,14 +390,16 @@ def adaptive_frame_figure(fig_num, info):
     plt.legend(loc=1, prop={'size':15})
     plt.show(block=True)
 
-def odometry_error_bar(fig_num, info, pred_mean,  color_bar='Reds'):
+def odometry_error_bar(fig_num, info, pred_mean, sampling_time ='1s', color_bar='Reds'):
     ########################
     # Plot Bar 
     ########################
     matplotlib.rcParams.update({'font.size': 15, 'font.weight': 'bold'})
     fig, ax = plt.subplots()
 
-    x = info.index.to_pydatetime()
+    resample_info = info.resample(resampling_time).mean()
+
+    x = resample_info.index.to_pydatetime()
     x[:] = [(i-x[0]).total_seconds() for i in x]
     y = info.inliers_matches_ratio_th
 
@@ -424,8 +426,8 @@ def odometry_error_bar(fig_num, info, pred_mean,  color_bar='Reds'):
     ax.tick_params('y', colors='k')
     ax.set_xlabel(r'Time [$s$]', fontsize=25, fontweight='bold')
     ax.tick_params('x', colors='k')
-    ax.set_xlim([0.5, 1.5])
-    ax.set_ylim([x[0], x[len(x)-1]])
+    ax.set_ylim([0.5, 1.5])
+    ax.set_xlim([x[0], x[len(x)-1]])
     plt.show(block=True)
 
 ##########################################################################
@@ -679,7 +681,7 @@ adaptive_matches_figure(3, info)
 adaptive_frame_figure(4, info)
 
 info = info.resample(resampling_time).mean()
-odometry_error_bar(5, info, pred_mean)
+odometry_error_bar(5, info, pred_mean, sampling_time)
 ##########################################################################
 # Compute RMSE, FINAL ERROR AND MAXIMUM ERROR
 ##########################################################################
