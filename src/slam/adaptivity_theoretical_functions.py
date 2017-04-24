@@ -33,7 +33,7 @@ def exponential_ratio(constant, t, min_value):
 ################################
 # Residual vs image frame period
 ################################
-matplotlib.rcParams.update({'font.size': 15, 'font.weight': 'bold'})
+matplotlib.rcParams.update({'font.size': 25, 'font.weight': 'bold'})
 fig = plt.figure(1, figsize=(28, 16), dpi=120, facecolor='w', edgecolor='k')
 ax = fig.add_subplot(111)
 
@@ -66,10 +66,10 @@ ax.scatter(residual_2, linear_frame(eq_constant, residual_2, image_frame_max),
 ax.set_xlim(gp_min_boundary, gp_max_boundary)
 ax.set_ylim(image_frame_min, image_frame_max+0.02)
 
-plt.xlabel(r'Odometry error [$m/s$]', fontsize=25, fontweight='bold')
-plt.ylabel(r'Visual odometry period', fontsize=25, fontweight='bold')
+plt.xlabel(r'Odometry error [$m/s$]', fontsize=45, fontweight='bold')
+plt.ylabel(r'Visual odometry period', fontsize=45, fontweight='bold')
 plt.grid(True)
-ax.legend(loc=1, prop={'size':15})
+ax.legend(loc=1, prop={'size':35})
 plt.show(block=True)
 fig.savefig("function_plot_frame_adaptive_slam.png", dpi=fig.dpi)
 
@@ -80,7 +80,7 @@ matches_ratio_max = 1.00 #0.75
 ################################
 # Residual vs image frame period
 ################################
-matplotlib.rcParams.update({'font.size': 15, 'font.weight': 'bold'})
+matplotlib.rcParams.update({'font.size': 25, 'font.weight': 'bold'})
 fig = plt.figure(2, figsize=(28, 16), dpi=120, facecolor='w', edgecolor='k')
 ax = fig.add_subplot(111)
 
@@ -114,10 +114,10 @@ ax.scatter(residual_2, linear_frame(eq_constant, residual_2, matches_ratio_min),
 ax.set_xlim(gp_min_boundary, gp_max_boundary)
 ax.set_ylim(matches_ratio_min, matches_ratio_max)
 
-plt.xlabel(r'Odometry error [$m/s$]', fontsize=25, fontweight='bold')
-plt.ylabel(r'Features matches ratio', fontsize=25, fontweight='bold')
+plt.xlabel(r'Odometry error [$m/s$]', fontsize=45, fontweight='bold')
+plt.ylabel(r'Features matches ratio', fontsize=45, fontweight='bold')
 plt.grid(True)
-ax.legend(loc=2, prop={'size':15})
+ax.legend(loc=2, prop={'size':35})
 plt.show(block=True)
 fig.savefig("function_plot_ratio_adaptive_slam.png", dpi=fig.dpi)
 
