@@ -70,7 +70,7 @@ def decos_odometry_dem_figure(fig_num, dem_file,
     map_posi_align = [2.00, 9.00, 0.00]
     map_orient_align = quat.quaternion.fromAngleAxis(-20.0 * np.pi/180.0, [0.0, 0.0,1.0])
 
-    matplotlib.rcParams.update({'font.size': 15, 'font.weight': 'bold'})
+    matplotlib.rcParams.update({'font.size': 30, 'font.weight': 'bold'})
     fig = plt.figure(fig_num, figsize=(28, 16), dpi=120, facecolor='w', edgecolor='k')
     ax = fig.add_subplot(111)
     #fig, ax = plt.subplots()
@@ -167,9 +167,9 @@ def decos_odometry_dem_figure(fig_num, dem_file,
 
     ax.add_artist(ab)
 
-    plt.xlabel(r'X [$m$]', fontsize=15, fontweight='bold')
-    plt.ylabel(r'Y [$m$]', fontsize=15, fontweight='bold')
-    ax.legend(loc=2, prop={'size':15})
+    plt.xlabel(r'X [$m$]', fontsize=35, fontweight='bold')
+    plt.ylabel(r'Y [$m$]', fontsize=35, fontweight='bold')
+    ax.legend(loc=2, prop={'size':30})
     #leg = ax.legend(loc=1, prop={'size':30}, fancybox=True)
     #leg.get_frame().set_alpha(0.5)
     #plt.axis('equal')
