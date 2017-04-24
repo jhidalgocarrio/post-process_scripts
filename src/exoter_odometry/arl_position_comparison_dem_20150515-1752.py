@@ -64,7 +64,7 @@ def arl_odometry_dem_figure(fig_num, dem_file, threed_odometry_trajectory, skid_
     dem_zi = griddata(dem_px, dem_py, dem_pz, dem_xi, dem_yi, interp='linear')
 
 
-    matplotlib.rcParams.update({'font.size': 15, 'font.weight': 'bold'})
+    matplotlib.rcParams.update({'font.size': 30, 'font.weight': 'bold'})
     fig = plt.figure(fig_num, figsize=(28, 16), dpi=120, facecolor='w', edgecolor='k')
     ax = fig.add_subplot(111)
     #fig, ax = plt.subplots()
@@ -141,9 +141,9 @@ def arl_odometry_dem_figure(fig_num, dem_file, threed_odometry_trajectory, skid_
 
     ax.add_artist(ab)
 
-    plt.xlabel(r'X [$m$]', fontsize=15, fontweight='bold')
-    plt.ylabel(r'Y [$m$]', fontsize=15, fontweight='bold')
-    ax.legend(loc=2, prop={'size':15})
+    plt.xlabel(r'X [$m$]', fontsize=35, fontweight='bold')
+    plt.ylabel(r'Y [$m$]', fontsize=35, fontweight='bold')
+    ax.legend(loc=2, prop={'size':30})
     #plt.axis('equal')
     plt.grid(True)
     fig.savefig("arl_odometry_comparison_20150515-1752.png", dpi=fig.dpi)

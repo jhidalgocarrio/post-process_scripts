@@ -98,7 +98,7 @@ zi = griddata(px, py, pz, xi, yi, interp='linear')
 ############
 ### PLOT ###
 ############
-matplotlib.rcParams.update({'font.size': 15, 'font.weight': 'bold'})
+matplotlib.rcParams.update({'font.size': 30, 'font.weight': 'bold'})
 fig = plt.figure(1, figsize=(28, 16), dpi=120, facecolor='w', edgecolor='k')
 ax = fig.add_subplot(111)
 #fig, ax = plt.subplots()
@@ -225,7 +225,7 @@ ax.add_artist(ab)
 
 plt.xlabel(r'X [$m$]', fontsize=35, fontweight='bold')
 plt.ylabel(r'Y [$m$]', fontsize=35, fontweight='bold')
-ax.legend(loc=2, prop={'size':15})
+ax.legend(loc=4, prop={'size':30})
 #plt.axis('equal')
 fig.savefig("arl_odometry_comparison_20141027-2034.png", dpi=fig.dpi)
 plt.grid(True)
