@@ -33,7 +33,7 @@ class Figures(object):
 
 class ExoTerFigures(Figures):
     def output(self, fig_num, dataset, method, prediction_mean, prediction_var,
-            train_sampling_time, test_sampling_time, cutoff=0.2):
+            train_sampling_time, test_sampling_time, cutoff=0.1):
 
         #######################################
         # TEST DATA
@@ -47,7 +47,7 @@ class ExoTerFigures(Figures):
         order = 8
         fs = 1.0/float(test_sampling_time[0]) # sample rate, Hz
 
-        matplotlib.rcParams.update({'font.size': 15, 'font.weight': 'bold'})
+        matplotlib.rcParams.update({'font.size': 30, 'font.weight': 'bold'})
         fig = plt.figure(fig_num, figsize=(28, 16), dpi=120, facecolor='w', edgecolor='k')
         ax = fig.add_subplot(111)
 
@@ -93,7 +93,7 @@ class ExoTerFigures(Figures):
         plt.ylabel(r'Velocity [$m/s$]', fontsize=35, fontweight='bold')
         plt.grid(True)
         ax.set_ylim([-0.10, 0.10])
-        ax.legend(loc=1, prop={'size':15})
+        ax.legend(loc=4, prop={'size':30})
         title_str = dataset.name+"_" + method.name + "_train_at_"+train_sampling_time+"_test_at_"+test_sampling_time
         #plt.title(title_str)
         #plt.show(block=False)
