@@ -124,7 +124,7 @@ speed_loco_max_avg = [1.20, 92, 100.0, 100.0, 200]
 speed_loco_nominal_avg = [1.20, 10, 43, 50, 200]
 
 # Plot the values
-matplotlib.rcParams.update({'font.size': 25, 'font.weight': 'bold'})
+matplotlib.rcParams.update({'font.size': 45, 'font.weight': 'bold'})
 fig = plt.figure(1)
 ax = fig.add_subplot(111)
 #ax.set_title('Average Speed per Sol', fontsize=25, fontweight='bold')
@@ -136,66 +136,92 @@ ax.xaxis.set_ticks_position('bottom')
 ax.spines['bottom'].set_position(('data',0))
 ax.yaxis.set_ticks_position('left')
 ax.spines['left'].set_position(('data',0))
-ax.grid(True)
+#ax.grid(True)
 adjust_spines(ax,['left', 'bottom'])
 
 #Mission average velocities
 xposition = [1, 10, 20, 30 , 40]
 yposition = speed_mission_avg
-plt.plot(xposition, yposition, marker='.', linestyle='-', color="blue", lw=2)
-plt.plot(xposition[0], yposition[0], linestyle='none', marker='D', color='blue', markersize=10)
-plt.plot(xposition[1], yposition[1], linestyle='none', marker='D', color='red', markersize=10)
-plt.plot(xposition[2], yposition[2], linestyle='none', marker='D', color='yellow', markersize=10)
-plt.plot(xposition[3], yposition[3], linestyle='none', marker='D', color='green', markersize=10)
-plt.plot(xposition[4], yposition[4], linestyle='none', marker='D', color='magenta', markersize=10)
+plt.plot(xposition, yposition, marker='.', linestyle='-', color="blue", lw=4)
+plt.plot(xposition[0], yposition[0], linestyle='none', marker='D',
+        color='blue', markersize=20)
+plt.plot(xposition[1], yposition[1], linestyle='none', marker='D',
+        color='red', markersize=20)
+plt.plot(xposition[2], yposition[2], linestyle='none', marker='D',
+        color='yellow', markersize=20)
+plt.plot(xposition[3], yposition[3], linestyle='none', marker='D',
+        color='green', markersize=20)
+plt.plot(xposition[4], yposition[4], linestyle='none', marker='D',
+        color='magenta', markersize=20)
 
 
 plt.annotate(r''+trunc(yposition[0],1), xy=(xposition[0], yposition[0]), xycoords='data',
-                                xytext=(-10, 10), textcoords='offset points', fontsize=22)
+                                xytext=(-10, 10), textcoords='offset points',
+                                fontsize=40)
 plt.annotate(r''+trunc(yposition[1],1), xy=(xposition[1], yposition[1]), xycoords='data',
-                                xytext=(10, -15), textcoords='offset points', fontsize=22)
+                                xytext=(10, -15), textcoords='offset points',
+                                fontsize=40)
 plt.annotate(r''+trunc(yposition[2],1), xy=(xposition[2], yposition[2]), xycoords='data',
-                                xytext=(-10, 10), textcoords='offset points', fontsize=22)
+                                xytext=(-10, 10), textcoords='offset points',
+                                fontsize=40)
 plt.annotate(r''+trunc(yposition[3],1), xy=(xposition[3], yposition[3]), xycoords='data',
-                                xytext=(-20, 10), textcoords='offset points', fontsize=22)
+                                xytext=(-20, 10), textcoords='offset points',
+                                fontsize=40)
 plt.annotate(r''+trunc(yposition[4],1), xy=(xposition[4], yposition[4]), xycoords='data',
-                                xytext=(-10, 10), textcoords='offset points', fontsize=22)
+                                xytext=(-10, 10), textcoords='offset points',
+                                fontsize=40)
 
 #Maximum average velocity
 yposition = speed_loco_max_avg
-plt.plot(xposition, yposition, marker='.', linestyle='--', color="red", lw=2)
-plt.plot(xposition[0], yposition[0], linestyle='none', marker='D', color='blue', markersize=10)
-plt.plot(xposition[1], yposition[1], linestyle='none', marker='D', color='red', markersize=10)
-plt.plot(xposition[2], yposition[2], linestyle='none', marker='D', color='yellow', markersize=10)
-plt.plot(xposition[3], yposition[3], linestyle='none', marker='D', color='green', markersize=10)
-plt.plot(xposition[4], yposition[4], linestyle='none', marker='D', color='magenta', markersize=10)
+plt.plot(xposition, yposition, marker='.', linestyle='--', color="red", lw=4)
+plt.plot(xposition[0], yposition[0], linestyle='none', marker='D',
+        color='blue', markersize=20)
+plt.plot(xposition[1], yposition[1], linestyle='none', marker='D',
+        color='red', markersize=20)
+plt.plot(xposition[2], yposition[2], linestyle='none', marker='D',
+        color='yellow', markersize=20)
+plt.plot(xposition[3], yposition[3], linestyle='none', marker='D',
+        color='green', markersize=20)
+plt.plot(xposition[4], yposition[4], linestyle='none', marker='D',
+        color='magenta', markersize=20)
 
 plt.annotate(r''+trunc(yposition[1],1), xy=(xposition[1], yposition[1]), xycoords='data',
-                                xytext=(-10, 10), textcoords='offset points', fontsize=22)
+                                xytext=(-10, 10), textcoords='offset points',
+                                fontsize=40)
 plt.annotate(r''+trunc(yposition[2],1), xy=(xposition[2], yposition[2]), xycoords='data',
-                                xytext=(-10, 10), textcoords='offset points', fontsize=22)
+                                xytext=(-10, 10), textcoords='offset points',
+                                fontsize=40)
 plt.annotate(r''+trunc(yposition[3],1), xy=(xposition[3], yposition[3]), xycoords='data',
-                                xytext=(-20, 10), textcoords='offset points', fontsize=22)
+                                xytext=(-20, 10), textcoords='offset points',
+                                fontsize=40)
 
 yposition = speed_loco_nominal_avg
-plt.plot(xposition, yposition, marker='.', linestyle='-.', color="green", lw=2)
-plt.plot(xposition[0], yposition[0], linestyle='none', marker='D', color='blue', markersize=10)
-plt.plot(xposition[1], yposition[1], linestyle='none', marker='D', color='red', markersize=10)
-plt.plot(xposition[2], yposition[2], linestyle='none', marker='D', color='yellow', markersize=10)
-plt.plot(xposition[3], yposition[3], linestyle='none', marker='D', color='green', markersize=10)
-plt.plot(xposition[4], yposition[4], linestyle='none', marker='D', color='magenta', markersize=10)
+plt.plot(xposition, yposition, marker='.', linestyle='-.', color="green", lw=4)
+plt.plot(xposition[0], yposition[0], linestyle='none', marker='D',
+        color='blue', markersize=20)
+plt.plot(xposition[1], yposition[1], linestyle='none', marker='D',
+        color='red', markersize=20)
+plt.plot(xposition[2], yposition[2], linestyle='none', marker='D',
+        color='yellow', markersize=20)
+plt.plot(xposition[3], yposition[3], linestyle='none', marker='D',
+        color='green', markersize=20)
+plt.plot(xposition[4], yposition[4], linestyle='none', marker='D',
+        color='magenta', markersize=20)
 
 
 plt.annotate(r''+trunc(yposition[1],1), xy=(xposition[1], yposition[1]), xycoords='data',
-                                xytext=(-10, 10), textcoords='offset points', fontsize=22)
+                                xytext=(-10, 10), textcoords='offset points',
+                                fontsize=40)
 plt.annotate(r''+trunc(yposition[2],1), xy=(xposition[2], yposition[2]), xycoords='data',
-                                xytext=(-10, 10), textcoords='offset points', fontsize=22)
+                                xytext=(-10, 10), textcoords='offset points',
+                                fontsize=40)
 plt.annotate(r''+trunc(yposition[3],1), xy=(xposition[3], yposition[3]), xycoords='data',
-                                xytext=(-20, 10), textcoords='offset points', fontsize=22)
+                                xytext=(-20, 10), textcoords='offset points',
+                                fontsize=40)
 
 
-plt.ylabel(r' Speed [$m/sol$]', fontsize=35,  fontweight='bold')
-plt.legend(prop={'size':35})
+plt.ylabel(r' Speed [$m/sol$]', fontsize=45,  fontweight='bold')
+plt.legend(prop={'size':45})
 setp( ax.get_xticklabels(), visible=False)
 #savefig('data/speed_missions_comparison_2013.png')
 plt.show(block=True)
