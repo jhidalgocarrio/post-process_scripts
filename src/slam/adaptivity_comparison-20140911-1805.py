@@ -34,7 +34,7 @@ def adaptive_matches_comparison_figure(fig_num, info_ten, info_twentyfive, info_
     ########################
     # Plot matches
     ########################
-    matplotlib.rcParams.update({'font.size': 15, 'font.weight': 'bold'})
+    matplotlib.rcParams.update({'font.size': 40, 'font.weight': 'bold'})
     fig, ax = plt.subplots()
 
     ########################
@@ -62,7 +62,8 @@ def adaptive_matches_comparison_figure(fig_num, info_ten, info_twentyfive, info_
     lc.set_linewidth(100)
     lc.set_alpha(0.8)
     h_cbar = plt.colorbar(lc)#, orientation='horizontal')
-    h_cbar.ax.set_ylabel(r'threshold - odometry error [%]', fontsize=25, fontweight='bold', color='k')
+    h_cbar.ax.set_ylabel(r'threshold - odometry error [%]', fontsize=40,
+            fontweight='bold')
 
     ########################
     #Ten fill
@@ -73,7 +74,7 @@ def adaptive_matches_comparison_figure(fig_num, info_ten, info_twentyfive, info_
 
     #Scatters
     scatter_ten = ax.scatter(x[0], y[0], marker='s', facecolor='lightblue',
-            edgecolor='k', label='10%', s=20, alpha=1.0, zorder=100)
+            edgecolor='k', label='10%', s=300, alpha=1.0, zorder=100)
 
     #Twenty five fill
     x = info_twentyfive.index.to_datetime()
@@ -83,7 +84,7 @@ def adaptive_matches_comparison_figure(fig_num, info_ten, info_twentyfive, info_
 
     #Scatters
     scatter_twentyfive = ax.scatter(x[0], y[0], marker='s', facecolor='lightsteelblue',
-            edgecolor='k', label='25%', s=20, alpha=1.0, zorder=100)
+            edgecolor='k', label='25%', s=300, alpha=1.0, zorder=100)
 
     #Fifty fill
     x = info_fifty.index.to_datetime()
@@ -93,7 +94,7 @@ def adaptive_matches_comparison_figure(fig_num, info_ten, info_twentyfive, info_
 
     #Scatters
     #scatter_fifty = ax.scatter(x[0], y[0], marker='s', facecolor='steelblue',
-    #        edgecolor='k', label='50%', s=20, alpha=1.0, zorder=100)
+    #        edgecolor='k', label='50%', s=300, alpha=1.0, zorder=100)
 
     #Hundred fill
     x = info_hundred.index.to_datetime()
@@ -103,7 +104,7 @@ def adaptive_matches_comparison_figure(fig_num, info_ten, info_twentyfive, info_
 
     #Scatters
     scatter_hundred = ax.scatter(x[0], y[0], marker='s', facecolor='blue',
-            edgecolor='k', label='100%', s=20, alpha=1.0, zorder=100)
+            edgecolor='k', label='100%', s=300, alpha=1.0, zorder=100)
 
     ########################
     #Hundred line
@@ -126,16 +127,21 @@ def adaptive_matches_comparison_figure(fig_num, info_ten, info_twentyfive, info_
     y = info_ten.inliers_matches_ratio_th
     ax.plot(x, y, linestyle='-', lw=2, alpha=1.0, color=[0.0, 0.0, 0.0])
 
-    ax.set_ylabel(r'inliers matches ratio [$0.0 - 0.75$]', fontsize=25, fontweight='bold', color='k')
-    #ax.tick_params('y', colors='k')
+    ax.set_ylabel(r'inliers matches ratio [$0.0 - 0.75$]', fontsize=40,
+    fontweight='bold')
+    #ax.tick_params('y')
 
-    ax.set_xlabel(r'Time', fontsize=25, fontweight='bold')
-    #ax.tick_params('x', colors='k')
+    formatted_ticks = info_ten.resample('10min').mean().index.map(lambda t: t.strftime('%H:%M:%S'))
+    plt.xticks(info_ten.resample('10min').mean().index.to_pydatetime(), formatted_ticks)
+    ax.set_xlim(min(info_ten.resample('10min').mean().index.to_pydatetime()), max(info_ten.resample('10min').mean().index.to_pydatetime()))
+
+    ax.set_xlabel(r'Time', fontsize=40, fontweight='bold')
+    #ax.tick_params('x')
     plt.grid(True)
     plt.legend(handles=[scatter_ten, scatter_twentyfive,
         #scatter_fifty,
         scatter_hundred],
-        loc=2, prop={'size':15})
+        loc=2, prop={'size':40})
     plt.show(block=True)
 
 def adaptive_frames_comparison_figure(fig_num, info_ten, info_twentyfive, info_fifty,
@@ -144,7 +150,7 @@ def adaptive_frames_comparison_figure(fig_num, info_ten, info_twentyfive, info_f
     ########################
     # Plot matches
     ########################
-    matplotlib.rcParams.update({'font.size': 15, 'font.weight': 'bold'})
+    matplotlib.rcParams.update({'font.size': 40, 'font.weight': 'bold'})
     fig, ax = plt.subplots()
 
     ########################
@@ -172,7 +178,8 @@ def adaptive_frames_comparison_figure(fig_num, info_ten, info_twentyfive, info_f
     lc.set_linewidth(100)
     lc.set_alpha(0.8)
     h_cbar = plt.colorbar(lc)#, orientation='horizontal')
-    h_cbar.ax.set_ylabel(r'threshold - odometry error [%]', fontsize=25, fontweight='bold', color='k')
+    h_cbar.ax.set_ylabel(r'threshold - odometry error [%]', fontsize=40,
+            fontweight='bold')
 
     ########################
     #Ten fill
@@ -183,7 +190,7 @@ def adaptive_frames_comparison_figure(fig_num, info_ten, info_twentyfive, info_f
 
     #Scatters
     scatter_ten = ax.scatter(x[0], y[0], marker='s', facecolor='lightgreen',
-            edgecolor='k', label='10%', s=20, alpha=1.0, zorder=100)
+            edgecolor='k', label='10%', s=300, alpha=1.0, zorder=100)
 
     #Twenty five fill
     x = info_twentyfive.index.to_datetime()
@@ -193,7 +200,7 @@ def adaptive_frames_comparison_figure(fig_num, info_ten, info_twentyfive, info_f
 
     #Scatters
     scatter_twentyfive = ax.scatter(x[0], y[0], marker='s', facecolor='mediumseagreen',
-            edgecolor='k', label='25%', s=20, alpha=1.0, zorder=100)
+            edgecolor='k', label='25%', s=300, alpha=1.0, zorder=100)
 
     #Fifty fill
     x = info_fifty.index.to_datetime()
@@ -203,7 +210,7 @@ def adaptive_frames_comparison_figure(fig_num, info_ten, info_twentyfive, info_f
 
     #Scatters
     #scatter_fifty = ax.scatter(x[0], y[0], marker='s', facecolor='forestgreen',
-    #        edgecolor='k', label='50%', s=20, alpha=1.0, zorder=100)
+    #        edgecolor='k', label='50%', s=300, alpha=1.0, zorder=100)
 
     #Hundred fill
     x = info_hundred.index.to_datetime()
@@ -213,7 +220,7 @@ def adaptive_frames_comparison_figure(fig_num, info_ten, info_twentyfive, info_f
 
     #Scatters
     scatter_hundred = ax.scatter(x[0], y[0], marker='s', facecolor='darkgreen',
-            edgecolor='k', label='100%', s=20, alpha=1.0, zorder=100)
+            edgecolor='k', label='100%', s=300, alpha=1.0, zorder=100)
 
     ########################
     #Hundred line
@@ -236,16 +243,20 @@ def adaptive_frames_comparison_figure(fig_num, info_ten, info_twentyfive, info_f
     y = info_ten.desired_fps
     ax.plot(x, y, linestyle='-', lw=2, alpha=1.0, color=[0.0, 0.0, 0.0])
 
-    ax.set_ylabel(r'fps [$0.5 - 2.5$]', fontsize=25, fontweight='bold', color='k')
-    #ax.tick_params('y', colors='k')
+    ax.set_ylabel(r'fps [$0.5 - 2.5$]', fontsize=40, fontweight='bold')
+    #ax.tick_params('y')
 
-    ax.set_xlabel(r'Time', fontsize=25, fontweight='bold')
-    #ax.tick_params('x', colors='k')
+    formatted_ticks = info_ten.resample('10min').mean().index.map(lambda t: t.strftime('%H:%M:%S'))
+    plt.xticks(info_ten.resample('10min').mean().index.to_pydatetime(), formatted_ticks)
+    ax.set_xlim(min(info_ten.resample('10min').mean().index.to_pydatetime()), max(info_ten.resample('10min').mean().index.to_pydatetime()))
+
+    ax.set_xlabel(r'Time', fontsize=40, fontweight='bold')
+    #ax.tick_params('x')
     plt.grid(True)
     plt.legend(handles=[scatter_ten, scatter_twentyfive,
         #scatter_fifty,
         scatter_hundred],
-            loc=2, prop={'size':15})
+            loc=2, prop={'size':40})
     plt.show(block=True)
 
 ##########################################################################
@@ -450,8 +461,16 @@ m = data.open_object(path_gpy_gaussian_process_model_file)
 [pred_mean, pred_var] = m.predict(Xp)
 
 ##########################################################################
+# RE-SAMPLE
+##########################################################################
+info_ten = info_ten.resample(resampling_time).mean()
+info_twentyfive = info_twentyfive.resample(resampling_time).mean()
+info_fifty = info_fifty.resample(resampling_time).mean()
+info_hundred = info_hundred.resample(resampling_time).mean()
+
+##########################################################################
 # PLOT
 ##########################################################################
 adaptive_matches_comparison_figure(1, info_ten, info_twentyfive, info_fifty, info_hundred, pred_mean)
-adaptive_frames_comparison_figure(1, info_ten, info_twentyfive, info_fifty, info_hundred, pred_mean)
+adaptive_frames_comparison_figure(2, info_ten, info_twentyfive, info_fifty, info_hundred, pred_mean)
 
