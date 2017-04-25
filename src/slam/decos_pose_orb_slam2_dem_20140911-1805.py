@@ -747,6 +747,7 @@ decos_dem_figure(2, decos_dem_file, reference_position, pred_mean, keyframes_pos
 ##########################################################################
 adaptive_matches_figure(3, info)
 adaptive_frame_figure(4, info)
+info = info.resample(resampling_time).mean()
 odometry_error_bar(5, info, pred_mean, resampling_time)
 ##########################################################################
 # Compute RMSE, FINAL ERROR AND MAXIMUM ERROR
