@@ -4,7 +4,7 @@
 
 #######################################
 #path='~/npi/data/20140911_decos_field/20140911-1805_orb_slam2_bis/'
-path='~/npi/data/20140911_decos_field/20140911-1805_orb_slam2_quadratic_adaptivity_100_bis/'
+path='~/npi/data/20140911_decos_field/20140911-1805_orb_slam2_quadratic_adaptivity_10_bis/'
 #######################################
 path_odometry_file = path + 'pose_odo_position.0.data'
 
@@ -124,7 +124,7 @@ def decos_dem_figure(fig_num, dem_file, trajectory, pred_mean, kf_trajectory,
     map_posi_align = [1.00, 5.00, 0.00]
     map_orient_align = quat.quaternion.fromAngleAxis(-25.0 * np.pi/180.0, [0.0, 0.0,1.0])
 
-    matplotlib.rcParams.update({'font.size': 15, 'font.weight': 'bold'})
+    matplotlib.rcParams.update({'font.size': 30, 'font.weight': 'bold'})
     fig = plt.figure(fig_num, figsize=(28, 16), dpi=120, facecolor='w', edgecolor='k')
     ax = fig.add_subplot(111)
     #fig, ax = plt.subplots()
@@ -180,12 +180,15 @@ def decos_dem_figure(fig_num, dem_file, trajectory, pred_mean, kf_trajectory,
     fr[:] = [ i + map_posi_align for i in fr ]
     fr_x = fr[:,0]
     fr_y = fr[:,1]
-    ax.plot(fr_x, fr_y, linestyle='-', lw=2, alpha=0.4, color=[0.0, 0.3, 1.0],
-            label='slam trajectory', zorder=99)
+    ax.plot(fr_x, fr_y,
+            #marker='s',
+            linestyle='-', lw=2, alpha=0.5, color=[0.0, 0.3, 1.0],
+            label='slam trajectory',
+            zorder=99)
 
     # Plot all the image frames
     ax.scatter(fr_x, fr_y, marker='s', facecolor=[0.0,0.3,1.0], edgecolor='b',
-            label='image frames', s=80, alpha=0.3, zorder=99)
+            label='image frames', s=120, alpha=0.3, zorder=99)
 
 
     # Plot the key frames
@@ -197,7 +200,7 @@ def decos_dem_figure(fig_num, dem_file, trajectory, pred_mean, kf_trajectory,
     kf_x = kf[:,0]
     kf_y = kf[:,1]
     ax.scatter(kf_x, kf_y, marker='D', facecolor=[0.2,1.0,0.0], edgecolor='b',
-            label='keyframes', s=80, alpha=1.0, zorder=100)
+            label='keyframes', s=120, alpha=1.0, zorder=100)
 
     import os
     from matplotlib.cbook import get_sample_data
@@ -218,12 +221,15 @@ def decos_dem_figure(fig_num, dem_file, trajectory, pred_mean, kf_trajectory,
                     frameon=False)
 
     ax.annotate(r'ExoTeR', xy=(x[2], y[2]), xycoords='data',
-                            xytext=(-20, -35), textcoords='offset points', fontsize=16,
+                            xytext=(-20, -35), textcoords='offset points',
+                            fontsize=30,
                             #arrowprops=dict(arrowstyle="->", connectionstyle="arc3,rad=.2", lw=2.0)
+                            zorder=101,
                             )
 
     ax.annotate(r'Start', xy=(x[2], y[2]), xycoords='data',
-                            xytext=(-5, 5), textcoords='offset points', fontsize=16,
+                            xytext=(-5, 5), textcoords='offset points',
+                            fontsize=30,
                             horizontalalignment='left',
                             verticalalignment='bottom',
                             zorder=101
@@ -235,7 +241,8 @@ def decos_dem_figure(fig_num, dem_file, trajectory, pred_mean, kf_trajectory,
 
     # End sign
     ax.annotate(r'End', xy=(fr_x[fr_x.shape[0]-1], fr_y[fr_y.shape[0]-1]), xycoords='data',
-                            xytext=(-5, 5), textcoords='offset points', fontsize=16,
+                            xytext=(-5, 5), textcoords='offset points',
+                            fontsize=30,
                             horizontalalignment='left',
                             verticalalignment='bottom',
                             zorder=101
@@ -244,9 +251,9 @@ def decos_dem_figure(fig_num, dem_file, trajectory, pred_mean, kf_trajectory,
 
     ax.add_artist(ab)
 
-    plt.xlabel(r'X [$m$]', fontsize=15, fontweight='bold')
-    plt.ylabel(r'Y [$m$]', fontsize=15, fontweight='bold')
-    #ax.legend(loc=2, prop={'size':15})
+    plt.xlabel(r'X [$m$]', fontsize=35, fontweight='bold')
+    plt.ylabel(r'Y [$m$]', fontsize=35, fontweight='bold')
+    #ax.legend(loc=2, prop={'size':30})
     #plt.axis('equal')
     plt.grid(True)
     fig.savefig("decos_adaptive_slam_dem_20140911-1805.png", dpi=fig.dpi)
