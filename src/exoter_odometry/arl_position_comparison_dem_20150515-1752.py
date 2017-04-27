@@ -85,16 +85,16 @@ def arl_odometry_dem_figure(fig_num, dem_file, threed_odometry_trajectory, skid_
     # Plot 3d odometry trajectory
     x = threed_odometry_trajectory[:,0][0::5]
     y = threed_odometry_trajectory[:,1][0::5]
-    ax.plot(x, y, marker='o', linestyle='-.', label="3d odometry", color=[0.3,1.0,0.4], lw=2)
+    ax.plot(x, y, marker='o', linestyle='-.', label="3d odometry", color=[0.3,1.0,0.4], lw=5)
 
     # Plot skid odometry
     x = skid_odometry_trajectory[:,0][0::5]
     y = skid_odometry_trajectory[:,1][0::5]
-    ax.plot(x, y, marker='x', linestyle='--', label="skid odometry", color=[0,0.5,1], lw=2)
+    ax.plot(x, y, marker='x', linestyle='--', label="skid odometry", color=[0,0.5,1], lw=5)
 
     x = reference_trajectory[1:reference_trajectory.shape[0]-1,0][0::5]
     y = reference_trajectory[1:reference_trajectory.shape[0]-1,1][0::5]
-    ax.plot(x, y, marker='D', linestyle='--', label="reference trajectory", color=[0.5,0,0], alpha=0.5, lw=2)
+    ax.plot(x, y, marker='D', linestyle='--', label="reference trajectory", color=[0.5,0,0], alpha=0.5, lw=5)
 
     import os
     from matplotlib.cbook import get_sample_data
@@ -115,29 +115,33 @@ def arl_odometry_dem_figure(fig_num, dem_file, threed_odometry_trajectory, skid_
                     frameon=False)
 
     ax.annotate(r'ExoTeR', xy=(x[1], y[1]), xycoords='data',
-                            xytext=(-20, 30), textcoords='offset points', fontsize=12, zorder=101,
-                            #arrowprops=dict(arrowstyle="->", connectionstyle="arc3,rad=.2", lw=2.0)
+                            xytext=(-20, 30), textcoords='offset points',
+                            fontsize=30, zorder=101,
+                            #arrowprops=dict(arrowstyle="->", connectionstyle="arc3,rad=.2", lw=5.0)
                             )
 
     ax.annotate(r'Start', xy=(x[0], y[0]), xycoords='data',
-                            xytext=(-5, 5), textcoords='offset points', fontsize=12,
+                            xytext=(-5, 5), textcoords='offset points',
+                            fontsize=30,
                             horizontalalignment='left',
                             verticalalignment='bottom',
                             zorder=101
                             )
-    ax.scatter(x[0], y[0], marker='o', facecolor='k', s=40, alpha=1.0, zorder=103)
+    ax.scatter(x[0], y[0], marker='o', facecolor='k', s=100, alpha=1.0, zorder=103)
 
     ax.arrow(x[0], y[0], x[13]-x[0], y[13]-y[0], width=0.02, head_width=0.1,
             head_length=0.05, fc='k', ec='k', zorder=104)
 
     # End sign
     ax.annotate(r'End', xy=(x[x.shape[0]-1], y[y.shape[0]-1]), xycoords='data',
-                            xytext=(-5, 5), textcoords='offset points', fontsize=12,
+                            xytext=(-5, 5), textcoords='offset points',
+                            fontsize=30,
                             horizontalalignment='left',
                             verticalalignment='bottom',
                             zorder=101
                             )
-    ax.scatter(x[x.shape[0]-1], y[y.shape[0]-1], marker='o', facecolor='k', s=40, alpha=1.0, zorder=103)
+    ax.scatter(x[x.shape[0]-1], y[y.shape[0]-1], marker='o', facecolor='k',
+            s=100, alpha=1.0, zorder=103)
 
     ax.add_artist(ab)
 
@@ -252,7 +256,7 @@ zposition = threed_odometry_position[:,2][0::5]
 x = xposition
 y = yposition
 z = zposition
-ax.plot(x, y, z, marker='o', linestyle='-.', label="3d odometry", color=[0.3,1.0,0.4], lw=2)
+ax.plot(x, y, z, marker='o', linestyle='-.', label="3d odometry", color=[0.3,1.0,0.4], lw=5)
 
 # Planar Odometry trajectory
 xposition = skid_odometry_position[:,0][0::5]
@@ -263,7 +267,7 @@ zposition = skid_odometry_position[:,2][0::5]
 x = xposition
 y = yposition
 z = zposition
-ax.plot(x, y, z, marker='x', linestyle='--', label="skid odometry", color=[0,0.5,1], lw=2)
+ax.plot(x, y, z, marker='x', linestyle='--', label="skid odometry", color=[0,0.5,1], lw=5)
 
 # Reference trajectory
 xposition = reference_position[:,0][0::5]
@@ -274,7 +278,7 @@ zposition = reference_position[:,2][0::5]
 x = xposition
 y = yposition
 z = zposition
-ax.plot(x, y, z, marker='D', linestyle='--', label="reference trajectory", color=[0.5,0,0], alpha=0.5, lw=2)
+ax.plot(x, y, z, marker='D', linestyle='--', label="reference trajectory", color=[0.5,0,0], alpha=0.5, lw=5)
 
 ax.set_xlabel('X')
 ax.set_xlim(0, max(xi))

@@ -99,7 +99,7 @@ def decos_odometry_dem_figure(fig_num, dem_file,
     t_odo[:] = [ i + map_posi_align for i in t_odo ]
     x = t_odo[:,0]
     y = t_odo[:,1]
-    ax.plot(x, y, marker='o', linestyle='-.', label="3d odometry", color=[0.3,1.0,0.4], lw=2)
+    ax.plot(x, y, marker='o', linestyle='-.', label="3d odometry", color=[0.3,1.0,0.4], lw=5)
 
     # Plot skid odometry
     skid = np.column_stack((skid_odometry_trajectory[:,0][0::10],
@@ -111,7 +111,7 @@ def decos_odometry_dem_figure(fig_num, dem_file,
     skid[:] = [ i + map_posi_align for i in skid ]
     x = skid[:,0]
     y = skid[:,1]
-    ax.plot(x, y, marker='x', linestyle='--', label="skid odometry", color=[0,0.5,1], lw=2)
+    ax.plot(x, y, marker='x', linestyle='--', label="skid odometry", color=[0,0.5,1], lw=5)
 
     # Display Ground Truth trajectory
     ref = np.column_stack((reference_trajectory[:,0][0::10], reference_trajectory[:,1][0::10], reference_trajectory[:,2][0::10]))
@@ -119,7 +119,7 @@ def decos_odometry_dem_figure(fig_num, dem_file,
     ref[:] = [ i + map_posi_align for i in ref ]
     x = ref[:,0]
     y = ref[:,1]
-    ax.plot(x, y, marker='D', linestyle='--', label="reference trajectory", color=[0.5,0,0], alpha=0.5, lw=2)
+    ax.plot(x, y, marker='D', linestyle='--', label="reference trajectory", color=[0.5,0,0], alpha=0.5, lw=5)
 
 
     import os
@@ -141,29 +141,33 @@ def decos_odometry_dem_figure(fig_num, dem_file,
                     frameon=False)
 
     ax.annotate(r'ExoTeR', xy=(x[0], y[0]), xycoords='data',
-                            xytext=(-20, -35), textcoords='offset points', fontsize=16,
+                            xytext=(-30, -40), textcoords='offset points',
+                            fontsize=30,
                             #arrowprops=dict(arrowstyle="->", connectionstyle="arc3,rad=.2", lw=2.0)
+                            zorder=101
                             )
 
     ax.annotate(r'Start', xy=(x[0], y[0]), xycoords='data',
-                            xytext=(-5, 5), textcoords='offset points', fontsize=16,
+                            xytext=(-5, 5), textcoords='offset points',
+                            fontsize=30,
                             horizontalalignment='left',
                             verticalalignment='bottom',
                             zorder=101
                             )
-    ax.scatter(x[0], y[0], marker='o', facecolor='k', s=40, alpha=1.0, zorder=103)
+    ax.scatter(x[0], y[0], marker='o', facecolor='k', s=100, alpha=1.0, zorder=103)
 
     #ax.arrow(x[0], y[0], x[13]-x[0], y[13]-y[0], width=0.02, head_width=0.1,
     #        head_length=0.05, fc='k', ec='k', zorder=104)
 
     # End sign
     ax.annotate(r'End', xy=(x[x.shape[0]-1], y[y.shape[0]-1]), xycoords='data',
-                            xytext=(-5, 5), textcoords='offset points', fontsize=16,
+                            xytext=(-5, 5), textcoords='offset points',
+                            fontsize=30,
                             horizontalalignment='left',
                             verticalalignment='bottom',
                             zorder=101
                             )
-    ax.scatter(x[x.shape[0]-1], y[y.shape[0]-1], marker='o', facecolor='k', s=40, alpha=1.0, zorder=103)
+    ax.scatter(x[x.shape[0]-1], y[y.shape[0]-1], marker='o', facecolor='k', s=100, alpha=1.0, zorder=103)
 
     ax.add_artist(ab)
 
@@ -292,7 +296,7 @@ position[:] = [ i + map_posi_align for i in position ]
 xposition = position[:,0]
 yposition = position[:,1]
 zposition = position[:,2]
-ax.plot(xposition, yposition, zposition, marker='o', linestyle='-.', label="3d odometry", color=[0.3,1.0,0.4], lw=2)
+ax.plot(xposition, yposition, zposition, marker='o', linestyle='-.', label="3d odometry", color=[0.3,1.0,0.4], lw=5)
 
 # Plot skid odometry trajectory
 position = np.column_stack((skid_odometry_position[:,0][0::50], skid_odometry_position[:,1][0::50], skid_odometry_position[:,2][0::50]))
@@ -304,7 +308,7 @@ position[:] = [ i + map_posi_align for i in position ]
 xposition = position[:,0]
 yposition = position[:,1]
 zposition = position[:,2]
-ax.plot(xposition, yposition, zposition, marker='^', linestyle='-', label="skid odometry", color=[0,0.5,1], lw=2)
+ax.plot(xposition, yposition, zposition, marker='^', linestyle='-', label="skid odometry", color=[0,0.5,1], lw=5)
 
 # Plot skid odometry trajectory
 position = np.column_stack((reference_position[:,0][0::50], reference_position[:,1][0::50], reference_position[:,2][0::50]))
@@ -313,7 +317,7 @@ position[:] = [ i + map_posi_align for i in position ]
 xposition = position[:,0]
 yposition = position[:,1]
 zposition = position[:,2]
-ax.plot(xposition, yposition, zposition, marker='D', linestyle='--', label="reference trajectory", color=[0.5,0,0], alpha=0.5, lw=2)
+ax.plot(xposition, yposition, zposition, marker='D', linestyle='--', label="reference trajectory", color=[0.5,0,0], alpha=0.5, lw=5)
 
 ax.scatter(xposition[0], yposition[0], zposition[0], marker='D', color=[0,0.5,0.5], alpha=0.5, lw=20)
 xstart, ystart, _ = proj3d.proj_transform(xposition[0], yposition[0], zposition[0], ax.get_proj())

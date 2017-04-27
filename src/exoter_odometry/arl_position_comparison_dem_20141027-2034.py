@@ -131,7 +131,7 @@ position[:] = [navigation_orient.data[0].rot(x) +  navigation_position.data[0] f
 # Display Odometry trajectory
 x = position[:,0]
 y = position[:,1]
-ax.plot(x, y, marker='o', linestyle='-.', label="3d odometry", color=[0.3,1.0,0.4], lw=2)
+ax.plot(x, y, marker='o', linestyle='-.', label="3d odometry", color=[0.3,1.0,0.4], lw=5)
 
 
 # Planar Odometry trajectory
@@ -147,7 +147,7 @@ position[:] = [navigation_orient.data[0].rot(x) +  navigation_position.data[0] f
 # Display Planar Odometry trajectory
 x = position[:,0]
 y = position[:,1]
-ax.plot(x, y, marker='x', linestyle='--', label="skid odometry", color=[0,0.5,1], lw=2)
+ax.plot(x, y, marker='x', linestyle='--', label="skid odometry", color=[0,0.5,1], lw=5)
 
 # Contact Odometry trajectory
 plt.rc('text', usetex=False)# activate latex text rendering
@@ -162,7 +162,7 @@ position[:] = [navigation_orient.data[0].rot(x) +  navigation_position.data[0] f
 # Display Planar Odometry trajectory
 #x = position[:,0]
 #y = position[:,1]
-#ax.plot(x, y, marker='^', linestyle='-', label="Contact Point Odometry", color=[0.3,0.5,1], lw=2)
+#ax.plot(x, y, marker='^', linestyle='-', label="Contact Point Odometry", color=[0.3,0.5,1], lw=5)
 
 # Reference trajectory
 plt.rc('text', usetex=False)# activate latex text rendering
@@ -177,7 +177,7 @@ position[:] = [navigation_orient.data[0].rot(x) +  navigation_position.data[0] f
 # Display Reference trajectory
 x = position[:,0]
 y = position[:,1]
-ax.plot(x, y, marker='D', linestyle='--', label="reference trajectory", color=[0.5,0,0], alpha=0.5, lw=2)
+ax.plot(x, y, marker='D', linestyle='--', label="reference trajectory", color=[0.5,0,0], alpha=0.5, lw=5)
 
 from matplotlib.cbook import get_sample_data
 from matplotlib._png import read_png
@@ -197,29 +197,30 @@ ab = AnnotationBbox(imexoter, xy=(x[0], y[0]),
             frameon=False)
 
 ax.annotate(r'ExoTeR', xy=(x[0], y[0]), xycoords='data',
-                    xytext=(-20, 30), textcoords='offset points', fontsize=12,
-                    #arrowprops=dict(arrowstyle="->", connectionstyle="arc3,rad=.2", lw=2.0)
+                    xytext=(-40, 50), textcoords='offset points', fontsize=30,
+                    #arrowprops=dict(arrowstyle="->", connectionstyle="arc3,rad=.2", lw=5.0)
+                    zorder=101
                     )
 
 ax.annotate(r'Start', xy=(x[0], y[0]), xycoords='data',
-                    xytext=(-5, 5), textcoords='offset points', fontsize=12,
+                    xytext=(-5, 5), textcoords='offset points', fontsize=30,
                     horizontalalignment='left',
                     verticalalignment='bottom',
                     zorder=101
                     )
-ax.scatter(x[0], y[0], marker='o', facecolor='k', s=40, alpha=1.0, zorder=103)
+ax.scatter(x[0], y[0], marker='o', facecolor='k', s=100, alpha=1.0, zorder=103)
 
 ax.arrow(x[0], y[0], x[32]-x[0], y[32]-y[0], width=0.02, head_width=0.07,
     head_length=0.1, fc='k', ec='k', zorder=104)
 
 # End sign
 ax.annotate(r'End', xy=(x[x.shape[0]-1], y[y.shape[0]-1]), xycoords='data',
-                    xytext=(-5, 5), textcoords='offset points', fontsize=12,
+                    xytext=(-5, 5), textcoords='offset points', fontsize=30,
                     horizontalalignment='left',
                     verticalalignment='bottom',
                     zorder=101
                     )
-ax.scatter(x[x.shape[0]-1], y[y.shape[0]-1], marker='o', facecolor='k', s=40, alpha=1.0, zorder=103)
+ax.scatter(x[x.shape[0]-1], y[y.shape[0]-1], marker='o', facecolor='k', s=100, alpha=1.0, zorder=103)
 
 ax.add_artist(ab)
 
@@ -263,7 +264,7 @@ position[:] = [navigation_orient.data[0].rot(x) +  navigation_position.data[0] f
 x = position[:,0]
 y = position[:,1]
 z = position[:,2]
-ax.plot(x, y, z, marker='o', linestyle='-.', label="Enhanced 3D Odometry", color=[0.3,1.0,0.4], lw=2)
+ax.plot(x, y, z, marker='o', linestyle='-.', label="Enhanced 3D Odometry", color=[0.3,1.0,0.4], lw=5)
 
 # Planar Odometry trajectory
 plt.rc('text', usetex=False)# activate latex text rendering
@@ -279,7 +280,7 @@ position[:] = [navigation_orient.data[0].rot(x) +  navigation_position.data[0] f
 x = position[:,0]
 y = position[:,1]
 z = position[:,2]
-ax.plot(x, y, z, marker='x', linestyle='--', label="Planar Odometry", color=[0,0.5,1], lw=2)
+ax.plot(x, y, z, marker='x', linestyle='--', label="Planar Odometry", color=[0,0.5,1], lw=5)
 
 # Contact Odometry trajectory
 plt.rc('text', usetex=False)# activate latex text rendering
@@ -295,7 +296,7 @@ position[:] = [navigation_orient.data[0].rot(x) +  navigation_position.data[0] f
 x = position[:,0]
 y = position[:,1]
 z = position[:,2]
-ax.plot(x, y, z, marker='^', linestyle='.-', label="Contact Point Odometry", color=[0.3,0.5,1], lw=2)
+ax.plot(x, y, z, marker='^', linestyle='.-', label="Contact Point Odometry", color=[0.3,0.5,1], lw=5)
 
 # Reference trajectory
 plt.rc('text', usetex=False)# activate latex text rendering
@@ -311,7 +312,7 @@ position[:] = [navigation_orient.data[0].rot(x) +  navigation_position.data[0] f
 x = position[:,0]
 y = position[:,1]
 z = position[:,2]
-ax.plot(x, y, z, marker='D', linestyle='--', label="Reference Trajectory", color=[0.5,0,0], alpha=0.5, lw=2)
+ax.plot(x, y, z, marker='D', linestyle='--', label="Reference Trajectory", color=[0.5,0,0], alpha=0.5, lw=5)
 
 ax.set_xlabel('X')
 ax.set_xlim(0, max(xi))
