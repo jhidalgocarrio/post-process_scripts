@@ -687,7 +687,7 @@ adaptive_matches_figure(3, info)
 adaptive_frame_figure(4, info)
 
 info = info.resample(resampling_time).mean()
-odometry_error_bar(5, info, pred_mean, sampling_time)
+odometry_error_bar(5, info, pred_mean, resampling_time)
 ##########################################################################
 # Compute RMSE, FINAL ERROR AND MAXIMUM ERROR
 ##########################################################################
