@@ -188,7 +188,7 @@ def decos_dem_figure(fig_num, dem_file, trajectory, pred_mean, kf_trajectory,
 
     # Plot all the image frames
     ax.scatter(fr_x, fr_y, marker='s', facecolor=[0.0,0.3,1.0], edgecolor='b',
-            label='image frames', s=120, alpha=0.3, zorder=99)
+            label='image frames', s=300, alpha=0.2, zorder=99)
 
 
     # Plot the key frames
@@ -200,7 +200,7 @@ def decos_dem_figure(fig_num, dem_file, trajectory, pred_mean, kf_trajectory,
     kf_x = kf[:,0]
     kf_y = kf[:,1]
     ax.scatter(kf_x, kf_y, marker='D', facecolor=[0.2,1.0,0.0], edgecolor='b',
-            label='keyframes', s=120, alpha=1.0, zorder=100)
+            label='keyframes', s=250, alpha=0.8, zorder=100)
 
     import os
     from matplotlib.cbook import get_sample_data
@@ -234,7 +234,7 @@ def decos_dem_figure(fig_num, dem_file, trajectory, pred_mean, kf_trajectory,
                             verticalalignment='bottom',
                             zorder=101
                             )
-    ax.scatter(x[2], y[2], marker='o', facecolor='k', s=40, alpha=1.0, zorder=103)
+    ax.scatter(x[2], y[2], marker='o', facecolor='k', s=100, alpha=1.0, zorder=103)
 
     #ax.arrow(x[0], y[0], x[130]-x[0], y[130]-y[0], width=0.02, head_width=0.07,
     #        head_length=0.1, fc='k', ec='k', zorder=104)
@@ -247,13 +247,14 @@ def decos_dem_figure(fig_num, dem_file, trajectory, pred_mean, kf_trajectory,
                             verticalalignment='bottom',
                             zorder=101
                             )
-    ax.scatter(fr_x[fr_x.shape[0]-1], fr_y[fr_y.shape[0]-1], marker='o', facecolor='k', s=40, alpha=1.0, zorder=103)
+    ax.scatter(fr_x[fr_x.shape[0]-1], fr_y[fr_y.shape[0]-1], marker='o',
+            facecolor='k', s=100, alpha=1.0, zorder=103)
 
     ax.add_artist(ab)
 
     plt.xlabel(r'X [$m$]', fontsize=35, fontweight='bold')
     plt.ylabel(r'Y [$m$]', fontsize=35, fontweight='bold')
-    #ax.legend(loc=2, prop={'size':30})
+    ax.legend(loc=2, prop={'size':30})
     #plt.axis('equal')
     plt.grid(True)
     fig.savefig("decos_adaptive_slam_dem_20140911-1805.png", dpi=fig.dpi)

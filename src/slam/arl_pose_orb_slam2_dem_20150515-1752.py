@@ -3,8 +3,8 @@
 # by javi 2017-02-28 14:05:29
 
 #######################################
-path='~/npi/data/20150515_planetary_lab/20150515-1752_no_adaptive_slam/'
-#path='~/npi/data/20150515_planetary_lab/20150515-1752_orb_slam2_quadratic_adaptivity_100_bis/'
+#path='~/npi/data/20150515_planetary_lab/20150515-1752_no_adaptive_slam/'
+path='~/npi/data/20150515_planetary_lab/20150515-1752_orb_slam2_quadratic_adaptivity_100_bis/'
 #######################################
 path_odometry_file = path + 'pose_odo_position.0.data'
 
@@ -166,14 +166,14 @@ def arl_dem_figure(fig_num, dem_file, trajectory, pred_mean, kf_trajectory, fram
             zorder=98)
     # Plot all the image frames
     ax.scatter(fr_x, fr_y, marker='s', facecolor=[0.0,0.3,1.0], edgecolor='b',
-            label='image frames', s=120, alpha=0.3, zorder=99)
+            label='image frames', s=300, alpha=0.2, zorder=99)
 
 
     # Plot the key frames
     kf_x = kf_trajectory[:,0]
     kf_y = kf_trajectory[:,1]
     ax.scatter(kf_x, kf_y, marker='D', facecolor=[0.2,1.0,0.0], edgecolor='b',
-            label='keyframes', s=120, alpha=1.0, zorder=100)
+            label='keyframes', s=250, alpha=0.8, zorder=100)
 
     import os
     from matplotlib.cbook import get_sample_data
@@ -194,7 +194,7 @@ def arl_dem_figure(fig_num, dem_file, trajectory, pred_mean, kf_trajectory, fram
                     frameon=False)
 
     ax.annotate(r'ExoTeR', xy=(x[1], y[1]), xycoords='data',
-                            xytext=(-30, 50), textcoords='offset points',
+                            xytext=(-40, 50), textcoords='offset points',
                             fontsize=30,
                             #arrowprops=dict(arrowstyle="->", connectionstyle="arc3,rad=.2", lw=2.0)
                             zorder=101,
