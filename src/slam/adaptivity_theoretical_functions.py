@@ -73,7 +73,56 @@ ax.legend(loc=1, prop={'size':35})
 plt.show(block=True)
 fig.savefig("function_plot_frame_adaptive_slam.png", dpi=fig.dpi)
 
+#########################################
+# Residual vs image frame period (latex )
+#########################################
+matplotlib.rcParams.update({'font.size': 25, 'font.weight': 'bold',
+    'text.usetex': True, 'text.latex.preamble': r'\usepackage{amsmath}'})
+fig = plt.figure(1, figsize=(28, 16), dpi=120, facecolor='w', edgecolor='k')
+ax = fig.add_subplot(111)
+
+residual_1 = np.arange(gp_min_boundary, gp_max_boundary, 0.0001)
+residual_2 = np.arange(gp_min_boundary, gp_max_boundary, 0.001)
+
+# Quadratic
+eq_constant = (image_frame_min - image_frame_max) / pow(gp_max_boundary - gp_min_boundary, 2);
+ax.plot(residual_1, quadratic_frame(eq_constant, residual_1, image_frame_max),
+        linestyle='--', lw=2, alpha=1.0, color=[0, 0, 0.0])
+
+ax.scatter(residual_2, quadratic_frame(eq_constant, residual_2, image_frame_max),
+        marker='o', color=[0.0,0.0,1.0], s=100, alpha=0.5, label='Quadratic')
+
+# Exponential
+ax.plot(residual_1, exponential_frame(eq_constant, residual_1, image_frame_max),
+        linestyle='--', lw=2, alpha=1.0, color=[0, 0, 0.0])
+
+ax.scatter(residual_2, exponential_frame(eq_constant, residual_2, image_frame_max),
+        marker='*', color=[0.0,1.0,0.0], s=100, alpha=0.5, label='Exponential')
+
+# Linear
+eq_constant = (image_frame_min - image_frame_max) / (gp_max_boundary - gp_min_boundary);
+ax.plot(residual_1, linear_frame(eq_constant, residual_1, image_frame_max),
+        linestyle='--', lw=2, alpha=1.0, color=[0.0, 0, 0.0])
+
+ax.scatter(residual_2, linear_frame(eq_constant, residual_2, image_frame_max),
+        marker='D', color=[1.0,0.0,0.0], s=100, alpha=0.5, label='Linear')
+
+ax.set_xlim(gp_min_boundary, gp_max_boundary+0.001)
+ax.set_ylim(image_frame_min, image_frame_max+0.2)
+
+
+ax.set_xticklabels(["$\underline{\gamma}$", "", "", "", "", "", "", "", "$\overline{\gamma}$"])
+ax.set_yticklabels(["", r"$\underline{\rho}$", "", "", "", "",r"$\overline{\rho}$"])
+
+plt.xlabel(r'Odometry error [$m/s$]', fontsize=45, fontweight='bold')
+plt.ylabel(r'Visual odometry period', fontsize=45, fontweight='bold')
+plt.grid(True)
+ax.legend(loc=1, prop={'size':35})
+plt.show(block=True)
+
+################################
 # Matches ratio
+################################
 matches_ratio_min = 0.00 #0.3
 matches_ratio_max = 1.00 #0.75
 
