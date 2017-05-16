@@ -125,7 +125,7 @@ speed_loco_nominal_avg = [1.20, 10, 43, 50, 200]
 
 # Plot the values
 matplotlib.rcParams.update({'font.size': 45, 'font.weight': 'bold'})
-fig = plt.figure(1)
+fig = plt.figure(1, figsize=(28, 16), dpi=120, facecolor='w', edgecolor='k')
 ax = fig.add_subplot(111)
 #ax.set_title('Average Speed per Sol', fontsize=25, fontweight='bold')
 ax.set_xlim(-1.0, 50)
@@ -137,6 +137,7 @@ ax.spines['bottom'].set_position(('data',0))
 ax.yaxis.set_ticks_position('left')
 ax.spines['left'].set_position(('data',0))
 #ax.grid(True)
+ax.legend(loc=1, prop={'size':35})
 adjust_spines(ax,['left', 'bottom'])
 
 #Mission average velocities
@@ -229,8 +230,8 @@ plt.show(block=True)
 ##############################
 # Plot rover mass
 ##############################
-matplotlib.rcParams.update({'font.size': 25, 'font.weight': 'bold'})
-fig = plt.figure(1)
+matplotlib.rcParams.update({'font.size': 45, 'font.weight': 'bold'})
+fig = plt.figure(1, figsize=(28, 16), dpi=120, facecolor='w', edgecolor='k')
 ax = fig.add_subplot(111)
 
 #Sojourner
@@ -258,7 +259,7 @@ plt.show(block=True)
 # Plot mission distances
 ##############################
 matplotlib.rcParams.update({'font.size': 25, 'font.weight': 'bold'})
-fig = plt.figure(1)
+fig = plt.figure(1, figsize=(28, 16), dpi=120, facecolor='w', edgecolor='k')
 ax = fig.add_subplot(111)
 
 #Sojourner
@@ -281,4 +282,55 @@ ax.set_ylim(-1.0, 250)
 #ax.grid(True)
 
 plt.show(block=True)
+
+
+###################################
+# Plot mass and mission distances
+###################################
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+from io import StringIO
+
+s = StringIO(u"""\
+mass     distance
+1996     11.5   100
+2003     185   600
+2011    900  19000
+2020    300  4000
+2025+     150   22000""")
+
+df = pd.read_csv(s, index_col=0, delimiter=' ', skipinitialspace=True)
+
+matplotlib.rcParams.update({'font.size': 25, 'font.weight': 'bold'})
+fig = plt.figure(1, figsize=(28, 16), dpi=120, facecolor='w', edgecolor='k')
+ax = fig.add_subplot(111) # Create matplotlib axes
+ax2 = ax.twinx() # Create another axes that shares the same x-axis as ax.
+
+width = 0.4
+
+df.mass.plot(kind='bar', color='grey', ax=ax, width=width, position=1, rot=0)
+df.distance.plot(kind='bar', color='lightgray', ax=ax2, width=width, position=0,
+        rot=0)
+
+ax.set_ylabel(r'Mass [$kg$]', fontsize=25, fontweight='bold', color="black")
+ax2.set_ylabel(r'Distance [$m$]', fontsize=25, fontweight='bold', color="grey")
+ax2.tick_params(axis='y', colors='grey')
+
+for p in ax.patches:
+    ax.annotate(str(p.get_height()), (p.get_x() * 1.005, p.get_height() *
+        1.01), color="black")
+
+for p in ax2.patches:
+    ax2.annotate(str(p.get_height()), (p.get_x() * 1.005, p.get_height() *
+        1.01), color="grey")
+
+ax.set_ylim(-0.0, 1500)
+ax2.set_ylim(-0.0, 25000)
+ax.spines['top'].set_visible(False)
+ax2.spines['top'].set_visible(False)
+savefig('data/distance_and_mass_missions_comparison.png')
+plt.show(block=True)
+
+
 
