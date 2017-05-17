@@ -141,7 +141,7 @@ ax.spines['left'].set_position(('data',0))
 #ax.grid(True)
 adjust_spines(ax,['left', 'bottom'])
 
-xposition = [5, 15, 25, 35, 45]
+xposition = [5, 15, 25, 37, 49]
 
 #Maximum average velocity
 yposition = speed_loco_max_avg
