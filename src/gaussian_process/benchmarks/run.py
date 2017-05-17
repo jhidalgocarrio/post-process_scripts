@@ -27,12 +27,12 @@ config = {
           'evaluations':[RMSE, MAE, MAPE],
           'methods':[SparseGP_RBF_NL], #'methods':[GP_RBF, GP_MAT32, GP_MAT52],
           'normalization': True,
-          'tasks':[ExoTerOdometryARLResiduals],
+          'tasks':[ExoTerOdometryDecosResiduals],
           'train_sampling_time':['1s'],
           'test_sampling_time':['1s'],
           'outputs': [ScreenOutput()],
           #'outputs': [ScreenOutput(), CSVOutput(outpath, prjname)]
-          'save_model': True,
+          'save_model': False,
           'figures': True
           }
 

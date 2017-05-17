@@ -8,7 +8,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from math import sqrt
 
-#matplotlib.style.use('ggplot') #in matplotlib >= 1.5.1
+matplotlib.style.use('classic') #in matplotlib >= 1.5.1
 
 def adjust_spines(ax,spines):
     for loc, spine in ax.spines.items():

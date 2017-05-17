@@ -35,7 +35,7 @@ from plyfile import PlyData, PlyElement
 import scipy
 
 import datetime
-matplotlib.style.use('ggplot') #in matplotlib >= 1.5.1
+matplotlib.style.use('classic') #in matplotlib >= 1.5.1
 
 #######################################
 def figsize(scale):

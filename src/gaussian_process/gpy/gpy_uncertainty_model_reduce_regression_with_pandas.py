@@ -40,7 +40,7 @@ from methods import GP_RBF, SVIGP_RBF, SparseGP_RBF, SparseGP_RBF_NL, GP_MAT32, 
 
 import pandas as pandas
 import datetime
-matplotlib.style.use('ggplot')# in matplotlib >= 1.5.1
+matplotlib.style.use('classic')# in matplotlib >= 1.5.1
 #pandas.set_option('display.mpl_style', 'default') # Make the graphs a bit prettier
 def dateparse (time_in_microsecs):
     return datetime.datetime.fromtimestamp(float(time_in_microsecs) * 1e-06)

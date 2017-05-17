@@ -9,7 +9,7 @@ from pylab import *
 from matplotlib import pyplot as plt
 from scipy.signal import butter, lfilter, freqz
 import pandas as pandas
-matplotlib.style.use('ggplot') #in matplotlib >= 1.5.1
+matplotlib.style.use('classic') #in matplotlib >= 1.5.1
 #pandas.set_option('display.mpl_style', 'default') # Make the graphs a bit prettier
 
 class Figures(object):

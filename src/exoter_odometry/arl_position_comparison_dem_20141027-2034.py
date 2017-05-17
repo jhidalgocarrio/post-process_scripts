@@ -33,7 +33,7 @@ from plyfile import PlyData, PlyElement
 import scipy
 
 import datetime
-matplotlib.style.use('ggplot') #in matplotlib >= 1.5.1
+matplotlib.style.use('classic') #in matplotlib >= 1.5.1
 
 #ExoTeR Odometry
 threed_odometry = data.ThreeData()
@@ -228,7 +228,7 @@ plt.xlabel(r'X [$m$]', fontsize=35, fontweight='bold')
 plt.ylabel(r'Y [$m$]', fontsize=35, fontweight='bold')
 ax.legend(loc=4, prop={'size':30})
 #plt.axis('equal')
-fig.savefig("arl_odometry_comparison_20141027-2034.png", dpi=fig.dpi)
+fig.savefig("arl_odometry_comparison_20141027-2034.pdf", dpi=fig.dpi)
 plt.grid(True)
 plt.show(block=True)
 
