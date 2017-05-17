@@ -145,7 +145,7 @@ xposition = [5, 15, 25, 35, 45]
 
 #Maximum average velocity
 yposition = speed_loco_max_avg
-plt.plot(xposition, yposition, marker='.', linestyle='--', color="lightgray", lw=4,
+plt.plot(xposition, yposition, marker='.', linestyle='--', color="dimgray", lw=4,
         label="direct driving")
 plt.plot(xposition[0], yposition[0], linestyle='none', marker='s',
         color='lightgray', markersize=20)
@@ -158,13 +158,13 @@ plt.plot(xposition[3], yposition[3], linestyle='none', marker='s',
 
 plt.annotate(r''+trunc(yposition[1],1), xy=(xposition[1], yposition[1]), xycoords='data',
                                 xytext=(-10, 10), textcoords='offset points',
-                                fontsize=30)
+                                fontsize=40)
 plt.annotate(r''+trunc(yposition[2],1), xy=(xposition[2], yposition[2]), xycoords='data',
                                 xytext=(-10, 10), textcoords='offset points',
-                                fontsize=30)
+                                fontsize=40)
 plt.annotate(r''+trunc(yposition[3],1), xy=(xposition[3], yposition[3]), xycoords='data',
                                 xytext=(-20, 10), textcoords='offset points',
-                                fontsize=30)
+                                fontsize=40)
 
 yposition = speed_loco_nominal_avg
 plt.plot(xposition, yposition, marker='.', linestyle='-.', color="grey", lw=4,
@@ -181,13 +181,13 @@ plt.plot(xposition[3], yposition[3], linestyle='none', marker='8',
 
 plt.annotate(r''+trunc(yposition[1],1), xy=(xposition[1], yposition[1]), xycoords='data',
                                 xytext=(-10, 10), textcoords='offset points',
-                                fontsize=30)
+                                fontsize=40)
 plt.annotate(r''+trunc(yposition[2],1), xy=(xposition[2], yposition[2]), xycoords='data',
                                 xytext=(-10, 10), textcoords='offset points',
-                                fontsize=30)
+                                fontsize=40)
 plt.annotate(r''+trunc(yposition[3],1), xy=(xposition[3], yposition[3]), xycoords='data',
                                 xytext=(-20, 10), textcoords='offset points',
-                                fontsize=30)
+                                fontsize=40)
 
 
 #Mission average velocities
@@ -208,20 +208,20 @@ plt.plot(xposition[4], yposition[4], linestyle='none', marker='D',
 
 plt.annotate(r''+trunc(yposition[0],1), xy=(xposition[0], yposition[0]), xycoords='data',
                                 xytext=(-10, 10), textcoords='offset points',
-                                fontsize=30)
-plt.annotate(r''+trunc(yposition[1],1), xy=(xposition[1], yposition[1]-2.0), xycoords='data',
+                                fontsize=40)
+plt.annotate(r''+trunc(yposition[1],1), xy=(xposition[1], yposition[1]-4.0), xycoords='data',
                                 xytext=(10, -15), textcoords='offset points',
-                                fontsize=30)
+                                fontsize=40)
 plt.annotate(r''+trunc(yposition[2],1), xy=(xposition[2], yposition[2]),
         xycoords='data',
                                 xytext=(-10, 10), textcoords='offset points',
-                                fontsize=30)
-plt.annotate(r''+trunc(yposition[3],1), xy=(xposition[3]-2.0, yposition[3]), xycoords='data',
+                                fontsize=40)
+plt.annotate(r''+trunc(yposition[3],1), xy=(xposition[3]-3.0, yposition[3]), xycoords='data',
                                 xytext=(-20, 10), textcoords='offset points',
-                                fontsize=30)
+                                fontsize=40)
 plt.annotate(r''+trunc(yposition[4],1), xy=(xposition[4], yposition[4]), xycoords='data',
                                 xytext=(-10, 10), textcoords='offset points',
-                                fontsize=30)
+                                fontsize=40)
 
 
 labels = ['1996', '2003', '2011', '2020', '2025+']
