@@ -178,7 +178,7 @@ def decos_odometry_dem_figure(fig_num, dem_file,
     #leg.get_frame().set_alpha(0.5)
     #plt.axis('equal')
     plt.grid(True)
-    fig.savefig("decos_odometry_comparison_20140911-1805.png", dpi=fig.dpi)
+    fig.savefig("decos_odometry_comparison_20140911-1805.pdf", dpi=fig.dpi)
     plt.show(block=True)
 
 ##########################################################################
