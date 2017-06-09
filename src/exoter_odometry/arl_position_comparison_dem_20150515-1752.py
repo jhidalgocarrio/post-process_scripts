@@ -129,8 +129,8 @@ def arl_odometry_dem_figure(fig_num, dem_file, threed_odometry_trajectory, skid_
                             )
     ax.scatter(x[0], y[0], marker='o', facecolor='k', s=100, alpha=1.0, zorder=103)
 
-    ax.arrow(x[0], y[0], x[13]-x[0], y[13]-y[0], width=0.02, head_width=0.1,
-            head_length=0.05, fc='k', ec='k', zorder=104)
+    ax.arrow(x[0], y[0], x[13]-x[0], y[13]-y[0], width=0.02, head_width=0.07,
+            head_length=0.1, fc='k', ec='k', zorder=104)
 
     # End sign
     ax.annotate(r'End', xy=(x[x.shape[0]-1], y[y.shape[0]-1]), xycoords='data',
@@ -150,7 +150,7 @@ def arl_odometry_dem_figure(fig_num, dem_file, threed_odometry_trajectory, skid_
     ax.legend(loc=2, prop={'size':30})
     #plt.axis('equal')
     plt.grid(True)
-    fig.savefig("arl_odometry_comparison_20150515-1752.png", dpi=fig.dpi)
+    fig.savefig("arl_odometry_comparison_20150515-1752.pdf", dpi=fig.dpi)
     plt.show(block=True)
 
 
