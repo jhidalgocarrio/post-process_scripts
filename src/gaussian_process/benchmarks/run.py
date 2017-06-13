@@ -27,7 +27,7 @@ config = {
           'evaluations':[RMSE, MAE, MAPE],
           'methods':[SparseGP_RBF_NL], #'methods':[GP_RBF, GP_MAT32, GP_MAT52],
           'normalization': True,
-          'tasks':[ExoTerOdometryDecosResiduals],
+          'tasks':[ExoTerOdometryARLResiduals],
           'train_sampling_time':['1s'],
           'test_sampling_time':['1s'],
           'outputs': [ScreenOutput()],
@@ -90,7 +90,9 @@ if __name__=='__main__':
                     if config['figures']:
                         print(bcolors.BOLD + 'Plotting figures: '+ bcolors.ENDC, end='')
                         figure = ExoTerFigures()
-                        figure.output(fig_num, dataset, m, pred_test_mean, 0, train_time, test_time)
+                        figure.output_velocity(fig_num, dataset, m, train_time, test_time)
+                        fig_num = fig_num + 1
+                        figure.output_error(fig_num, dataset, m, pred_test_mean, pred_test_var, train_time, test_time)
                         fig_num = fig_num + 1
                         dataset.dem_figure(fig_num, m.name, pred_test_mean, pred_test_var, train_time, test_time)
                         fig_num = fig_num + 1
