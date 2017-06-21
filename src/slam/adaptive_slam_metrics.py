@@ -16,7 +16,7 @@ w100_adaptivity = np.array([18.3, 19.9, 19.95])
 # Adaptivity mean and std on box plots
 #####################################
 matplotlib.rcParams.update({'font.size': 40, 'font.weight': 'bold'})
-fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(28, 16))
+fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(28, 16), facecolor='w', edgecolor='k')
 labels = ['0%', '10%', '25%', '100%']
 boxprops = dict(linestyle='-', linewidth=4, color='k')
 medianprops = dict(linestyle='-', linewidth=4, color='k')
@@ -72,7 +72,7 @@ w100_error = np.array([0.92, 1.12, 0.51])
 # Adaptivity mean and std on box plots
 #####################################
 matplotlib.rcParams.update({'font.size': 40, 'font.weight': 'bold'})
-fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(28, 16))
+fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(28, 16), facecolor='w', edgecolor='k')
 labels = ['0%', '10%', '25%', '100%']
 boxprops = dict(linestyle='-', linewidth=4, color='k')
 medianprops = dict(linestyle='-', linewidth=4, color='k')
@@ -104,7 +104,7 @@ for line in bp['means']:
     text(x, y, '        %.1f' % y,
          horizontalalignment='left') # draw above, centered
 
-ax.set_ylabel('increase in localization error [$\%$]', fontsize=40, fontweight='bold', color="black")
+ax.set_ylabel('increase in the localization error [$\%$]', fontsize=40, fontweight='bold', color="black")
 ax.set_xlabel('threshold in adaptiveness ', fontsize=40, fontweight='bold', color="black")
 
 #plt.subplots_adjust(left=0.075, right=0.95, top=0.9, bottom=0.25)
