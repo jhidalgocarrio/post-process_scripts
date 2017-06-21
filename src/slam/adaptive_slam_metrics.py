@@ -48,8 +48,8 @@ for line in bp['means']:
     text(x, y, '        %.1f' % y,
          horizontalalignment='left') # draw above, centered
 
-ax.set_ylabel('frames percentage reduction [$\%$]', fontsize=40, fontweight='bold', color="black")
-ax.set_xlabel('adaptivity', fontsize=40, fontweight='bold', color="black")
+ax.set_ylabel('percentage of image frames usage [$\%$]', fontsize=40, fontweight='bold', color="black")
+ax.set_xlabel('threshold in adaptiveness', fontsize=40, fontweight='bold', color="black")
 
 #plt.subplots_adjust(left=0.075, right=0.95, top=0.9, bottom=0.25)
 
@@ -61,7 +61,7 @@ ax.set_axisbelow(True)
 
 plt.show(block=True)
 
-savefig('adaptive_slam_boxplots_numbers.pdf')
+savefig('adaptive_slam_boxplots_frames.pdf')
 #####################################
 wo_error = np.array([0.0, 0.0, 0.0])
 w10_error = np.array([0.02, 0.14, 0.09])
@@ -104,8 +104,8 @@ for line in bp['means']:
     text(x, y, '        %.1f' % y,
          horizontalalignment='left') # draw above, centered
 
-ax.set_ylabel('error percentage increase [$\%$]', fontsize=40, fontweight='bold', color="black")
-ax.set_xlabel('adaptivity', fontsize=40, fontweight='bold', color="black")
+ax.set_ylabel('increase in localization error [$\%$]', fontsize=40, fontweight='bold', color="black")
+ax.set_xlabel('threshold in adaptiveness ', fontsize=40, fontweight='bold', color="black")
 
 #plt.subplots_adjust(left=0.075, right=0.95, top=0.9, bottom=0.25)
 
@@ -117,7 +117,7 @@ ax.set_axisbelow(True)
 
 plt.show(block=True)
 
-savefig('error_slam_boxplots_numbers.pdf')
+savefig('adaptive_slam_boxplots_error.pdf')
 #####################################
 
 data_mean = np.array([wo_adaptivity.mean(), w10_adaptivity.mean(),
@@ -144,16 +144,19 @@ number_frames = exomars_distance/loc_per_frame #frames per traverse
 
 nav_time = exomars_distance/nav_per_frame * nav_image_time
 
-data_time = np.array([(data_mean[0]*number_frames) * loc_image_time,
+total_nav_loc_time_mean = np.array([(data_mean[0]*number_frames) * loc_image_time,
                     (data_mean[1]*number_frames) * loc_image_time,
                     (data_mean[2]*number_frames) * loc_image_time,
                     (data_mean[3]*number_frames) * loc_image_time])
 
-data_time = data_time + locomotion_time + nav_time
+total_nav_loc_time_mean = total_nav_loc_time_mean + locomotion_time + nav_time
+
+total_nav_loc_time_std = (total_nav_loc_time_mean * data_std)
 
 nav_hours_per_sol = 3600 * 2.25 #2.25 hours per sol
 
-meter_per_sol = (exomars_distance * nav_hours_per_sol) / data_time
+meter_per_sol = (exomars_distance * nav_hours_per_sol) / total_nav_loc_time_mean
+meter_per_sol_std = meter_per_sol - ((exomars_distance * nav_hours_per_sol) / (total_nav_loc_time_mean + total_nav_loc_time_std))
 #####################################
 # Meter per sol with adaptive SLAM
 #####################################
@@ -183,8 +186,7 @@ def trunc(f, n):
     return ('%.*f' % (n + 1, f))[:-1]
 #####################################
 matplotlib.rcParams.update({'font.size': 40, 'font.weight': 'bold'})
-fig = plt.figure(1, figsize=(28, 16), dpi=120, facecolor='w', edgecolor='k')
-ax = fig.add_subplot(111)
+fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(28, 16), facecolor='w', edgecolor='k')
 #ax.set_title('Average Speed per Sol', fontsize=25, fontweight='bold')
 ax.set_xlim(-1.0, 40)
 ax.set_ylim(-1.0, 58)
@@ -198,29 +200,33 @@ xposition = [5, 15, 25, 37]
 
 # Autonomous driving velocity with adaptive slam
 yposition = meter_per_sol
-plt.plot(xposition, yposition, marker='.', linestyle='-.', color="grey", lw=4,
+ax.plot(xposition, yposition, marker='.', linestyle='-.', color="grey", lw=6,
         label="autonomous driving")
-plt.plot(xposition[0], yposition[0], linestyle='none', marker='8',
+ax.plot(xposition[0], yposition[0], linestyle='none', marker='8',
         color='grey', markersize=20)
-plt.plot(xposition[1], yposition[1], linestyle='none', marker='8',
+ax.plot(xposition[1], yposition[1], linestyle='none', marker='8',
         color='grey', markersize=20)
-plt.plot(xposition[2], yposition[2], linestyle='none', marker='8',
+ax.plot(xposition[2], yposition[2], linestyle='none', marker='8',
         color='grey', markersize=20)
-plt.plot(xposition[3], yposition[3], linestyle='none', marker='8',
+ax.plot(xposition[3], yposition[3], linestyle='none', marker='8',
         color='grey', markersize=20)
 
-plt.annotate(r''+trunc(yposition[0],1), xy=(xposition[0], yposition[0]), xycoords='data',
-                                xytext=(-10, 10), textcoords='offset points',
+yposition_error = meter_per_sol_std
+ax.errorbar(xposition, yposition, yerr=yposition_error, fmt='o', ecolor='grey',zorder=1,
+        linewidth=4, capthick=4, capsize=10)
+
+ax.annotate(r''+trunc(yposition[0],1), xy=(xposition[0], yposition[0]), xycoords='data',
+                                xytext=(10, 10), textcoords='offset points',
                                 fontsize=40)
 
-plt.annotate(r''+trunc(yposition[1],1), xy=(xposition[1], yposition[1]), xycoords='data',
-                                xytext=(-10, 10), textcoords='offset points',
+ax.annotate(r''+trunc(yposition[1],1), xy=(xposition[1], yposition[1]), xycoords='data',
+                                xytext=(10, 10), textcoords='offset points',
                                 fontsize=40)
-plt.annotate(r''+trunc(yposition[2],1), xy=(xposition[2], yposition[2]), xycoords='data',
-                                xytext=(-10, 10), textcoords='offset points',
+ax.annotate(r''+trunc(yposition[2],1), xy=(xposition[2], yposition[2]), xycoords='data',
+                                xytext=(10, 10), textcoords='offset points',
                                 fontsize=40)
-plt.annotate(r''+trunc(yposition[3],1), xy=(xposition[3], yposition[3]), xycoords='data',
-                                xytext=(-20, 10), textcoords='offset points',
+ax.annotate(r''+trunc(yposition[3],1), xy=(xposition[3], yposition[3]), xycoords='data',
+                                xytext=(10, 10), textcoords='offset points',
                                 fontsize=40)
 
 
@@ -228,7 +234,92 @@ labels = ['0%', '10%', '25%', '100%']
 plt.xticks(xposition, labels, rotation='horizontal')
 
 plt.ylabel(r'average velocity [$m/sol$]', fontsize=40,  fontweight='bold')
-plt.xlabel(r'adaptivity', fontsize=40,  fontweight='bold')
+plt.xlabel(r'threshold in adaptiveness', fontsize=40,  fontweight='bold')
 plt.legend(loc=2, prop={'size':35})
 plt.show(block=True)
+
+savefig('adaptive_slam_exomars_velocity.pdf')
+
+#####################################
+
+percentage_error_mean = np.array([wo_error.mean(), w10_error.mean(), w25_error.mean(), w100_error.mean()])
+percentage_error_std = np.array([wo_error.std(), w10_error.std(), w25_error.std(), w100_error.std()])
+
+#####################################
+def adjust_spines(ax,spines):
+    for loc, spine in ax.spines.items():
+        if loc in spines:
+            spine.set_position(('outward',10)) # outward by 10 points
+            spine.set_smart_bounds(True)
+        else:
+            spine.set_color('none') # don't draw spine
+
+    # turn off ticks where there is no spine
+    if 'left' in spines:
+        ax.yaxis.set_ticks_position('left')
+    else:
+        # no yaxis ticks
+        ax.yaxis.set_ticks([])
+
+    if 'bottom' in spines:
+        ax.xaxis.set_ticks_position('bottom')
+    else:
+        # no xaxis ticks
+        ax.xaxis.set_ticks([])
+
+#####################################
+matplotlib.rcParams.update({'font.size': 40, 'font.weight': 'bold'})
+fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(28, 16), facecolor='w', edgecolor='k')
+#ax.set_title('Average Speed per Sol', fontsize=25, fontweight='bold')
+ax.set_xlim(-1.0, 40)
+ax.set_ylim(-1.0, 1.0)
+ax.spines['right'].set_color('none')
+ax.spines['top'].set_color('none')
+ax.spines['bottom'].set_position(('data',0))
+adjust_spines(ax,['left','bottom'])
+ax.spines['left'].set_visible(True)
+
+xposition = [5, 15, 25, 37]
+
+# Autonomous driving velocity with adaptive slam
+yposition = meter_per_sol * (percentage_error_mean / 100.0)
+ax.plot(xposition, yposition, marker='.', linestyle='-.', color="grey", lw=6,
+        label="autonomous driving")
+ax.plot(xposition[0], yposition[0], linestyle='none', marker='8',
+        color='grey', markersize=20)
+ax.plot(xposition[1], yposition[1], linestyle='none', marker='8',
+        color='grey', markersize=20)
+ax.plot(xposition[2], yposition[2], linestyle='none', marker='8',
+        color='grey', markersize=20)
+ax.plot(xposition[3], yposition[3], linestyle='none', marker='8',
+        color='grey', markersize=20)
+
+yposition_error = meter_per_sol * (percentage_error_std / 100.0)
+ax.errorbar(xposition, yposition, yerr=yposition_error, fmt='o', ecolor='grey',zorder=1,
+        linewidth=4, capthick=4, capsize=10)
+
+ax.annotate(r''+trunc(yposition[0],2), xy=(xposition[0], yposition[0]), xycoords='data',
+                                xytext=(10, 10), textcoords='offset points',
+                                fontsize=40)
+
+ax.annotate(r''+trunc(yposition[1],2), xy=(xposition[1], yposition[1]), xycoords='data',
+                                xytext=(10, 10), textcoords='offset points',
+                                fontsize=40)
+ax.annotate(r''+trunc(yposition[2],2), xy=(xposition[2], yposition[2]), xycoords='data',
+                                xytext=(10, 10), textcoords='offset points',
+                                fontsize=40)
+ax.annotate(r''+trunc(yposition[3],2), xy=(xposition[3], yposition[3]), xycoords='data',
+                                xytext=(10, 10), textcoords='offset points',
+                                fontsize=40)
+
+
+labels = ['0%', '10%', '25%', '100%']
+plt.xticks(xposition, labels, rotation='horizontal')
+
+plt.ylabel(r'increase in localization error [$m/sol$]', fontsize=40,  fontweight='bold')
+plt.xlabel(r'threshold in adaptiveness', fontsize=40,  fontweight='bold')
+plt.legend(loc=2, prop={'size':35})
+plt.show(block=True)
+
+savefig('adaptive_slam_exomars_error.pdf')
 
