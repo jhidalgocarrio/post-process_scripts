@@ -83,7 +83,7 @@ ax.set_ylabel(r'RMSE [$m$]', fontsize=40, fontweight='bold', color="black")
 ax.set_xticks(ind+width)
 ax.set_xticklabels( ('skid odometry', 'contact point odometry', 'enhanced 3D odometry'), 
         fontsize=35, fontweight='bold', color="black")
-ax.legend( (rects_moto[0], rects_sand[0]), ('sandfield',  'motocross'),
+ax.legend( (rects_sand[0], rects_moto[0]), ('sandfield',  'motocross'),
         prop={'size':30})
 ax.grid(True)
 ax.spines['top'].set_visible(False)
