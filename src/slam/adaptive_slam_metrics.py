@@ -119,6 +119,8 @@ plt.show(block=True)
 
 savefig('adaptive_slam_boxplots_error.pdf')
 #####################################
+# Figures for the Conclusions
+#####################################
 
 data_mean = np.array([wo_adaptivity.mean(), w10_adaptivity.mean(),
     w25_adaptivity.mean(), w100_adaptivity.mean()])/100.0
@@ -200,7 +202,7 @@ xposition = [5, 15, 25, 37]
 
 # Autonomous driving velocity with adaptive slam
 yposition = meter_per_sol
-ax.plot(xposition, yposition, marker='.', linestyle='-.', color="grey", lw=6,
+ax.plot(xposition, yposition, marker='.', linestyle='--', color="grey", lw=10,
         label="autonomous driving")
 ax.plot(xposition[0], yposition[0], linestyle='none', marker='8',
         color='grey', markersize=20)
@@ -213,7 +215,7 @@ ax.plot(xposition[3], yposition[3], linestyle='none', marker='8',
 
 yposition_error = meter_per_sol_std
 ax.errorbar(xposition, yposition, yerr=yposition_error, fmt='o', ecolor='grey',zorder=1,
-        linewidth=4, capthick=4, capsize=10)
+        linewidth=6, capthick=6, capsize=10)
 
 ax.annotate(r''+trunc(yposition[0],1), xy=(xposition[0], yposition[0]), xycoords='data',
                                 xytext=(10, 10), textcoords='offset points',
@@ -272,7 +274,7 @@ matplotlib.rcParams.update({'font.size': 40, 'font.weight': 'bold'})
 fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(28, 16), facecolor='w', edgecolor='k')
 #ax.set_title('Average Speed per Sol', fontsize=25, fontweight='bold')
 ax.set_xlim(-1.0, 40)
-ax.set_ylim(-1.0, 1.0)
+ax.set_ylim(-1.0, 0.6)
 ax.spines['right'].set_color('none')
 ax.spines['top'].set_color('none')
 ax.spines['bottom'].set_position(('data',0))
@@ -283,7 +285,7 @@ xposition = [5, 15, 25, 37]
 
 # Autonomous driving velocity with adaptive slam
 yposition = meter_per_sol * (percentage_error_mean / 100.0)
-ax.plot(xposition, yposition, marker='.', linestyle='-.', color="grey", lw=6,
+ax.plot(xposition, yposition, marker='.', linestyle='-.', color="grey", lw=10,
         label="autonomous driving")
 ax.plot(xposition[0], yposition[0], linestyle='none', marker='8',
         color='grey', markersize=20)
@@ -296,7 +298,7 @@ ax.plot(xposition[3], yposition[3], linestyle='none', marker='8',
 
 yposition_error = meter_per_sol * (percentage_error_std / 100.0)
 ax.errorbar(xposition, yposition, yerr=yposition_error, fmt='o', ecolor='grey',zorder=1,
-        linewidth=4, capthick=4, capsize=10)
+        linewidth=6, capthick=6, capsize=10)
 
 ax.annotate(r''+trunc(yposition[0],2), xy=(xposition[0], yposition[0]), xycoords='data',
                                 xytext=(10, 10), textcoords='offset points',
