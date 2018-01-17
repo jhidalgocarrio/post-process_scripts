@@ -1,9 +1,11 @@
 #!/usr/bin/env python
 
-path = '~/npi/data/20141024_planetary_lab/20141027-2034_odometry_comparison/'
+path = '~/npi/data/20141024_planetary_lab/20141027-2034_odometry_comparison_review/'
 
 #######################################
-threed_odometry_file = path + 'pose_odo_position.reaction_forces.0.data'
+threed_odometry_file = path + 'pose_odo_position.no_forces.0.data'
+
+threed_odometry_with_forces_file = path + 'pose_odo_position.reaction_forces.0.data'
 
 skid_odometry_file = path + 'pose_skid_position.0.data'
 
@@ -39,6 +41,10 @@ matplotlib.style.use('classic') #in matplotlib >= 1.5.1
 threed_odometry = data.ThreeData()
 threed_odometry.readData(threed_odometry_file, cov=True)
 
+#ExoTeR Odometry
+threed_odometry_forces = data.ThreeData()
+threed_odometry_forces.readData(threed_odometry_with_forces_file, cov=True)
+
 #Skid Odometry
 skid_odometry = data.ThreeData()
 skid_odometry.readData(skid_odometry_file, cov=True)
@@ -65,6 +71,7 @@ temindex = np.asarray(temindex)
 
 reference.delete(temindex)
 threed_odometry.delete(temindex)
+threed_odometry_forces.delete(temindex)
 skid_odometry.delete(temindex)
 contact_odometry.delete(temindex)
 
@@ -73,6 +80,7 @@ contact_odometry.delete(temindex)
 ################################
 reference.eigenValues()
 threed_odometry.eigenValues()
+threed_odometry_forces.eigenValues()
 contact_odometry.eigenValues()
 
 
@@ -117,6 +125,20 @@ plt.ylim(min(py), max(yi))
 cbar = plt.colorbar()  # draw colorbar
 cbar.ax.set_ylabel(r' terrain elevation [$m$]', fontsize=25, fontweight='bold')
 
+# Odometry trajectory with reaction_forces
+plt.rc('text', usetex=False)# activate latex text rendering
+xposition = threed_odometry_forces.getAxis(0)[0::50]
+yposition = threed_odometry_forces.getAxis(1)[0::50]
+zposition = threed_odometry_forces.getAxis(2)[0::50]
+
+# rotate and translate the trajectory wrt the world frame
+position = np.column_stack((xposition, yposition, zposition))
+position[:] = [navigation_orient.data[0].rot(x) +  navigation_position.data[0] for x in position]
+
+# Display Odometry trajectory
+x = position[:,0]
+y = position[:,1]
+ax.plot(x, y, marker='o', linestyle='-.', label="E. 3D odometry", color=[0.7,1.0,0.4], lw=5)
 
 # Odometry trajectory
 plt.rc('text', usetex=False)# activate latex text rendering
@@ -131,7 +153,7 @@ position[:] = [navigation_orient.data[0].rot(x) +  navigation_position.data[0] f
 # Display Odometry trajectory
 x = position[:,0]
 y = position[:,1]
-ax.plot(x, y, marker='o', linestyle='-.', label="3d odometry", color=[0.3,1.0,0.4], lw=5)
+ax.plot(x, y, marker='o', linestyle='-.', label="3D odometry", color=[0.3,1.0,0.4], lw=5)
 
 
 # Planar Odometry trajectory
