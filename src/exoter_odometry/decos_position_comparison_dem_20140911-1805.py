@@ -42,9 +42,9 @@ def dateparse (time_in_microsecs):
 # PLOTTING FUNCTION
 ##########################################################################
 def decos_odometry_dem_figure(fig_num, dem_file,
-        threed_odometry_trajectory, skid_odometry_trajectory,
-        reference_trajectory, mis_orient = quat.quaternion(np.array([1.0,0.0,0.0,0.0])),
-        mis_position = [0.00, 0.00, 0.00]):
+        threed_odometry_trajectory, skid_odometry_trajectory, reference_trajectory,
+        mis_orient_threed = quat.quaternion(np.array([1.0,0.0,0.0,0.0])), mis_position_threed = [0.00, 0.00, 0.00],
+        mis_orient_skid = quat.quaternion(np.array([1.0,0.0,0.0,0.0])), mis_position_skid = [0.00, 0.00, 0.00]):
 
     ########################
     # Load Terrain DEM
@@ -93,8 +93,8 @@ def decos_odometry_dem_figure(fig_num, dem_file,
     t_odo = np.column_stack((threed_odometry_trajectory[:,0][0::10],
         threed_odometry_trajectory[:,1][0::10],
         threed_odometry_trajectory[:,2][0::10]))
-    t_odo[:] = [(mis_orient * i * mis_orient.conj())[1:4] for i in t_odo]
-    t_odo[:] = [ i + mis_position for i in t_odo ]
+    t_odo[:] = [(mis_orient_threed * i * mis_orient_threed.conj())[1:4] for i in t_odo]
+    t_odo[:] = [ i + mis_position_threed for i in t_odo ]
     t_odo[:] = [(map_orient_align * i * map_orient_align.conj())[1:4] for i in t_odo ]
     t_odo[:] = [ i + map_posi_align for i in t_odo ]
     x = t_odo[:,0]
@@ -105,8 +105,8 @@ def decos_odometry_dem_figure(fig_num, dem_file,
     skid = np.column_stack((skid_odometry_trajectory[:,0][0::10],
         skid_odometry_trajectory[:,1][0::10],
         skid_odometry_trajectory[:,2][0::10]))
-    skid[:] = [(mis_orient * i * mis_orient.conj())[1:4] for i in skid]
-    skid[:] = [ i + mis_position for i in skid ]
+    skid[:] = [(mis_orient_skid * i * mis_orient_skid.conj())[1:4] for i in skid]
+    skid[:] = [ i + mis_position_skid for i in skid ]
     skid[:] = [(map_orient_align * i * map_orient_align.conj())[1:4] for i in skid ]
     skid[:] = [ i + map_posi_align for i in skid ]
     x = skid[:,0]
@@ -179,7 +179,7 @@ def decos_odometry_dem_figure(fig_num, dem_file,
     #plt.axis('equal')
     plt.grid(True)
     fig.savefig("decos_odometry_comparison_20140911-1805.pdf", dpi=fig.dpi)
-    plt.show(block=True)
+    plt.show(block=False)
 
 ##########################################################################
 # READ THE VALUES IN PANDAS
@@ -238,16 +238,26 @@ skid_odometry_position = np.column_stack((skid_odometry.x.values, skid_odometry.
 ##########################################################################
 reference_position = np.column_stack((reference.x.values, reference.y.values,  reference.z.values ))
 
-#################################################
-# Take the misalignment between both orientations
-#################################################
-mis_orient = quat.quaternion.fromAngleAxis(5.0 * np.pi/180.0, [0.0, 0.0, 1.0])
-mis_position = [0.0, 0.0, 0.00]
+######################################################
+# Take the misalignment between threed odometry and GT
+######################################################
+mis_orient_threed_odo = quat.quaternion.fromAngleAxis(-60.0 * np.pi/180.0, [0.0, 0.0, 1.0])
+mis_position_threed_odo = [0.0, 0.0, 0.00]
+
+######################################################
+# Take the misalignment between threed odometry and GT
+######################################################
+mis_orient_skid_odo = quat.quaternion.fromAngleAxis(5.0 * np.pi/180.0, [0.0, 0.0, 1.0])
+mis_position_skid_odo = [0.0, 0.0, 0.00]
+
 
 ############
 ### PLOT ###
 ############
-decos_odometry_dem_figure(1, decos_dem_file, threed_odometry_position, skid_odometry_position, reference_position, mis_orient, mis_position)
+decos_odometry_dem_figure(2, decos_dem_file, threed_odometry_position,
+        skid_odometry_position, reference_position,
+        mis_orient_threed_odo, mis_position_threed_odo,
+        mis_orient_skid_odo, mis_position_skid_odo)
 
 #################################################
 # 3D PLOT
@@ -288,8 +298,8 @@ plt.rc('text', usetex=False)# activate latex text rendering
 
 # Plot 3d odometry trajectory
 position = np.column_stack((threed_odometry_position[:,0][0::50], threed_odometry_position[:,1][0::50], threed_odometry_position[:,2][0::50]))
-position[:] = [(mis_orient * i * mis_orient.conj())[1:4] for i in position]
-position[:] = [ i + mis_position for i in position ]
+position[:] = [(mis_orient_threed_odo * i * mis_orient_threed_odo.conj())[1:4] for i in position]
+position[:] = [ i + mis_position_threed_odo for i in position ]
 position[:] = [(map_orient_align * i * map_orient_align.conj())[1:4] for i in position ]
 position[:] = [ i + map_posi_align for i in position ]
 
@@ -300,8 +310,8 @@ ax.plot(xposition, yposition, zposition, marker='o', linestyle='-.', label="3d o
 
 # Plot skid odometry trajectory
 position = np.column_stack((skid_odometry_position[:,0][0::50], skid_odometry_position[:,1][0::50], skid_odometry_position[:,2][0::50]))
-position[:] = [(mis_orient * i * mis_orient.conj())[1:4] for i in position]
-position[:] = [ i + mis_position for i in position ]
+position[:] = [(mis_orient_skid_odo * i * mis_orient_skid_odo.conj())[1:4] for i in position]
+position[:] = [ i + mis_position_skid_odo for i in position ]
 position[:] = [(map_orient_align * i * map_orient_align.conj())[1:4] for i in position ]
 position[:] = [ i + map_posi_align for i in position ]
 
