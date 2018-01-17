@@ -1,12 +1,13 @@
 #! /usr/bin/env python
 # -*- coding:utf-8 -*-
 # by javi 2017-03-28 16:52:14
+#path ='~/npi/data/20141024_planetary_lab/20141027-2034_odometry_comparison/'
 path = '~/npi/data/20150515_planetary_lab/20150515-1752_odometry_comparison/'
 
 # ################## #
 # Planetary Lab Data #
 # ################## #
-threed_odometry_file = path + 'pose_odo_position.0.data'
+threed_odometry_file = path + 'pose_odo_position.no_forces.0.data'
 
 skid_odometry_file = path + 'pose_skid_position.0.data'
 
