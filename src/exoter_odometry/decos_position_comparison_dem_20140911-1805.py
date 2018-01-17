@@ -254,7 +254,7 @@ mis_position_skid_odo = [0.0, 0.0, 0.00]
 ############
 ### PLOT ###
 ############
-decos_odometry_dem_figure(2, decos_dem_file, threed_odometry_position,
+decos_odometry_dem_figure(1, decos_dem_file, threed_odometry_position,
         skid_odometry_position, reference_position,
         mis_orient_threed_odo, mis_position_threed_odo,
         mis_orient_skid_odo, mis_position_skid_odo)
