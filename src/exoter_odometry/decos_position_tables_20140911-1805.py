@@ -12,7 +12,7 @@ skid_odometry_file = path + 'pose_skid_position.0.data'
 
 reference_file = path + 'pose_ref_position.0.data'
 #######################################
-delta_reference_file =  path + 'delta_pose_odo_position.0.data'
+delta_reference_file =  path + 'delta_pose_odo_position.reaction_forces.0.data'
 #######################################
 pose_odo_orient_file = path + "pose_odo_orientation.reaction_forces.0.data"
 
@@ -95,10 +95,17 @@ norm_delta_position = [np.linalg.norm(x) for x in position ]
 norm_delta_position = [x for x in norm_delta_position if str(x) != 'inf']
 distance_traveled = np.nansum(norm_delta_position)
 
-#################################################
-mis_orient = quat.quaternion.fromAngleAxis(5.0 * np.pi/180.0, [0.0, 0.0, 1.0])
-mis_position = [0.0, 0.0, 0.00]
-#################################################
+######################################################
+# Take the misalignment between threed odometry and GT
+######################################################
+mis_orient_threed_odo = quat.quaternion.fromAngleAxis(5.0 * np.pi/180.0, [0.0, 0.0, 1.0])
+mis_position_threed_odo = [0.0, 0.0, 0.00]
+
+######################################################
+# Take the misalignment between threed odometry and GT
+######################################################
+mis_orient_skid_odo = quat.quaternion.fromAngleAxis(5.0 * np.pi/180.0, [0.0, 0.0, 1.0])
+mis_position_skid_odo = [0.0, 0.0, 0.00]
 
 #################
 ## RE-SAMPLE   ##
@@ -109,15 +116,15 @@ skid_odometry = skid_odometry.resample(resampling_time).mean()
 reference = reference.resample(resampling_time).mean()
 
 #################################################
-threed_pose = np.array([(mis_orient * i * mis_orient.conj())[1:4] for i in np.column_stack((threed_odometry.x.values, threed_odometry.y.values, threed_odometry.z.values))])
-threed_pose[:] = [ i + mis_position for i in threed_pose ]
+threed_pose = np.array([(mis_orient_threed_odo * i * mis_orient_threed_odo.conj())[1:4] for i in np.column_stack((threed_odometry.x.values, threed_odometry.y.values, threed_odometry.z.values))])
+threed_pose[:] = [ i + mis_position_threed_odo for i in threed_pose ]
 threed_odometry.x = threed_pose[:,0]
 threed_odometry.y = threed_pose[:,1]
 threed_odometry.z = threed_pose[:,2]
 
 #################################################
-skid_pose = np.array([(mis_orient * i * mis_orient.conj())[1:4] for i in np.column_stack((skid_odometry.x.values, skid_odometry.y.values, skid_odometry.z.values))])
-skid_pose[:] = [ i + mis_position for i in skid_pose ]
+skid_pose = np.array([(mis_orient_skid_odo * i * mis_orient_skid_odo.conj())[1:4] for i in np.column_stack((skid_odometry.x.values, skid_odometry.y.values, skid_odometry.z.values))])
+skid_pose[:] = [ i + mis_position_skid_odo for i in skid_pose ]
 skid_odometry.x = skid_pose[:,0]
 skid_odometry.y = skid_pose[:,1]
 skid_odometry.z = skid_pose[:,2]
@@ -224,3 +231,4 @@ print("skid odomery median error:" + str(la.norm(skidmediane[0:2])))
 
 print("3d odometry final error:" + str(la.norm(odofinale[0:2])))
 print("skid odomery median error:" + str(la.norm(skidfinale[0:2])))
+
