@@ -127,7 +127,7 @@ def adaptive_matches_comparison_figure(fig_num, info_ten, info_twentyfive, info_
     y = info_ten.inliers_matches_ratio_th
     ax.plot(x, y, linestyle='-', lw=2, alpha=1.0, color=[0.0, 0.0, 0.0])
 
-    ax.set_ylabel(r'inliers matches ratio [$0.0 - 0.75$]', fontsize=40,
+    ax.set_ylabel(r'feature matching ratio [$0.0 - 0.75$]', fontsize=40,
     fontweight='bold')
     #ax.tick_params('y')
 
