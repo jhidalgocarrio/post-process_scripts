@@ -171,7 +171,7 @@ ax.set_ylim(matches_ratio_min, matches_ratio_max)
 #ax.get_xaxis().set_visible(False)
 
 plt.xlabel(r'Odometry error [$m/s$]', fontsize=35, fontweight='bold')
-plt.ylabel(r'Features matches ratio', fontsize=35, fontweight='bold')
+plt.ylabel(r'Feature matching ratio', fontsize=35, fontweight='bold')
 plt.grid(True)
 ax.legend(loc=2, prop={'size':35})
 plt.show(block=True)
