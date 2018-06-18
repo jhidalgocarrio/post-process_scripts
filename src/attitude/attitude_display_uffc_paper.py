@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-path = '/home/javi/exoter/development/data/20150323_ww_dlr/imu_stim300_attitude_test_20150325-1716/'
+path = '/home/javi/npi/data/20150323_ww_dlr/imu_stim300_attitude_test_20150325-1716/'
 
 ##################################
 pose_ikf_orient_file = path + 'pose_ikf_orientation.0.data'
