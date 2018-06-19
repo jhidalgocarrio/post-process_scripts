@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-path = '/home/javi/exoter/development/data/20140422_stim300_vs_vicon/20140429-1429/'
+path = '/home/javi/npi/data/20140422_stim300_vs_vicon/20140429-1429/'
 
 ##################################
 pose_imu_acceleration_file =  path + 'pose_imu_acceleration.0.data' # IMU is wrt to body frame
