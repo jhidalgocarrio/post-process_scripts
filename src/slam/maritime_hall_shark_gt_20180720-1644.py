@@ -66,14 +66,22 @@ def maritime_hall_figure(fig_num, dem_file, reference_trajectory,
         mis_orient = quat.quaternion(np.array([1.0,0.0,0.0,0.0])),
         mis_position = [0.00, 0.00, 0.00]):
 
+    import os
+    from matplotlib.cbook import get_sample_data
+    from matplotlib._png import read_png
+    import matplotlib.image as image
     matplotlib.rcParams.update({'font.size': 15, 'font.weight': 'bold'})
-    fig = plt.figure(fig_num, figsize=(28, 16), dpi=120, facecolor='w', edgecolor='k')
-    ax = fig.add_subplot(111)
-
+    #fig = plt.figure(fig_num, figsize=(28, 16), dpi=120, facecolor='w', edgecolor='k')
+    #ax = fig.add_subplot(111)
+    fn = get_sample_data(os.getcwd()+"/data/img/maritime_hall.png", asfileobj=False)
+    maritime_hall = image.imread(fn)
+    fig, ax = plt.subplots()
+    ax.imshow(maritime_hall, extent=[-1.2, 25, -2, 20])
+    #ax.imshow(maritime_hall, extent=[-1.2, 25, -2, 19])
 
     # Display Ground Truth trajectory
     from numpy import linalg as la
-    ref = np.column_stack((reference_trajectory[:,0][0::10], reference_trajectory[:,1][0::10], reference_trajectory[:,2][0::10]))
+    ref = np.column_stack((reference_trajectory[:,0][0::1], reference_trajectory[:,1][0::1], reference_trajectory[:,2][0::1]))
     ref[:] = [(mis_orient * i * mis_orient.conj())[1:4] for i in ref ]
     ref[:] = [ i + mis_position for i in ref ]
     x = ref[:,0]
@@ -82,10 +90,6 @@ def maritime_hall_figure(fig_num, dem_file, reference_trajectory,
             label='ground truth', zorder=80)
 
     # Annotations
-    import os
-    from matplotlib.cbook import get_sample_data
-    from matplotlib._png import read_png
-    import matplotlib.image as image
     from matplotlib.offsetbox import OffsetImage, AnnotationBbox
 
     ax.annotate(r'Start', xy=(x[0], y[0]), xycoords='data',
