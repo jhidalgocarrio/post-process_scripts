@@ -2,7 +2,7 @@
 # -*- coding:utf-8 -*-
 # by javi 2018-07-23 14:10:35
 #######################################
-path='~/waste_shark/experiments/20180720-1644_gt_maritime_hall/'
+path='~/waste_shark/experiments/20180720_gt_maritime_hall/'
 #######################################
 path_reference_position_file = path + '2018-07-20-16-44-13.bag'
 #######################################
@@ -10,7 +10,6 @@ path_reference_position_file = path + '2018-07-20-16-44-13.bag'
 import sys
 import os
 sys.path.insert(0, './src/core')
-sys.path.insert(0, './src/ros_numpy/src')
 import quaternion as quat
 from pylab import *
 import rosbag
