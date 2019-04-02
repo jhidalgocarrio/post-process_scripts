@@ -5,6 +5,8 @@
 path='~/waste_shark/experiments/20181115_maritime_hall/'
 #######################################
 path_reference_position_file = path + '2018-11-15-18-37-26.bag'
+#path_slam_position_file = path + '2018-11-19-18-37-16.bag'
+path_slam_position_file = path + '2018-11-22-18-28-40.bag'
 #######################################
 
 import sys
@@ -78,16 +80,11 @@ reference_orient = pandas.DataFrame(data=np.asarray(pose_orient), index=[datetim
 # Process the ROS bag logs
 # to get the SLAM pose
 ############################
+bag = rosbag.Bag(os.path.expanduser(path_slam_position_file))
 pose_time = []
 pose_pos = []
 pose_orient = []
-for topic, msg, t in bag.read_messages(topics=['/shark_slam/pose_debug']):
-        print "-----"
-        print topic
-        print "-----"
-        print msg
-        print "-----"
-        print t
+for topic, msg, t in bag.read_messages(topics=['/dory/dory_slam/pose']):
         pose_time.append(t.to_time())
         position = msg.pose.pose.position
         orientation = msg.pose.pose.orientation
